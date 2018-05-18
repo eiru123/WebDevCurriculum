@@ -166,4 +166,10 @@
         * 태그를 checkout 하기
             * 태그는 브랜치와는 달리 가리키는 커밋을 바꿀 수 없는 이름이기 때문에 checkout 해서 사용할 수 없다. 태그가 가리키는 특정 커밋 기반의 브랜치를 만들어 작업하려면 새로 브랜치를 생성해야한다.  
             git checkout -b [브랜치명] [태그명]
+    * ### git alias
+        * git의 명령을 전부 입력하는 것이 귀찮다면 git config를 사용하여 각 명령의 alias를 만들 수 있다.  
+        git config --global alias.[alias명] [명령]  
+        외부 명령어도 실핼할 수 있다. !를 제일 앞에 추가하면 외부 명령을 실행한다.  
+        gitk -> !gitk
+
 #### 참고사이트: git(https://git-scm.com/book/ko/v2/)
