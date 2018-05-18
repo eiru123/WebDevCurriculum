@@ -58,5 +58,12 @@
         1. Staging area에 파일을 stage해서 커밋할 스냅샷을 만든다.
         1. Staging area에 있는 파일들을 커밋해서 git 디렉토리에 영구적인 스냅샷으로 저장.
 
-
+1. git 사용법
+    * git 저장소 만들기
+        * git init: .git이라는 하위 디렉토리를 만든다. .git 디렉토리에는 저장소에 필요한 뼈대 파일이 들어 있다. 파일 관리를 위해서는 저장소에 파일을 추가하고 커밋해야 한다. git add 명령으로 파일을 추가하고 git commit 명령으로 커밋한다.
+    * 기존 저장소를 clone하기
+        * git clone [url]: 서버에 있는 거의 모든 데이터를 복사해온다.
+    * 수정하고 저장소에 저장하기
+        * tracked(관리 대상)와 untracked(관리 대상이 아님)으로 나뉨. Tracked 파일은 이미 스냅샷에 포함되어 있던 파일이다. Tracked 팡리은 또 unmodified, modified, staged로 나뉜다. 이 외에는 모두 untracked 파일이다.
+![tracked untracked image](track.png) (이미지 출처:https://git-scm.com/book/ko/v2/Git%EC%9D%98-%EA%B8%B0%EC%B4%88-%EC%88%98%EC%A0%95%ED%95%98%EA%B3%A0-%EC%A0%80%EC%9E%A5%EC%86%8C%EC%97%90-%EC%A0%80%EC%9E%A5%ED%95%98%EA%B8%B0)
 #### 참고사이트: git(https://git-scm.com/book/ko/v2/)
