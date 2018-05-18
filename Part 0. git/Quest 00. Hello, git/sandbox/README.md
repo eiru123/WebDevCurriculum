@@ -12,4 +12,4 @@
     * CVCS
         * CVS, Subversion, Perforce 같은 시스템은 파일을 관리하는 서버가 별도로 있고 클라이언트가 중앙 서버에서 파일을 받아서 사용함.
         * 중앙 서버에서 문제가 발생한다면 해결하는 동안 아무도 다른 사람과 협업 할 수 없다. 또 중앙 데이터베이스의 하드디스크에 문제가 생기면 그 동안의 히스토리를 모두 잃을 수 있다.
-![CVCS image](CVCS.png) 
+![CVCS image](CVCS.png) (이미지 출처: https://git-scm.com/book/ko/v2/%EC%8B%9C%EC%9E%91%ED%95%98%EA%B8%B0-%EB%B2%84%EC%A0%84-%EA%B4%80%EB%A6%AC%EB%9E%80%3F)
