@@ -2,8 +2,5 @@ Hello, git!
 This is dummy text file!
 hotfix!
 hello
-<<<<<<< HEAD
 gittttttt
-=======
 git three way
->>>>>>> test
