@@ -45,4 +45,18 @@
         1. Modified: 수정한 파일을 아직 커밋하지 않은 것. Checkout 후 수정까지 했지만 staging area에 추가하지 않은 상태.
         1. Staged: 현재 수정한 파일을 곧 커밋할 것이라고 표시한 상태. Stageing area에 들어가 있는 상태
 ![status image](status.png) (이미지 출처: https://git-scm.com/book/ko/v2/%EC%8B%9C%EC%9E%91%ED%95%98%EA%B8%B0-Git-%EA%B8%B0%EC%B4%88)
+
+    * Git 디렉토리
+        * git이 프로젝트의 메타데이터와 객체 데이터베이스를 저장하는 곳을 말한다.
+        * git의 핵심
+    * 워킹 트리
+        * 프로젝트의 특정 버전을 checkout한 것이다. git 디렉토리는 지금 작업하는 디스크에 있고 그 디렉토리 안에 압축된 데이터베이스에서 파일을 가져와서 워킹 트리를 만든다.
+    * Staging area
+        * git 디렉토리에 있다. 단순한 파일이고 곧 커밋할 파일에 대한 정보를 저장한다. 종종 index라고 불리기도 한다.
+    * git으로 하는 일
+        1. 워킹트리에서 파일을 수정한다.
+        1. Staging area에 파일을 stage해서 커밋할 스냅샷을 만든다.
+        1. Staging area에 있는 파일들을 커밋해서 git 디렉토리에 영구적인 스냅샷으로 저장.
+
+
 #### 참고사이트: git(https://git-scm.com/book/ko/v2/)
