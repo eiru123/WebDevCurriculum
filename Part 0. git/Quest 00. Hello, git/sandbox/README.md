@@ -219,4 +219,8 @@
         (소스 출처: https://git-scm.com/book/ko/v2/Git-%EB%B8%8C%EB%9E%9C%EC%B9%98-%EB%B8%8C%EB%9E%9C%EC%B9%98%EC%99%80-Merge-%EC%9D%98-%EA%B8%B0%EC%B4%88)  
         이 때 위의 코드는 merge 명령을 실행했을 때 HEAD에 해당하는 커밋이고 아래의 코드는 merge하려 했던 코드이다. 이 코드를 수정하여 충돌을 해결한 후 다시 git add 명령을 사용해 git에 저장한다.
         * merge도구로도 충돌을 해결할 수 있다. git mergetool 명령으로 실행한다. merge 도구를 종료하면 git은 merge를 잘 했는지 물어본다. 잘 마쳤다고 입력하면 자동으로 git add가 수행되고 해당 파일이 staging area에 저장된다. git status 명령으로 충돌이 해결된 상태인지 다시 한번 확인해볼 수 있다. staging area에 저장됐는지 확인 했으면 git commit 명령으로 merge 한 것을 커밋한다.
+    * ### 브랜치 관리
+        * git branch 명령은 아무런 옵션이 없으면 브랜치의 목록을 보여주며 \* 표시가 된 브랜치 명은 현재 checkout 해서 작업중인 브랜치를 나타낸다.
+        * git branch -v 명령을 실행하면 브랜치마다 마지막 커밋 메세지도 함께 보여준다.
+        * 현재 checkout한 브랜치를 기준으로 --merged, --no-merged 옵션을 사용하여 merge 된 브랜치인지 아닌지 필터링해 볼 수 있다.
 #### 참고사이트: git(https://git-scm.com/book/ko/v2/)
