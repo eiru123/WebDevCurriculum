@@ -89,8 +89,8 @@
         * rm 명령어는 file-glob패턴을 사용하기에 여러 개의 파일이나 디렉토리를 한꺼번에 삭제할 수도 있따. ex) git rm log ^*.log
     * 파일 이름 변경하기
         * git mv file_from file_to를 이용하여 파일 이름을 변경할 수 있다. git mv는 일종의 단축 명령어다. 
-        git mv README.md README 는 다음과 같다.
-        mv README.md README
-        git rm README.md
-        git add README
+        git mv README.md README 는 다음과 같다.  
+        mv README.md README  
+        git rm README.md  
+        git add README  
 #### 참고사이트: git(https://git-scm.com/book/ko/v2/)
