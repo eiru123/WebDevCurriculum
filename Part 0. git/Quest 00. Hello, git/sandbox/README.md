@@ -1,10 +1,6 @@
 # git 정리
-<!-- TOC -->
 
-- [git 정리](#git-정리)
-            - [참고사이트: git(https://git-scm.com/book/ko/v2/)](#참고사이트-githttpsgit-scmcombookkov2)
-
-<!-- /TOC -->
+- [git 기초](#git 기초)
 
 1. ## git 기초
     * ### 버전 관리란?
