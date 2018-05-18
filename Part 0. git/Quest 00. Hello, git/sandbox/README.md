@@ -191,4 +191,19 @@
         * 갈라지는 프랜치는 git log 명령으로 쉽게 확인할 수 있다. 현재 브랜치가 가리키고 있는 히스토리가 무엇이고 어떻게 갈라져 나왔는지 보여준다.  
         git log --oneline --decorate --graph --all  
         이라고 실핼하면 히스토리를 출력한다.
+    * ### 브랜치와 merge의 기초
+        * git checkout -b [브랜치명] : 브랜치를 새로 만들면서 바로 checkout 하는 명령
+        * 브랜치를 이동하려면 워킹 디렉토리를 정리하는 것이 좋다. 아직 커밋하지 않은 파일이 checkout 할 브랜치와 충돌 나면 브랜치를 변경할 수 없기 때문이다. 이 문제를 다루는 방법는 stash나 amend가 있다.
+        * 예를 들어 서비스를 제공하는 master 브랜치와 새로운 기능을 구현하고 있는 feature브랜치가 있다고 생각해보자. feature 브랜치에서 작업중에 오류가 났다면 master 브랜치로 돌아가 hotfix라는 오류 수정을 위한 브랜치를 만들어 feature브랜치에 영향을 주지 않고 오류 수정에 집중할 수 있다. 모든 오류 수정이 완료되면 다시 master 브랜치에 병합한다. 이를 merge라고 한다.
+        * fast-forward: 병합할 브랜치가 자신의 커밋에 기반한 브랜치면 merge의 과정 없이 최신 커밋으로 이동한다. 이러한 방식을 fast-forward라 한다.
+        * git branch -d [브랜치명]: 더 이상 필요없는 브랜치를 삭제하기 위한 명령
+        * merge를 할 때 merge 명령으로 합칠 브랜치에서 합쳐질 브랜치를 merge하면 된다.  
+        ex) master 브랜치에 hotfix 브랜치를 병합할 때  
+        git checkout master  
+        git merge hotfix
+        * merge 시 현재 브랜치가 가리키는 커밋이 merge할 브랜치의 조상이 아니면 fast-forward가 아닌 3-way merge를 진행한다. 3-way merge는 각 브랜치가 가리키는 커밋 두 개와 공콩 조상 하나를 사용한다. 이러한 commit을 merge commit이라 한다.
+    * ### merge commit
+        * git은 merge하는데 필요한 최적의 공통 조상을 자동으로 찾는다. CVS, SVN 등은 개발자가 직접 공통 조상을 찾아 merge해야 한다. merge한 후 필요없는 브랜치는 역시 삭제한다.
+    * ### 충동의 기초
+        *
 #### 참고사이트: git(https://git-scm.com/book/ko/v2/)
