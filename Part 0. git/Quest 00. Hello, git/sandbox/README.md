@@ -207,15 +207,15 @@
     * ### 충돌의 기초
         * 3-way merge가 실패할 떄도 있다. merge하는 두 브랜치에서 같은 파일의 한 부분을 동시에 수정하고 merge하면 git은 해당 부분을 merge 하지 못한다. 이 때 git은 자동으로 merge하지 못해서 새 커밋이 생기지 않는다. 충돌을 개발자가 해결해야만 merge가 진행된다.
         * git status를 통해 어떤 파일이 merge할 수 없는지 확인할 수 있다. 이 때 unmerged 상태로 표시된 파일이 충돌이 난 파일이다.  
-        '''  
+        ```
         <<<<<<< HEAD:index.html
         <div id="footer">contact : email.support@github.com</div>
         =======
         <div id="footer">
         please contact us at support@github.com
         </div>
-        >>>>>>> iss53:index.html
-        '''  
+        >>>>>>> iss53:index.html  
+        ```
         (소스 출처: https://git-scm.com/book/ko/v2/Git-%EB%B8%8C%EB%9E%9C%EC%B9%98-%EB%B8%8C%EB%9E%9C%EC%B9%98%EC%99%80-Merge-%EC%9D%98-%EA%B8%B0%EC%B4%88)  
         이 때 위의 코드는 merge 명령을 실행했을 때 HEAD에 해당하는 커밋이고 아래의 코드는 merge하려 했던 코드이다. 이 코드를 수정하여 충돌을 해결한 후 다시 git add 명령을 사용해 git에 저장한다.
         * merge도구로도 충돌을 해결할 수 있다. git mergetool 명령으로 실행한다. merge 도구를 종료하면 git은 merge를 잘 했는지 물어본다. 잘 마쳤다고 입력하면 자동으로 git add가 수행되고 해당 파일이 staging area에 저장된다. git status 명령으로 충돌이 해결된 상태인지 다시 한번 확인해볼 수 있다. staging area에 저장됐는지 확인 했으면 git commit 명령으로 merge 한 것을 커밋한다.
