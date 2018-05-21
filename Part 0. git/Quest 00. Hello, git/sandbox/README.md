@@ -251,4 +251,23 @@
         * 추적 브랜치가 현재 어떻게 설정되어 있는지 확인하려면 git branch -vv 명령을 사용하면 된다. 이 때 중요한 점은 명령을 실행했을 때 나타나는 결과는 모두 마지막으로 서버에서 데이터를 가져온 시점을 바탕으로 계산한다. 즉 서버의 최신 데이터를 반영하지는 않으며 로컬에 저장된 서버의 캐시 데이터를 사용한다. 최신 데이터로 추적 상황을 알아보려면 git fetch --all; git branch -vv 로 두 명령을 이어서 사용하면 된다.
         * pull 하기: git fetch 명령을 실행하면 서버에는 존재하지만, 로컬에는 아직 없는 데이터를 받아와서 저장한다. 데이터를 가져오기만 하고 merge하도록 준비만 해둔다. git pull 명령은 fetch와 merge를 동시에 수행한다. 하지만 일반적으로는 fetch 후 merge 명령을 명시적으로 사용하는 것이 pull 명령으로 두 명령을 수행하는 것보다 더 낫다.
         * 리모트 브랜치 삭제: git push \<remotename\> --delete \<branch\>
+    * rebase하기
+        * 한 브랜치에서 다른 브랜치로 병합하는 방법은 2가지가 있는데 merge와 rebase가 그것들이다.
+        * rebase의 기초: git checkout branch; git rebase master  
+        이 명령을 사용했을 때 일어나는 일은 두 브랜치가 나뉘기 전인 공통 커밋으로 이동하고 나서 그 커밋부터 지금 checkout 한 브랜치가 가리키는 커밋까지 diff를 차례로 만들어 어딘가에 임시로 저장해 놓는다. rebase할 브랜치(branch)가 합칠 브랜치(master)가 가리키는 커밋을 가리키게 하고 아까 저장해 놓았떤 변경사항을 차례대로 적용한다. 그 이후에 master 브랜치를 fast-forward 시킨다. 
+        * rebase가 merge 보다 더 깔끔한 히스토리를 만들기 때문에 리모트 브랜치에 커밋을 깔끔하게 적용하고 싶을 때 사용한다. 보통 이렇게 rebase하는 리모트 브랜치는 직접 관리하는 것이 아니라 그냥 참여하는 브랜치일 것이다. 메인 프로젝트에 patch를 보낼 준비가 되면 하는 것이 rebase이다.
+        * rebase든 merge든 최종 결과물은 같고 커밋 히스토리만 다르다는 것이 중요하다. rebase의 경우는 변경사항을 순서대로 다른 브랜치에 적용하며 합치고, merge의 경우는 두 브랜치의 최종 결과만을 가지고 합친다.
+        * rebase 활용:  
+        git rebase --onto master server client  
+        이 명령은 master브랜치부터 server브랜치와 client 브랜치의 공통 조상까지의 커밋을 client 브랜치에서 없애고 싶을 때 사용한다. server 브랜치의 일이 모두 끝나면 _**git rebase [basebranch] [topicbranch]**_ 라는 명령으로 checkout하지 않고 바로 server 브랜치를 master 브랜치로 rebase할 수 있다. 위 명령은 topicbranch를 checkout하지 않고 바로 master 브랜치에 rebase 한다.
+        * rebase의 위험성  
+        **이미 공개 저장소에 push한 컷밋을 rebase하지 마라**  
+        rebase는 기존의 커밋을 그대로 사용하는 것이 아니라 내용은 같지만 다른 커밋을 새로 만든다. 따라서 push하기 전에 rebase를 한 후에 push를 해야한다.
+        * 서버의 히스토리를 새로 덮어씌우려면 git push --force 명령을 사용한다.
+        * rebase 한 것을 다시 rebase하기  
+        어떤 팀원이 강제로 내가 한 일을 덮어썼다고 하자. 그러면 내가 했던 일이 무엇이고 덮어쓴 내용이 무엇인지 알아내야 한다. 커밋 SHA 체크섬 외에도 git은 커밋에 patch할 내용으로 SHA체크섬을 한번 더 구한다. 이 값은 "patch-id"라고 한다.
+        * git pull 명령을 실행할 때 옵션을 붙여서 git pull --rebase로 rebase할 수도 있다. 
+        * push 하기 전에 정리하려고 rebase하는 것은 괜찮다. 절대 공개하지 않고 혼자 rebase하는 경우도 괜찮다. 하지만 이미 공개하여 사람들이 사용하는 커밋을 rebase하면 문제가 생긴다.
+        * rebase vs merge  
+        히스토리를 보는 관점 중에 하나는 작업한 내용의 기록으로 보는 것이 있다. 작업 내용을 기록한 문서이고 각 기록은 각각 의미를 가지며, 변경할 수 없다.
 #### 참고사이트: git(https://git-scm.com/book/ko/v2/)
