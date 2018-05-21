@@ -246,12 +246,12 @@
         * git push origin \<:branch\>: 리모트 브랜치를 삭제하기 위한 명령.
         * 브랜치 추적: 리모트 트래킹 브랜치를 로컬 브랜치로 checkout하면 자동으로 tracking브랜치가 만들어진다. (tracking 하는 대상 브랜치를 upstream 브랜치 라고 부른다.)트래킹 브랜치는 리모트 브랜치와 직접적으로 연관이 있는 로컬 브랜치다. 트래킹 브랜치에서 git pull 명령을 내리면 리모트 저장소로부터 데이터를 내려받아 연결된 리모트 브랜치와 자동으로 merge한다.
         * 트래킹 브랜치는 직접 만들 수 있다. 리모트를 origin이 아닌 다른 리모트로 할 수도 있고, 브랜치도 master가 아닌 다른 브랜치로 추적하게 할 수 있다.  
-        _**git checkout -b [branch] [remotename]/[branch] 명령으로 간단히 트래킹 브랜치를 만들 수 있다. --track 옵션을 사용하여 로컬 브랜치 이름을 자동 생성 가능. 입력한 브랜치가 있는 리모트가 딱 하나 있고 로컬에는 없으면 git은 다음의 명령만으로 트래킹 브랜치를 만들어 준다.  git checkout branch.  리모트 브랜치와 다른 이름으로 만들려면 다음의 명령을 사용한다.  git branch -b newBranch origin/branch.  이미 로컬에 존재하는 브랜치가 리모트의 특정 브랜치를 추적하게 하려면 git branch 명령에 -u나 --set-upstream-to 옵션을 붙여서 설정한다.
+        _**git checkout -b [branch] [remotename]/[branch]**_ 명령으로 간단히 트래킹 브랜치를 만들 수 있다. --track 옵션을 사용하여 로컬 브랜치 이름을 자동 생성 가능. 입력한 브랜치가 있는 리모트가 딱 하나 있고 로컬에는 없으면 git은 다음의 명령만으로 트래킹 브랜치를 만들어 준다.  git checkout branch.  리모트 브랜치와 다른 이름으로 만들려면 다음의 명령을 사용한다.  git branch -b newBranch origin/branch.  이미 로컬에 존재하는 브랜치가 리모트의 특정 브랜치를 추적하게 하려면 git branch 명령에 -u나 --set-upstream-to 옵션을 붙여서 설정한다.
         * upstream 별명: 추적 브랜치를 설정했다면 추적 브랜치 이름을 @{upstream} 이나 @{u} 로 짧게 대체하여 사용할 수 있다.
         * 추적 브랜치가 현재 어떻게 설정되어 있는지 확인하려면 git branch -vv 명령을 사용하면 된다. 이 때 중요한 점은 명령을 실행했을 때 나타나는 결과는 모두 마지막으로 서버에서 데이터를 가져온 시점을 바탕으로 계산한다. 즉 서버의 최신 데이터를 반영하지는 않으며 로컬에 저장된 서버의 캐시 데이터를 사용한다. 최신 데이터로 추적 상황을 알아보려면 git fetch --all; git branch -vv 로 두 명령을 이어서 사용하면 된다.
         * pull 하기: git fetch 명령을 실행하면 서버에는 존재하지만, 로컬에는 아직 없는 데이터를 받아와서 저장한다. 데이터를 가져오기만 하고 merge하도록 준비만 해둔다. git pull 명령은 fetch와 merge를 동시에 수행한다. 하지만 일반적으로는 fetch 후 merge 명령을 명시적으로 사용하는 것이 pull 명령으로 두 명령을 수행하는 것보다 더 낫다.
         * 리모트 브랜치 삭제: git push \<remotename\> --delete \<branch\>
-    * rebase하기
+    * ### rebase하기
         * 한 브랜치에서 다른 브랜치로 병합하는 방법은 2가지가 있는데 merge와 rebase가 그것들이다.
         * rebase의 기초: git checkout branch; git rebase master  
         이 명령을 사용했을 때 일어나는 일은 두 브랜치가 나뉘기 전인 공통 커밋으로 이동하고 나서 그 커밋부터 지금 checkout 한 브랜치가 가리키는 커밋까지 diff를 차례로 만들어 어딘가에 임시로 저장해 놓는다. rebase할 브랜치(branch)가 합칠 브랜치(master)가 가리키는 커밋을 가리키게 하고 아까 저장해 놓았떤 변경사항을 차례대로 적용한다. 그 이후에 master 브랜치를 fast-forward 시킨다. 
@@ -270,4 +270,23 @@
         * push 하기 전에 정리하려고 rebase하는 것은 괜찮다. 절대 공개하지 않고 혼자 rebase하는 경우도 괜찮다. 하지만 이미 공개하여 사람들이 사용하는 커밋을 rebase하면 문제가 생긴다.
         * rebase vs merge  
         히스토리를 보는 관점 중에 하나는 작업한 내용의 기록으로 보는 것이 있다. 작업 내용을 기록한 문서이고 각 기록은 각각 의미를 가지며, 변경할 수 없다.
+    * ### stashing과 cleaning
+        * 작업을 하던 일이 있고 다른 요청이 들어와서 잠시 브랜치를 변경해야 할 일이 생겼을 때 아직 완료하지 않은 일을 커밋하는 것이 껄끄러울 수 있다. 이 때 git stash 라는 명령을 사용하면 된다.
+        * stash 명령을 사용하면 워킹 디렉토리에서 수정한 파일들만 저장한다. stash는 modified이면서 tracked 상태인 파일과 staging area에 있는 파일들을 보관해두는 장소다. 아직 끝내지 않은 수정사항을 스택에 잠시 저장했다가 나중에 다시 적용할 수 있다.
+        * git stash 와 git stash save를 실행하면 스택에 새로운 stash가 만들어진다.
+        * git stash list 명령으로 stash를 확인할 수 있다.
+        * git stash apply [stashname]를 사용하여 stash를 다시 적용할 수 있다. git stash 명령을 실행하면 stash를 다시 적용하는 방법도 알려줘서 편리하다. stashname 에 특정 stash 를 입력하면 원하는 stash를 apply할 수 있다.
+        * 꼭 깨끗한 워킹 디렉토리나 stash 할 때와 같은 브랜치에 적용해야 하는 것은 아니다. 만약 충돌이 있으면 알려준다.
+        * stash를 적용할 때 staged 상태였던 파일을 자동으로 다시 staged 상태로 만들어 주지 않는다. 그래서 git stash apply 명령을 실행할 때 --index 옵션을 주어 staged 상태까지 적용한다.
+        * git stash drop 명령을 사용하여 해당 stash를 제거할 수 있다. apply는 stash를 적용하는 것 뿐이므로 stash가 필요 없어지면 앞의 명령을 사용해 지워주면 된다.
+        * git stash pop 이라는 명령은 stash를 적용하고 나서 바로 스택에서 제거해준다.
+        * --keep-index 옵션을 사용하면 staging area에 들어 있는 파일을 stash 하지 않는다.
+        * --include-untracked 나 -u 옵션을 붙이면 추적 중이지 않은 파일을 같이 저장할 수 있다.
+        * --patch 옵션을 붙이면 git은 수정된 모든 사항을 저장하지 않는다. 대화형 프롬프트가 뜨며 변경된 데이터 중 저장할 것과 저장하지 않을 것을 지정할 수 있다.
+        * stash를 적용한 브랜치 만들기
+            * git stash branch 명령을 실행하면 stash할 당시의 커밋을 checkout한 후 새로운 브랜치를 만들고 여기에 적용한다.
+        * 워킹 디렉토리 청소하기
+        * git clean 명령은 작업하고 있던 파일들을 치워버리고 싶을 때 사용한다. 보통은 merge나 외부 도구가 만들어낸 파일을 지우거나 이전 빌드 작업으로 생성된 각종 파일을 지우는 데 필요하다.
+        * 이 명령은 워킹 디렉토리 안의 추적하고 있지 않은 파일을 모두 삭제하기 때문에 조심해서 사용해야 한다. 추적  중이지 않은 모든 정보를 워킹 디렉토리에서 지우고 싶다면 git clean -f -d 명령을 사용하자. 이 명령은 하위 디렉토리까지 모두 지워버린다. -f 옵션은 강제로 하라는 옵션이다. -n 옵션을 사용하면 이 명령을 실행했을 때 어떤 일이 일어나는지 미리 보기 할 수 있다.
+        * git clean 명령은 .gitignore에 명시했거나 해서 무시되는 파일은 지우지 않는다.
 #### 참고사이트: git(https://git-scm.com/book/ko/v2/)
