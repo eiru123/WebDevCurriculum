@@ -6,28 +6,42 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
     <style>
-        .inline-test{
-            display: inline;
-
-            background-color: red;
-            width: 300px; height: 50px;
-            margin: 10px;
+        .box{
+            width: 100px;
+            height: 100px;
+            position: absolute;
         }
-        .in-bl-test{
-            display: inline-block;
-
+        .box:nth-child(1){
             background-color: red;
-            width: 300px; height: 50px;
-            margin: 10px;
+            left: 10px;
+            top: 10px;
+        }
+        .box:nth-child(2){
+            background-color: green;
+            left: 50px;
+            top: 50px;
+        }
+        .box:nth-child(3){
+            background-color: blue;
+            left: 90px;
+            top: 90px;
+        }
+        body > div{
+            width: 400px; height: 100px;
+            border: 3px solid black;
+
+            position: relative;
+            overflow: scroll;
         }
     </style>
 </head>
 <body>
-    <span>Dummy</span>
-    <div id="box">
-        <span class="inline-test"> Lorem ipsum dolor sit amet, consectetur adipiscing elit.</span>
-        <span class="in-bl-test"> Lorem ipsum dolor sit amet, consectetur adipiscing elit.</span>
+    <h1>Dummy Dummy Dummy Dummy Dummy</h1>
+    <div>
+        <div class="box"></div>
+        <div class="box"></div>
+        <div class="box"></div>
     </div>
-    <span>Dummy</span>
+    <h1>Dummy Dummy Dummy Dummy Dummy</h1>
 </body>
 </html>
