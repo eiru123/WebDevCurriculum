@@ -2,6 +2,39 @@
 
 ## checklist
 * __CSS를 HTML에 적용하는 세 가지 방법의 장단점은 무엇인가요?__
+    1. 인라인 방식
+        * 해당 태그에 style 속성을 넣는 방식
+            * `<p style="color:red; background-color:yellow;">안녕하세요</p>`
+        * 내부 스타일 시트
+            * ```
+            <head>
+                <style>
+                    body{
+                        border: 1px; solid; black;
+                    }
+                    div{
+                        background: green;
+                    }
+                </style>
+            </head>
+            ```
+        * 외부 스타일 시트
+            * main.html
+            ```
+            <head>
+                <link rel="stylesheet" href="example.css">
+            </head>
+            ```
+            * example.css
+            ```
+            body{
+                border: 1px; solid; black;
+            }
+            div{
+                background: green;
+            }
+            ```
+                    
 * __여러 개의 CSS규칙이 한 개의 대상에 적용될 때, 어떤 규칙이 우선순위를 가지게 되나요?__
 * __어떤 박스가 `position:absolute;`인 속성을 갖는다면, 그 위치의 기준점은 어디가 되나요?__
 * __가로나 세로로 여러 개의 박스가 공간을 채우되, 그 중 한 개의 박스만 가변적인 크기를 가지고 나머지 박스는 고정된 크기를 갖게 하려면 어떻게 해야 할까요?__
