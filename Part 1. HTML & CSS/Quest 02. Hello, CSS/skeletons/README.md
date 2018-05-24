@@ -6,7 +6,8 @@
         * 해당 태그에 style 속성을 넣는 방식
             * `<p style="color:red; background-color:yellow;">안녕하세요</p>`
         * 내부 스타일 시트
-            * ```
+            * main.html
+            ```
             <head>
                 <style>
                     body{
