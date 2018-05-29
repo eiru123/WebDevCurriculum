@@ -7,11 +7,12 @@
 	<body>
 		<!-- TODO: Quest 1에서 완성한 HTML을 바탕으로 필요한 부분을 수정해 보세요 -->
 		<header id="header">
-				<!-- TODO: 상단의 회색 부분은 어떻게 처리하면 좋을까요? -->
-				<div id="header-content">
-					<div id="header-image">
-						<a href="#"><img></a>
-					</div>
+			<!-- TODO: 상단의 회색 부분은 어떻게 처리하면 좋을까요? -->
+			<div id="header-image">
+				<a href="#"><object type="image/svg+xml" data="svg/mark-github.svg">ddd</object></a>
+			</div>
+			<div class="flex">
+				<div id="header-gnb">
 					<div id="header-search">
 						<a href="#">This repository</a>
 						<input type="text">
@@ -24,143 +25,162 @@
 							<li><a href="#">Explore</a></li>
 						</ul>
 					</nav>
-					<div id="header-user">
+				</div>
+				<div id="header-icons">
+					<ul>
+						<li><a href="#">notification image</a></li>
+						<li><a href="#">plus mark image</a></li>
+						<li><a href="#">user profile</a></li>
+					</ul>
+				</div>
+			</div>
+		</header>
+	
+		<section class="main">
+			<header class="main-header">
+				<!-- TODO: 메인의 헤더 부분 -->
+				<div id="upper">
+					<div id="repository-project">
+						<object></object>
+						<a href="#">KnowRe</a>/<a href="#">WebDevCurriculum</a>
+					</div>
+					<div id="main-icons">
 						<ul>
-							<li><a href="#">notification image</a></li>
-							<li><a href="#">plus mark image</a></li>
-							<li><a href="#">user profile</a></li>
+							<li>
+								<form action="#">
+									<div>
+										<a href="#">Watch</a>
+										<a href="#">0</a>
+									</div>
+								</form>
+							</li>
+							<li>
+								<form action="#">
+									<div>
+										<a href="#">Star</a>
+										<a href="#">0</a>
+									</div>
+								</form>
+							</li>
+							<li>
+								<form action="#">
+									<div>
+										<a href="#">Fork</a>
+										<a href="#">0</a>
+									</div>
+								</form>
+							</li>
 						</ul>
 					</div>
 				</div>
+				<div id="bottom">
+					<nav id="content-tab">
+						<ul class="tab">
+							<li class="tab-link" data-tab="tab1">Code</li>
+							<li class="tab-link" data-tab="tab2">Issues</li>
+							<li class="tab-link" data-tab="tab3">Pull Request</li>
+							<li class="tab-link" data-tab="tab4">Projects</li>
+							<li class="tab-link" data-tab="tab5">Insights</li>
+						</ul>
+					</nav>
+				</div>
 			</header>
-	
-			<section class="main">
-				<header class="main-header">
-					<!-- TODO: 메인의 헤더 부분 -->
-					<div id="upper">
-						<div id="repository-project">
-							<img>
-							<a href="#">KnowRe</a>/<a href="#">WebDevCurriculum</a>
-						</div>
-						<div id="unwatch-star-fork-icons">
+
+			<section class="main-detail">
+				<!-- TODO: 메인의 부분 -->
+				<div id="status">
+					<div id="inform">
+						<p>KnowRe web development curriculum for noobs</p>
+					</div>
+					<div id="status-status">
+						<div id="status-icons">
 							<ul>
-								<li>
-									<form action="#">
-										<div>
-											<a href="#">Watch</a>
-											<a href="#">0</a>
-										</div>
-									</form>
-								</li>
-								<li>
-									<form action="#">
-										<div>
-											<a href="#">Star</a>
-											<a href="#">0</a>
-										</div>
-									</form>
-								</li>
-								<li>
-									<form action="#">
-										<div>
-											<a href="#">Fork</a>
-											<a href="#">0</a>
-										</div>
-									</form>
-								</li>
+								<li><a href="#">commits</a></li>
+								<li><a href="#">branch</a></li>
+								<li><a href="#">releases</a></li>
+								<li><a href="#">contributors</a></li>
+								<li><a href="#">MIT</a></li>
 							</ul>
 						</div>
+						<div id="status-bar">
+
+						</div>
 					</div>
-					<div id="bottom">
-						<nav id="header-tab">
-							<ul class="tab">
-								<li class="tab-link" data-tab="tab1">Code</li>
-								<li class="tab-link" data-tab="tab2">Issues</li>
-								<li class="tab-link" data-tab="tab3">Pull Request</li>
-								<li class="tab-link" data-tab="tab4">Projects</li>
-								<li class="tab-link" data-tab="tab5">Insights</li>
-							</ul>
-						</nav>
-					</div>
-				</header>
-	
-				<section class="main-detail">
-					<!-- TODO: 메인의 부분 -->
-					<p>KnowRe web development curriculum for noobs</p>
-					<div id="status">
+				</div>
+
+				<div id="content-directory-buttons">
+					<div id="git-buttons">
 						<ul>
-							<li><a href="#">commits</a></li>
-							<li><a href="#">branch</a></li>
-							<li><a href="#">releases</a></li>
-							<li><a href="#">contributors</a></li>
-							<li><a href="#">MIT</a></li>
+							<li><a href="#">Branch:master</a></li>
+							<li><a href="#">new pull request</a></li>
 						</ul>
 					</div>
-	
-					<div id="buttons">
-						<div id="buttons-left">
-							<ul>
-								<li><a href="#">Branch:master</a></li>
-								<li><a href="#">new pull request</a></li>
-							</ul>
-						</div>
-						<div id="buttons-middle">
+					<div id="import-export-buttons">
+						<div id="file-buttons">
 							<ul>
 								<li><a href="#">Create new file</a></li>
 								<li><a href="#">Upload files</a></li>
 								<li><a href="#">Find file</a></li>
 							</ul>
 						</div>
-						<div id="buttons-right">
+						<div id="download-clone-botton">
 							<a href="#">Clone or download</a>
 						</div>
 					</div>
-	
-					<div id="files">
-						<div id="files-header">
-							<div id="files-left">
-								<a href="#"><img src="" alt=""></a>
-								<a href="#">id</a>
-								<a href="#">commit message</a>
-							</div>
-							<div id="files-right">
-								latest commit time
-							</div>
+				</div>
+
+				<div id="content-directory">
+					<div id="content-directory-header">
+						<div id="files-left">
+							<a href="#"><img src="" alt=""></a>
+							<a href="#">id</a>
+							<a href="#">commit message</a>
 						</div>
-						<div class="file-list">
-							<table>
-								<tbody>
-									<tr class="data-raw">
-										<td><img src="" alt=""></td>
-										<td><a href="#">file name</a></td>
-										<td><a href="#">commit message</a></td>
-										<td><span></span></td>
-									</tr>
-									<tr class="data-raw">
-										<td><img src="" alt=""></td>
-										<td><a href="#">file name</a></td>
-										<td><a href="#">commit message</a></td>
-										<td><span></span></td>
-									</tr>
-									<tr class="data-raw">
-										<td><img src="" alt=""></td>
-										<td><a href="#">file name</a></td>
-										<td><a href="#">commit message</a></td>
-										<td><span></span></td>
-									</tr>
-								</tbody>
-							</table>
+						<div id="files-right">
+							latest commit time
 						</div>
 					</div>
-					<div id="contents">
+					<div class="file-list">
+						<table>
+							<tbody>
+								<tr class="data-raw">
+									<td><img src="" alt=""></td>
+									<td><a href="#">file name</a></td>
+									<td><a href="#">commit message</a></td>
+									<td><span></span></td>
+								</tr>
+								<tr class="data-raw">
+									<td><img src="" alt=""></td>
+									<td><a href="#">file name</a></td>
+									<td><a href="#">commit message</a></td>
+									<td><span></span></td>
+								</tr>
+								<tr class="data-raw">
+									<td><img src="" alt=""></td>
+									<td><a href="#">file name</a></td>
+									<td><a href="#">commit message</a></td>
+									<td><span></span></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div id="file-viewer">
+					<div id="file-viewer-header">
 						<h3><img>file name</h3>
-						<article id="file-contents"></article>
 					</div>
-				</section>
+					<article id="file-contents">
+						<p>
+							KnowRe web developement curriculum 2018
+						</p>
+					</article>
+				</div>
 			</section>
-	
-			<footer>
-				<!-- TODO: 하단의 Copyright, Terms, Privacy 등은 어떻게 처리하면 좋을까요? -->
+		</section>
+
+		<footer>
+			<!-- TODO: 하단의 Copyright, Terms, Privacy 등은 어떻게 처리하면 좋을까요? -->
+			<div class="flex flex-justify-space">
 				<nav id="footer-left">
 					<ul>
 						<li>@ 2018 GitHub, Inc</li>
@@ -184,6 +204,7 @@
 						<li><a href="#">About</a></li>
 					</ul>
 				</nav>
-			</footer>
+			</div>
+		</footer>
 	</body>
 </html>
