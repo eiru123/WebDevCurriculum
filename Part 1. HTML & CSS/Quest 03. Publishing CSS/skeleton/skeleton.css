@@ -16,3 +16,50 @@ body {
 }
 
 /* TODO: 또 어떤 코드들이 들어가야 할까요? */
+/* common start */
+a {
+	text-decoration: none;
+}
+a:link{
+	color: blue;
+}
+a:visited{
+	color: blue;
+}
+object {
+	width: 36px; height: 36px;
+}
+/* header start */
+#header{
+	width: 1020px;
+	margin: 0 auto;
+}
+/* content start */
+section{
+	width: 1020px;
+	margin: 0 auto;
+}
+
+/* footer start */
+footer{
+	width: 1020px;
+	margin: 0 auto;
+	padding-top: 30px;
+	border-top: 1px solid rgba(0, 0, 0, 0.5);
+}
+/* class start */
+.flex{
+	display: flex;
+	flex-flow: row nowrap;
+}
+.flex-justify-space{
+	justify-content: space-between; 
+}
+.fnb ul{
+	padding: 0;
+}
+.fnb ul li{
+	display: inline;
+	padding-right: 8px;
+}
+
