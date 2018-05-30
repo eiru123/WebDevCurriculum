@@ -1,10 +1,12 @@
 * {
 	/* TODO: 어떤 코드가 들어가야 할까요? */
+	box-sizing: border-box;
 }
 
 html {
 	/* TODO: 어떤 코드가 들어가야 할까요? */
 	font-family: sans-serif;
+	
 }
 
 body {
@@ -20,44 +22,167 @@ body {
 a {
 	text-decoration: none;
 }
-a:link{
+a:link {
 	color: blue;
 }
-a:visited{
+a:visited {
 	color: blue;
 }
-object {
-	width: 36px; height: 36px;
-}
-/* header start */
-#header{
-	width: 1020px;
-	margin: 0 auto;
-}
-/* content start */
-section{
-	width: 1020px;
-	margin: 0 auto;
-}
-
-/* footer start */
-footer{
-	width: 1020px;
-	margin: 0 auto;
-	padding-top: 30px;
-	border-top: 1px solid rgba(0, 0, 0, 0.5);
+ul {
+	list-style-type: none;
+	padding: 0;
 }
 /* class start */
 .flex{
 	display: flex;
+	/* flex-flow: row nowrap; */
+}
+.flex-row{
 	flex-flow: row nowrap;
 }
 .flex-justify-space{
 	justify-content: space-between; 
 }
-.fnb ul{
-	padding: 0;
+.flex-align-center{
+	align-items: center;
 }
+.width-fix {
+	width: 1020px;
+	margin: 0 auto;
+}
+.border-around {
+	border: 1px solid #e2e4e8;
+	display: block;
+	padding: 5px 11px;
+	margin: 0;
+}
+.border-left-radius {
+	border-top-left-radius: 3px;
+	border-bottom-left-radius: 3px;
+	border-right: 0px;
+}
+.border-right-radius {
+	border-top-right-radius: 3px;
+	border-bottom-right-radius: 3px;
+}
+/* header start */
+#header{
+	background-color: black;
+	height: 60px;
+}
+#header a {
+	color: white;
+}
+#header-template{
+	height: 60px;
+	padding-top: 12px;
+	padding-bottom: 12px;
+}
+#header-template ul{
+	padding-left: 5px;
+}
+#header-template ul li {
+	display: inline;
+	padding-left: 2px;
+}
+#header-icons ul li{
+	padding-left: 8px;
+}
+#header-search {
+	padding-left: 5px;
+}
+.search {
+	display: block;
+	height: 30px;
+	padding: 3px 5px;
+	margin-left: 2px;
+	line-height: 27px;
+	background-color: #404448; 
+	border-width: 0;
+}
+#header-search a.search{
+	color: #808488;
+	font-weight: 300;
+}
+#header-search input.search{
+	width: 180px;
+}
+/* content start */
+
+/* content header start */
+section{
+	width: 100%;
+	margin: 0 auto;
+}
+.main-header {
+	height: 130px;
+	background-color: #fafbfc;
+	border-bottom: 1px solid #e2e4e8;
+}
+.btn {
+	padding-left: 10px;
+}
+/* content header upper start */
+#upper {
+	height: 80px;
+	margin: 0;
+}
+.repo {
+	font-size: 24px;
+	padding-right: 5px;
+}
+#main-icons a {
+	color: black;
+}
+.left-button {
+	background: linear-gradient(to bottom, #fafbfc 0%, #eff3f6 90%);
+}
+.right-button {
+	background-color: white;
+}
+#main-icons a.right-button:hover {
+	color: blue;
+}
+/* content header bottom start */
+#bottom {
+	height: 50px;
+	margin: 0;
+	align-items: flex-end;
+	justify-content: flex-start
+}
+ul.tab {
+	margin: 0;
+}
+.tab-link {
+	width: auto; height: 50px;
+	border: solid transparent;
+	border-width: 3px 1px 1px;
+	padding-right: 15px;
+	padding-left: 15px;
+	line-height: 50px;
+}
+.tab-link a {
+	color: black;
+}
+#content-tab ul li.active {
+	background-color: white;
+	border: solid;
+	border-width: 3px 1px 1px;
+	border-color: red #e2e4e8 transparent;
+	border-top-left-radius: 3px;
+	border-top-right-radius: 3px;
+}
+
+/* status start */
+
+/* footer start */
+footer{
+	padding-top: 30px;
+	padding-bottom: 30px;
+	border-top: 1px solid rgba(0, 0, 0, 0.5);
+	font-size: 12px;
+}
+
 .fnb ul li{
 	display: inline;
 	padding-right: 8px;
