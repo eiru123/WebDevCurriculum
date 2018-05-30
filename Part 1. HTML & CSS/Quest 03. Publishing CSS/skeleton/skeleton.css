@@ -1,6 +1,7 @@
 * {
 	/* TODO: 어떤 코드가 들어가야 할까요? */
 	box-sizing: border-box;
+	margin: 0;
 }
 
 html {
@@ -14,7 +15,6 @@ body {
 	position: absolute;
 	width: 100%; height: 100%;
 	min-width: 1020px;
-	margin: 0;
 }
 
 /* TODO: 또 어떤 코드들이 들어가야 할까요? */
@@ -54,7 +54,6 @@ ul {
 	border: 1px solid #e2e4e8;
 	display: block;
 	padding: 5px 11px;
-	margin: 0;
 }
 .border-left-radius {
 	border-top-left-radius: 3px;
@@ -65,6 +64,14 @@ ul {
 	border-top-right-radius: 3px;
 	border-bottom-right-radius: 3px;
 }
+.border-radius-around{
+	border-radius: 3px;
+}
+.buttons {
+	background: linear-gradient(to bottom, #fafbfc 0%, #eff3f6 90%);
+
+}
+
 /* header start */
 #header{
 	background-color: black;
@@ -125,7 +132,6 @@ section{
 /* content header upper start */
 #upper {
 	height: 80px;
-	margin: 0;
 }
 .repo {
 	font-size: 24px;
@@ -134,9 +140,7 @@ section{
 #main-icons a {
 	color: black;
 }
-.left-button {
-	background: linear-gradient(to bottom, #fafbfc 0%, #eff3f6 90%);
-}
+
 .right-button {
 	background-color: white;
 }
@@ -146,12 +150,8 @@ section{
 /* content header bottom start */
 #bottom {
 	height: 50px;
-	margin: 0;
 	align-items: flex-end;
 	justify-content: flex-start
-}
-ul.tab {
-	margin: 0;
 }
 .tab-link {
 	width: auto; height: 50px;
@@ -174,7 +174,79 @@ ul.tab {
 }
 
 /* status start */
+#inform {
+	height: 50px;
+	font-size: 20px;
+	line-height: 50px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+.status-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+	place-items: center;
+}
+#status-status {
+	height: 60px;
+	border: 1px solid #e2e4e8;
+}
 
+#status-icons ul li{
+	height: 50px;
+	line-height: 50px;
+}
+#status-icons ul li a{
+	height: 50px;
+	line-height: 50px;
+	color: #808488;
+}
+.number {
+	color: black;
+}
+#status-bar div {
+	height: 9px;
+	border: 1px solid transparent;
+}
+#status-bar div.red{
+	width: 76%;
+	background-color: red;
+}
+#status-bar div.yellow{
+	width: 13%;
+	background-color: yellow;
+}
+#status-bar div.navy{
+	width: 11%;
+	background-color: navy;
+}
+#status-bar div:first-child {
+	border-bottom-left-radius: 3px;
+}
+#status-bar div:last-child {
+	border-bottom-right-radius: 3px;
+}
+
+/* buttons start */
+#content-directory-buttons {
+	margin-top: 20px;
+}
+#content-directory-buttons a{
+	color: black;
+}
+#git-buttons ul li, #file-buttons {
+	margin-right: 8px;
+}
+#file-buttons ul li:first-child a{
+	border-right: 0px;
+}
+#file-buttons ul li:last-child a{
+	border-left: 0px;
+}
+#download-clone-botton a {
+	background: linear-gradient(-180deg, #34d058 0%, #28a745 90%);
+	border-color: #28a745;
+	color: white;
+}
 /* footer start */
 footer{
 	padding-top: 30px;
