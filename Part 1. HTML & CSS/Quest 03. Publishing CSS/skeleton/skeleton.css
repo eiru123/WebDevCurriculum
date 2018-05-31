@@ -32,6 +32,10 @@ ul {
 	list-style-type: none;
 	padding: 0;
 }
+h1 {
+	font-size: 36px;
+	border-bottom: 1px solid #e2e4e8;
+}
 /* class start */
 .flex{
 	display: flex;
@@ -89,11 +93,11 @@ ul {
 	padding-left: 5px;
 }
 #header-template ul li {
-	display: inline;
-	padding-left: 2px;
+	padding-left: 3px;
+	padding-right: 10px;
 }
 #header-icons ul li{
-	padding-left: 8px;
+	padding-left: 5px;
 }
 #header-search {
 	padding-left: 5px;
@@ -247,6 +251,64 @@ section{
 	border-color: #28a745;
 	color: white;
 }
+/* file-list start */
+#content-directory {
+	margin-top: 15px;
+}
+#content-directory-header {
+	height: 40px;
+	background-color: #f2f8fe;
+	border: 1px solid #CBE1FC;
+	border-top-left-radius: 3px;
+	border-top-right-radius: 3px;
+}
+#user {
+	color: black;
+}
+#commit-message{
+	color: #596068;
+}
+#files-left a{
+	padding-left: 8px;
+}
+#files-right {
+	padding-right: 8px;
+	color: #596068;
+}
+
+#file-list {
+	border-top: 0px;
+	border-bottom-left-radius: 3px;
+	border-bottom-right-radius: 3px;
+	padding: 0;
+}
+#file-list table{
+	width: 100%;
+}
+#file-list tr:nth-child(n){
+	display: block;
+	width: 100%;
+	margin-right:2px;
+	border-bottom: 1px solid #e2e4e8;
+}
+#file-list tr:last-child {
+	border-bottom: 0px;
+}
+/* file-viewer start */
+#file-viewer {
+	margin-top: 10px;
+	margin-bottom: 100px; 
+	padding: 0;
+}
+#file-viewer-header{
+	padding: 10px 14px 5px;
+	border:1px solid transparent;
+	background-color: #f2f4f8;
+	border-bottom: 1px solid #e2e4e8;
+}
+#file-contents {
+	padding: 40px 30px;
+}
 /* footer start */
 footer{
 	padding-top: 30px;
@@ -256,7 +318,8 @@ footer{
 }
 
 .fnb ul li{
-	display: inline;
-	padding-right: 8px;
+	padding-right: 10px;
 }
-
+.fnb ul li:last-child{
+	padding-right: 0;
+}
