@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script>
+        let star = ()=>{
+            let line = prompt("줄 수 입력: ");
+            let str = '';
+            for(let i = 0; i < line; i++){
+                for(let j = 0; j < (line-i); j++){
+                    str += ' ';
+                }
+                for(let j = 0; j < (i*2 + 1); j++){
+                    str += '*';
+                }
+                str += '\n';
+            }
+            console.log(str);
+        }
+        
+    </script>
+</head>
+<body>
+    
+</body>
+</html>
