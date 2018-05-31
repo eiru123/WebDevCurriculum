@@ -7,12 +7,10 @@
 html {
 	/* TODO: 어떤 코드가 들어가야 할까요? */
 	font-family: sans-serif;
-	
 }
 
 body {
 	/* TODO: 어떤 코드가 들어가야 할까요? */
-	position: absolute;
 	width: 100%; height: 100%;
 	min-width: 1020px;
 }
@@ -55,8 +53,8 @@ h1 {
 	margin: 0 auto;
 }
 .border-around {
-	border: 1px solid #e2e4e8;
 	display: block;
+	border: 1px solid #e2e4e8;
 	padding: 5px 11px;
 }
 .border-left-radius {
@@ -280,9 +278,6 @@ section{
 	border-bottom-right-radius: 3px;
 	padding: 0;
 }
-#file-list table{
-	width: 1020px;
-}
 #file-list li:nth-child(n){
 	width: 100%; height:40px;
 	margin-right:2px;
@@ -296,6 +291,9 @@ section{
 	display: grid;
 	grid-template-columns: 200px auto 100px;
 }
+.data-raw:hover {
+	background-color: #f6f8fe;
+}
 .data-raw div:first-child {
 	padding-left: 10px;
 }
@@ -306,6 +304,7 @@ section{
 	padding-right: 10px;
 	text-align: end;
 }
+
 /* file-viewer start */
 #file-viewer {
 	margin-top: 10px;
