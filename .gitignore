@@ -3,6 +3,9 @@ bower_components/*
 **/node_modules/*
 **/bower_components/*
 
+**/dist
+**/public/dist
+
 **/.DS_Store
 **/Thumbs.db
 npm-debug.log
