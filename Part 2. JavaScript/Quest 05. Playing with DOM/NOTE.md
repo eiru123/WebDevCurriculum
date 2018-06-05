@@ -1,6 +1,14 @@
 * DOM API
     * document 객체
+        * 윈도우 객체의 속성. html에 관한 것들을 담당하는 개체이며 대부분의 것들이 태그를 선택하고 조작하는 데 사용된다.
     * document.getElementById(), document.querySelector(), document.querySelectorAll()
+        * document.getElementById(): html에서 해당 id를 가진 태그를 선택.
+        * document.getElementsByClassName(): html에서 해당 id를 가진 태그를 선택.
+        * document.getElementsByName(): html에서 해당 class를 가진 태그를 선택.
+        * document,getElementsByTag(): html에서 해당 태그를 선택.
+        * document.querySelector(): css 선택자로 선택할 수 있게 해준다. 아이디는 #, 클래스는 .(점), 태그먕[속성명=속성값]등의 선택자로 선택할 수 있다. 첫 번째 엘리먼트만 반환한다.
+        * document.querySelectorAll(): 선택자에 대응되는 모든 엘리먼트를 반환한다.
+        
 * Closure
     * 함수를 특정 스코프에 접근할 수 있도록 의도적으로 그 스코프에서 정의하는 경우가 많은데 이를 클로저라고 한다. 일반적으로 스코프에서 빠져나가면 그 스코프에서 선언한 변수들은 메모리에서 삭제되도 된다. 하지만 클로저의 경우 스코프가 끝나더라도 외부의 함수에서 해당 스코프에 접근을 하므로 스코프가 좀 더 오래살아 남아있게 된다. 또한 접근할 수 없는 변수에 접근할 수 있는 효과도 있다.
     * ```
