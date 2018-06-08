@@ -9,6 +9,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "events": "^3.0.0",
+    "moment-timezone": "^0.5.17",
+    "require": "^2.4.20",
     "underscore": "^1.9.1"
   },
   "devDependencies": {
