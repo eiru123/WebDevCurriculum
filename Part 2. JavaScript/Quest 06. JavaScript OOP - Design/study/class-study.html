@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+	<head>
+        <meta charset="UTF-8">
+		<link rel="stylesheet" href="class-study.css">
+		<style>
+			body{
+				height: 2000px;
+			}
+		</style>
+	</head>
+	<body>
+		<script>
+			window.onload=function() {
+    			document.onclick=processClick;
+			}
+			function processClick(evt){
+				evt = evt;
+				let x = 0;
+				let y = 0;
+
+				if(evt.pageX){
+					x = evt.pageX;
+					y = evt.pageY;
+					console.log("pageX!!!!");
+				}else if(evt. clientX){
+					let offsetX = 0;
+					let offsetY = 0;
+
+					if(document.documentElement.scrollLeft){
+						offsetX = document.documentElement.scrollLeft;
+						offsetY = document.documentElement.scrollTop;
+						console.log("documentElement.scrollLeft!!");
+					}else if(document.body){
+						offsetX = document.body.scrollLeft;
+						offsetY = document.body.scrollTop;
+						console.log('body');
+					}
+
+					x = evt.clientX + offsetX;
+					y = evt.clientY + offsetY;
+					console.log('client!!!');
+				}
+				console.log("you clicked at x=" + x + " y=" + y);
+			}
+			
+		</script>
+	</body>
+</html>
