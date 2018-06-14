@@ -2,7 +2,26 @@
 body{
     width: 100%; height: 100%;
 }
-.box{
-    width: 200px; height:200px;
-    background-color: black;
+.desktop{
+    /* position: relative; */
+    width: 100%; height: 100%;
+}
+
+/* icon관련 */
+.icon{
+    width: 100px; height: 100px;
+    display: grid;
+    grid-template-rows: 80px 20px;
+    margin: 0;
+}
+.icon-image{
+    width: 100px; height: 80px;
+    border: 0;
+}
+.icon-name{
+    width: 100px; height: 20px;
+    text-align: center;
+}
+.draggable{
+    position: relative;
 }
