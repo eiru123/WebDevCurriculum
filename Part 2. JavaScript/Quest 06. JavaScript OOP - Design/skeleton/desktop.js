@@ -3,9 +3,9 @@ class Desktop {
 	constructor(containerClass){
 		this.desktop = document.querySelector(containerClass);
 		
-		this.addFolder("sample folder1", containerClass);
-		this.addFolder("sample folder2", containerClass);
-		this.addIcon("sample icon");
+		this.addFolder();
+		this.addFolder();
+		this.addIcon();
 	}
 	addFolder(){
 
@@ -17,7 +17,6 @@ class Desktop {
 
 class Icon {
 	/* TODO: Icon 클래스는 어떤 멤버함수와 멤버변수를 가져야 할까요? */
-	// 아이콘과 폴더는 고정 크기로 가지고 있는다.
 	constructor(name, containerClass){
 		this.name = name;
 		this.containerClass = containerClass;
@@ -32,7 +31,6 @@ class Icon {
 
 class Folder {
 	/* TODO: Folder 클래스는 어떤 멤버함수와 멤버변수를 가져야 할까요? */
-	// 아이콘과 폴더는 고정 크기로 가지고 있는다.
 	constructor(name, containerClass){
 		this.name = name;
 		this.containerClass = containerClass;
@@ -47,6 +45,8 @@ class Folder {
 	doubleClickEvent(){
 
 	}
+	addWindow(){
+	}
 };
 
 class Window {
@@ -60,5 +60,10 @@ class Window {
 	}
 	closeWindow(){
 
+	}
+	createWindow(){
+
+	}
+	static getCount(){
 	}
 };
