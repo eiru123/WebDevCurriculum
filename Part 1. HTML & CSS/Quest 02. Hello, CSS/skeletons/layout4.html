@@ -55,5 +55,18 @@
 		<footer>
 			1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 
 		</footer>
+		<script>
+			let clientX_test = function(e){
+				console.log("clientX: " + e.clientX + " clientY: " + e.clientY);
+				console.log("offsetX: " + e.offsetX + " offsetY: " + e.offsetY);
+				console.log("pageX: " + e.pageX + " pageY: " + e.pageY);
+				console.log("scrollX: " + left.scrollLeft + " scrollY: " + left.scrollTop);
+				console.log("screenX: " + e.screenX + " screenY: " + e.screenY);
+				console.log("X: " + e.x + " Y: " + e.y);
+			};
+
+			document.querySelector(".left").addEventListener("click", clientX_test);
+			
+		</script>
 	</body>
 </html>
