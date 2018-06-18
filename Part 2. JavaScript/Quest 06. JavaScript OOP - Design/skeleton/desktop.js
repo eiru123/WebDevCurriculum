@@ -37,14 +37,15 @@ class Desktop {
 		const contents = document.createElement("div");
 
 		contents.classList.add("contents");
-		// contents.addEventListener("click", (e)=>{
-		// 	e.stopImmediatePropagation();
-		// 	const icons = document.querySelectorAll(".icon");
-		// 	for(let temp of icons){
-		// 		if(temp.classList.contains("focused"));
-		// 			temp.classList.remove("focused");
-		// 	}
-		// });
+		contents.addEventListener("click", (e)=>{
+			
+			const icons = document.querySelectorAll(".icon");
+			for(let temp of icons){
+				if(temp.classList.contains("focused"));
+					temp.classList.remove("focused");
+			}
+			console.log(contents.tagName);
+		}, false);
 		return contents;
 	}
 
@@ -84,14 +85,7 @@ class Icon {
 	/* TODO: Icon 클래스는 어떤 멤버함수와 멤버변수를 가져야 할까요? */
 	constructor(name){
 		this.icon = this.setIcon(name);
-		this.icon.addEventListener("click", ()=>{
-			const icons = document.querySelectorAll(".icon");
-			for(let temp of icons){
-				if(temp.classList.contains("focused"));
-					temp.classList.remove("focused");
-			}
-			this.icon.classList.add("focused");
-		});
+		this.addEvent("click", this.clickEvent);
 	}
 	/*
 	아이콘 기본 세팅.
@@ -121,21 +115,32 @@ class Icon {
 	dragFunction(){
 
 	}
+	addEvent(){
+		const eventMap = new Map();
+		eventMap.set("click", this.clickEvent);
+		for(let [eventName, eventFunction] of eventMap){
+			this.icon.addEventListener(eventName, eventFunction);
+		}
+	}
+	clickEvent(e){
+		e.stopPropagation();
+		const icons = document.querySelectorAll(".icon");
+		for(let temp of icons){
+			if(temp.classList.contains("focused"));
+				temp.classList.remove("focused");
+		}
+		
+		e.currentTarget.classList.add("focused");
+	}
 };
 
 class Folder {
 	/* TODO: Folder 클래스는 어떤 멤버함수와 멤버변수를 가져야 할까요? */
 	constructor(name, parentDiv){
+		this.name = name;
 		this.icon = this.setFolder(name);
 		this.parentDiv = parentDiv;
-		this.icon.addEventListener("click", ()=>{
-			const icons = document.querySelectorAll(".icon");
-			for(let temp of icons){
-				if(temp.classList.contains("focused"));
-					temp.classList.remove("focused");
-			}
-			this.icon.classList.add("focused");
-		});
+		this.addEvent();
 	}
 	/*
 	폴더 기본 세팅.
@@ -168,15 +173,36 @@ class Folder {
 	더블 클릭 이벤트 핸들러.
 	더블 클릭할 시 창이 새로 생긴다.
 	*/
+	addEvent(){
+		const eventMap = new Map();
+		eventMap.set("click", this.clickEvent);
+		eventMap.set("dblclick", this.dblclickEvent);
+		for(let [eventName, eventFunction] of eventMap){
+			this.icon.addEventListener(eventName, eventFunction);
+		}
+	}
+	clickEvent(e){
+		e.stopPropagation();
+		const icons = document.querySelectorAll(".icon");
+		for(let temp of icons){
+			if(temp.classList.contains("focused"));
+				temp.classList.remove("focused");
+		}
+		
+		e.currentTarget.classList.add("focused");
+	}
+	
 	dblclickEvent(){
-
+		console.log("dblclick");
+		// const newWindow = new Window(this.name).window;
+		// parentDiv.appendChild(newWindow);
 	}
 };
 
 class Window {
 	/* TODO: Window 클래스는 어떤 멤버함수와 멤버변수를 가져야 할까요? */
-	constructor(){
-		
+	constructor(name){
+		this.window = this.setWindow(name);
 	}
 	/*
 	창 기본 세팅
@@ -185,7 +211,12 @@ class Window {
 	상단에 상태바가 있고 좌측에 네비게이션 중앙에 폴더가 가지고 있는 파일들 나열.
 	*/
 	setWindow(){
+		const window = document.createElement("div");
+		const windowStatus = document.createElement("div");
+		const windowNavigation = document.createElement("div");
+		const windowContents = document.createElement("div");
 
+		
 	}
 	/*
 	드래그 함수.
@@ -204,7 +235,7 @@ class Window {
 	종료 버튼을 눌렀을때의 핸들러
 	*/
 	windowCloseEvent(){
-
+		this.window.remove();
 	}
 	/*
 	창 최대화 버튼을 눌렀을때의 핸들러
