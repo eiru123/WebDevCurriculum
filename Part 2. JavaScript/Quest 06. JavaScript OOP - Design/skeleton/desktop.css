@@ -1,4 +1,9 @@
 /* TODO: 자유롭게 바탕화면 시스템의 CSS를 만들어 보세요! */
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
 body{
     width: 100%; height: 100%;
 }
@@ -6,22 +11,51 @@ body{
     /* position: relative; */
     width: 100%; height: 100%;
 }
+ul{
+    list-style: none;
+    color: #ffffff;
+}
 
-/* icon관련 */
+/* 상단바 */
+.topbar{
+    display: flex;
+    justify-content: space-between;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+.gnbList{
+    display: flex;
+    height: 25px;
+}
+li{
+    padding: 0 5px;
+    line-height: 25px;
+}
+.infoList{
+    display: flex;
+    height: 25px;
+}
+
+/* 컨텐츠 공간 */
+contents{
+    width:100%; height:100%;
+}
+/* 아이콘 관련 */
 .icon{
+    display: relative;
     width: 100px; height: 100px;
     display: grid;
     grid-template-rows: 80px 20px;
-    margin: 0;
+    margin: 5px;
+    cursor: default;
+}
+.focused{
+    background-color: #0000ff;
 }
 .icon-image{
     width: 100px; height: 80px;
-    border: 0;
+
 }
 .icon-name{
     width: 100px; height: 20px;
     text-align: center;
-}
-.draggable{
-    position: relative;
 }
