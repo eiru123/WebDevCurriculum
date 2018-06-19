@@ -44,7 +44,6 @@ class Desktop {
 				if(temp.classList.contains("focused"));
 					temp.classList.remove("focused");
 			}
-			console.log(contents.tagName);
 		}, false);
 		return contents;
 	}
@@ -176,8 +175,9 @@ class Folder {
 	addEvent(){
 		const eventMap = new Map();
 		eventMap.set("click", this.clickEvent);
-		eventMap.set("dblclick", this.dblclickEvent);
+		eventMap.set("dblclick", this.dblClickEvent);
 		for(let [eventName, eventFunction] of eventMap){
+			console.log(this);
 			this.icon.addEventListener(eventName, eventFunction);
 		}
 	}
@@ -188,14 +188,13 @@ class Folder {
 			if(temp.classList.contains("focused"));
 				temp.classList.remove("focused");
 		}
-		
 		e.currentTarget.classList.add("focused");
 	}
 	
-	dblclickEvent(){
-		console.log("dblclick");
-		// const newWindow = new Window(this.name).window;
-		// parentDiv.appendChild(newWindow);
+	dblClickEvent(e){
+		e.preventDefault();
+		console.log(this);
+		const newWindow = new Window(e.currentTarget.name).window;
 	}
 };
 
@@ -216,7 +215,10 @@ class Window {
 		const windowNavigation = document.createElement("div");
 		const windowContents = document.createElement("div");
 
-		
+		window.classList.add("window");
+		windowStatus.classList.add("window-status");
+		windowNavigation.classList.add("window-navigation");
+		windowContents.classList.add("window-contents");
 	}
 	/*
 	드래그 함수.

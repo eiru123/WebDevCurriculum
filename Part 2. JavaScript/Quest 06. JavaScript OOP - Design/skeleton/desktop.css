@@ -59,3 +59,24 @@ contents{
     width: 100px; height: 20px;
     text-align: center;
 }
+
+.window{
+    width: 500px; height: 500px;
+    grid-template-columns: 100px auto;
+    grid-template-rows: 100px auto;
+    grid-template-areas: 
+        "status status"
+        "navigation contents";
+}
+.window-status{
+    grid-area: status;
+    background-color: #0000ff;
+}
+.window-navigation{
+    grid-area: navigation;
+    background-color: #ff0000;
+}
+.window-contents{
+    grid-area: contents;
+    background-color: #00ff00;
+}
