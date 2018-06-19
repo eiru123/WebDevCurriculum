@@ -109,19 +109,51 @@ class Icon {
 		return icon;
 	}
 
-	/*
-	드래그 함수
-	*/
-	dragFunction(){
-
-	}
 	addEvent(){
 		const eventMap = new Map();
+		eventMap.set("mousedown", this.clickEvent);
 		eventMap.set("click", this.clickEvent);
 		for(let [eventName, eventFunction] of eventMap){
 			this.icon.addEventListener(eventName, eventFunction.bind(this));
 		}
+		this.dragEvent();
 	}
+	/*
+	드래그 함수
+	*/
+	dragEvent(){
+		let drag = false;
+		let offsetX = 0;
+		let offsetY = 0;
+
+		this.icon.addEventListener("mousedown", (e)=>{
+			e.preventDefault();
+			drag = true;
+			offsetX = e.pageX;
+			offsetY = e.pageY;
+		});
+		document.addEventListener("mousemove", (e)=>{
+			if(!drag) return true;
+			let x = e.pageX;
+			let y = e.pageY;
+			
+			let xPos = parseInt(this.icon.style.left) || 0;
+			let yPos = parseInt(this.icon.style.top) || 0;
+
+			if(x != offsetX || y != offsetY){
+				this.icon.style.left = xPos + (x - offsetX) + "px";
+				this.icon.style.top = yPos + (y - offsetY) + "px";
+				offsetX = x;
+				offsetY = y;
+				
+			}
+		});
+		document.addEventListener("mouseup", (e)=>{
+			e.preventDefault();
+			drag = false;
+		});
+	}
+	
 	clickEvent(e){
 		e.stopPropagation();
 		const icons = document.querySelectorAll(".icon");
@@ -165,8 +197,37 @@ class Folder {
 	/*
 	드래그 함수.
 	*/
-	dragFunction(){
-		
+	dragEvent(){
+		let drag = false;
+		let offsetX = 0;
+		let offsetY = 0;
+
+		this.icon.addEventListener("mousedown", (e)=>{
+			e.preventDefault();
+			drag = true;
+			offsetX = e.pageX;
+			offsetY = e.pageY;
+		});
+		document.addEventListener("mousemove", (e)=>{
+			if(!drag) return true;
+			let x = e.pageX;
+			let y = e.pageY;
+			
+			let xPos = parseInt(this.icon.style.left) || 0;
+			let yPos = parseInt(this.icon.style.top) || 0;
+
+			if(x != offsetX || y != offsetY){
+				this.icon.style.left = xPos + (x - offsetX) + "px";
+				this.icon.style.top = yPos + (y - offsetY) + "px";
+				offsetX = x;
+				offsetY = y;
+				
+			}
+		});
+		document.addEventListener("mouseup", (e)=>{
+			e.preventDefault();
+			drag = false;
+		});
 	}
 	/*
 	더블 클릭 이벤트 핸들러.
@@ -174,11 +235,13 @@ class Folder {
 	*/
 	addEvent(){
 		const eventMap = new Map();
+		eventMap.set("mousedown", this.clickEvent);
 		eventMap.set("click", this.clickEvent);
 		eventMap.set("dblclick", this.dblClickEvent);
 		for(let [eventName, eventFunction] of eventMap){
 			this.icon.addEventListener(eventName, eventFunction.bind(this));
 		}
+		this.dragEvent();
 	}
 	clickEvent(e){
 		e.stopPropagation();
@@ -194,39 +257,90 @@ class Folder {
 		console.log(this);
 		const newWindow = new Window(e.currentTarget.name).window;
 		this.parentDiv.appendChild(newWindow);
+		this.icon.classList.remove("focused");
 	}
 };
 
 class Window {
 	/* TODO: Window 클래스는 어떤 멤버함수와 멤버변수를 가져야 할까요? */
 	constructor(name){
+		this.count = Window.getCount();
+		this.zIndexCount = Window.getZIndexCount();
 		this.window = this.setWindow(name);
+		this.addEvent();
 	}
 	/*
 	창 기본 세팅
-	macOs의 finder를 카피.
+	macOS의 finder를 카피.
 	좌측 상단에 종료, 최대화 아이콘.
 	상단에 상태바가 있고 좌측에 네비게이션 중앙에 폴더가 가지고 있는 파일들 나열.
 	*/
 	setWindow(){
 		const window = document.createElement("div");
-		const windowStatus = document.createElement("div");
+		this.windowStatus = document.createElement("div");
 		const windowNavigation = document.createElement("div");
 		const windowContents = document.createElement("div");
 
 		window.classList.add("window");
-		windowStatus.classList.add("window-status");
+		window.style.top = 20*this.count + 100 + "px";
+		window.style.left = 20*this.count + 100 + "px";
+		window.style.zIndex = this.zIndexCount;
+
+		this.windowStatus.classList.add("window-status");
 		windowNavigation.classList.add("window-navigation");
 		windowContents.classList.add("window-contents");
 
+		window.appendChild(this.windowStatus);
+		window.appendChild(windowNavigation);
+		window.appendChild(windowContents);
 		return window;
+	}
+	addEvent(){
+		this.dragEvent();
 	}
 	/*
 	드래그 함수.
 	창의 상단부분을 클릭했을시에만 드래그가 가능해야 한다.
 	*/
-	dragFunction(){
-		
+	dragEvent(){
+		let drag = false;
+		let offsetX = 0;
+		let offsetY = 0;
+
+		this.windowStatus.addEventListener("mousedown", (e)=>{
+			e.preventDefault();
+			drag = true;
+			offsetX = e.pageX;
+			offsetY = e.pageY;
+			this.window.style.zIndex = Window.getZIndexCount();
+			console.log(this.window.style.zIndex);
+		});
+		document.addEventListener("mousemove", (e)=>{
+			if(!drag) return true;
+			let x = e.pageX;
+			let y = e.pageY;
+			let xPos = parseInt(this.window.style.left) || 0;
+			let yPos = parseInt(this.window.style.top) || 0;
+			
+			
+			if(x != offsetX || y != offsetY){
+				this.window.style.left = xPos + (x - offsetX) + "px";
+				this.window.style.top = yPos + (y - offsetY) + "px";
+				offsetX = x;
+				offsetY = y;
+				
+				if(parseInt(this.window.style.top) < 25) {
+					this.window.style.top = "25px";
+					offsetY = 25;
+				}
+				
+			}
+		});
+		document.addEventListener("mouseup", (e)=>{
+			e.preventDefault();
+			drag = false;
+			
+		});
 	}
 	/*
 	창의 크기를 늘리거나 줄이기 위한 이벤트 핸들러.
@@ -246,4 +360,14 @@ class Window {
 	windowMaximizeEvent(){
 		
 	}
+	static getCount(){
+		if(Window.count > 10) return Window.count = 0;
+		return (Window.count++)%10;
+	}
+	static getZIndexCount(){
+		return Window.zIndexCount++;
+	}
 };
+
+Window.count = 0;
+Window.zIndexCount = 0;

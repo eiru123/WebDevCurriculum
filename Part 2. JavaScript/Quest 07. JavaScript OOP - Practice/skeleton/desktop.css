@@ -1,1 +1,116 @@
 /* TODO: 자유롭게 바탕화면 시스템의 CSS를 만들어 보세요! */
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+body{
+    width: 100%; height: 100%;
+}
+.desktop{
+    /* position: relative; */
+    width: 100%; height: 100%;
+}
+ul{
+    list-style: none;
+    color: #ffffff;
+}
+
+/* 상단바 */
+.topbar{
+    display: flex;
+    justify-content: space-between;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+}
+.gnbList{
+    display: flex;
+    height: 25px;
+}
+li{
+    padding: 0 5px;
+    line-height: 25px;
+}
+.infoList{
+    display: flex;
+    height: 25px;
+}
+
+/* 컨텐츠 공간 */
+contents{
+    width:100%; height:100%;
+}
+/* 아이콘 관련 */
+.icon{
+    position: relative;
+    width: 80px; height: 100px;
+    display: grid;
+    grid-template-rows: 80px 20px;
+    margin: 5px;
+    cursor: default;
+}
+.focused{
+    background-color: rgba(115, 115, 235, 0.7);
+}
+.icon-image{
+    width: 80px; height: 80px;
+    background-color: rgba(255, 255, 255, 0);
+}
+.icon-name{
+    width: 80px; height: 20px;
+    text-align: center; 
+}
+
+.window{
+    position: absolute;
+    display: grid;
+    width: 500px; height: 500px;
+    grid-template-columns: 100px auto;
+    grid-template-rows: 60px auto;
+    grid-template-areas: 
+        "status status"
+        "navigation contents";
+}
+/* window status css */
+
+.window-status{
+    grid-area: status;
+    border: 1px solid #dadada;
+    border-top-left-radius: 7px;
+    border-top-right-radius: 7px;
+    background-color: #f6f6f6;
+}
+.window-focus{
+    background: linear-gradient(to bottom,#f1f1f1, #dddddd 70%, #d0d0d0);
+}
+.upper{
+    width: 100%; height: 30px;
+    display: flex;
+}
+.close{
+    width: 20px; height: 20px;
+    margin: 5px;
+    border-radius: 10px;
+    background-color: #ff0000;
+}
+.name{
+    line-height: 30px;
+    margin: 0 auto;
+}
+.bottom{
+    width: 100%; height: 30px;
+}
+.window-navigation{
+    grid-area: navigation;
+    border: solid #dadada;
+    border-width: 0px 0px 1px 1px;
+    border-bottom-left-radius: 7px;
+    background-color: #f6f6f6;
+}
+.window-contents{
+    grid-area: contents;
+    border: solid #dadada;
+    border-width: 0px 1px 1px 1px;
+    border-bottom-right-radius: 7px;
+    background-color: #ffffff;
+}

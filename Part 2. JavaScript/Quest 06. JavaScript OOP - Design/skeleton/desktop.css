@@ -21,6 +21,7 @@ ul{
     display: flex;
     justify-content: space-between;
     background-color: rgba(0, 0, 0, 0.7);
+    z-index: 100000;
 }
 .gnbList{
     display: flex;
@@ -41,15 +42,15 @@ contents{
 }
 /* 아이콘 관련 */
 .icon{
-    display: relative;
-    width: 100px; height: 100px;
+    position: relative;
+    width: 80px; height: 100px;
     display: grid;
     grid-template-rows: 80px 20px;
     margin: 5px;
     cursor: default;
 }
 .focused{
-    background-color: #0000ff;
+    background-color: rgba(115, 115, 235, 0.7);
 }
 .icon-image{
     width: 100px; height: 80px;
@@ -61,9 +62,11 @@ contents{
 }
 
 .window{
+    position: absolute;
+    display: grid;
     width: 500px; height: 500px;
     grid-template-columns: 100px auto;
-    grid-template-rows: 100px auto;
+    grid-template-rows: 60px auto;
     grid-template-areas: 
         "status status"
         "navigation contents";
