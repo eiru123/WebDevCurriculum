@@ -29,6 +29,7 @@ class Desktop {
 		const info = this.createList(["infoList"], infoStrings);
 
 		topbar.classList.add("topbar");
+		
 		topbar.appendChild(gnb);
 		topbar.appendChild(info);
 		this.desktop.appendChild(topbar);
@@ -84,7 +85,7 @@ class Icon {
 	/* TODO: Icon 클래스는 어떤 멤버함수와 멤버변수를 가져야 할까요? */
 	constructor(name){
 		this.icon = this.setIcon(name);
-		this.addEvent("click", this.clickEvent);
+		this.addEvent();
 	}
 	/*
 	아이콘 기본 세팅.
@@ -118,7 +119,7 @@ class Icon {
 		const eventMap = new Map();
 		eventMap.set("click", this.clickEvent);
 		for(let [eventName, eventFunction] of eventMap){
-			this.icon.addEventListener(eventName, eventFunction);
+			this.icon.addEventListener(eventName, eventFunction.bind(this));
 		}
 	}
 	clickEvent(e){
@@ -128,8 +129,7 @@ class Icon {
 			if(temp.classList.contains("focused"));
 				temp.classList.remove("focused");
 		}
-		
-		e.currentTarget.classList.add("focused");
+		this.icon.classList.add("focused");
 	}
 };
 
@@ -177,8 +177,7 @@ class Folder {
 		eventMap.set("click", this.clickEvent);
 		eventMap.set("dblclick", this.dblClickEvent);
 		for(let [eventName, eventFunction] of eventMap){
-			console.log(this);
-			this.icon.addEventListener(eventName, eventFunction);
+			this.icon.addEventListener(eventName, eventFunction.bind(this));
 		}
 	}
 	clickEvent(e){
@@ -188,13 +187,13 @@ class Folder {
 			if(temp.classList.contains("focused"));
 				temp.classList.remove("focused");
 		}
-		e.currentTarget.classList.add("focused");
+		this.icon.classList.add("focused");
 	}
 	
 	dblClickEvent(e){
-		e.preventDefault();
 		console.log(this);
 		const newWindow = new Window(e.currentTarget.name).window;
+		this.parentDiv.appendChild(newWindow);
 	}
 };
 
@@ -219,6 +218,8 @@ class Window {
 		windowStatus.classList.add("window-status");
 		windowNavigation.classList.add("window-navigation");
 		windowContents.classList.add("window-contents");
+
+		return window;
 	}
 	/*
 	드래그 함수.
