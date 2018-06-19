@@ -16,6 +16,7 @@ class Desktop {
 		this.addIcon("folder1", "folder", this.contents);
 		this.addIcon("folder2", "folder", this.contents);
 		this.addIcon("file", "icon");
+
 		this.desktop.appendChild(this.contents);
 	}
 	// 상태바 생성
@@ -24,8 +25,8 @@ class Desktop {
 		const gnbStrings = ["icon", "program name", "파일", "편집", 
 						"보기", "이동", "윈도우", "도움말"];
 		const gnb = this.createList(["gnbList"], gnbStrings);
-		const infoStrings = ["wifi", "battery", "language", 
-						"date", "search", "alarm"];
+		const infoStrings = ["wifi", "battery", "language", "date", 
+						"search", "alarm"];
 		const info = this.createList(["infoList"], infoStrings);
 
 		topbar.classList.add("topbar");
@@ -34,6 +35,25 @@ class Desktop {
 		topbar.appendChild(info);
 		this.desktop.appendChild(topbar);
 	}
+	// 리스트 생성
+	createList(classes, menuStrings){
+		const nb = document.createElement("nav");
+		const list = document.createElement("ul");
+
+		// list에 class 추가
+		for(let name of classes){
+			list.classList.add(name);
+		}
+		// list 요소 추가
+		for(let name of menuStrings){
+			const listContent = document.createElement("li");
+			listContent.innerHTML = name;
+			list.appendChild(listContent);
+		}
+		nb.appendChild(list);
+		return nb;
+	}
+	// 바탕화면 생성
 	createContentArea(){
 		const contents = document.createElement("div");
 
@@ -41,11 +61,13 @@ class Desktop {
 		contents.addEventListener("click", (e)=>{
 			
 			const icons = document.querySelectorAll(".icon");
+			const windows = document.querySelectorAll(".window-focus");
+
 			for(let temp of icons){
 				if(temp.classList.contains("focused"));
 					temp.classList.remove("focused");
 			}
-			const windows = document.querySelectorAll(".window-focus");
+			
 			for(let temp of windows){
 				temp.classList.remove("window-focus");
 			}
@@ -64,24 +86,6 @@ class Desktop {
 		else icon = new Icon(name);
 		
 		this.contents.appendChild(icon.icon);
-	}
-
-	createList(classes, menuStrings){
-		const nb = document.createElement("nav");
-		const list = document.createElement("ul");
-
-		// list에 class 추가
-		for(let name of classes){
-			list.classList.add(name);
-		}
-		// list 요소 추가
-		for(let name of menuStrings){
-			const listContent = document.createElement("li");
-			listContent.innerHTML = name;
-			list.appendChild(listContent);
-		}
-		nb.appendChild(list);
-		return nb;
 	}
 };
 
@@ -162,11 +166,13 @@ class Icon {
 	clickEvent(e){
 		e.stopPropagation();
 		const icons = document.querySelectorAll(".icon");
+		const windows = document.querySelectorAll(".window-focus");
+
 		for(let temp of icons){
 			if(temp.classList.contains("focused"));
 				temp.classList.remove("focused");
 		}
-		const windows = document.querySelectorAll(".window-focus");
+		
 		for(let temp of windows){
 			temp.classList.remove("window-focus");
 		}
@@ -231,7 +237,6 @@ class Folder {
 				this.icon.style.top = yPos + (y - offsetY) + "px";
 				offsetX = x;
 				offsetY = y;
-				
 			}
 		});
 		document.addEventListener("mouseup", (e)=>{
@@ -258,11 +263,13 @@ class Folder {
 	clickEvent(e){
 		e.stopPropagation();
 		const icons = document.querySelectorAll(".icon");
+		const windows = document.querySelectorAll(".window-focus");
+
 		for(let temp of icons){
 			if(temp.classList.contains("focused"));
 				temp.classList.remove("focused");
 		}
-		const windows = document.querySelectorAll(".window-focus");
+		
 		for(let temp of windows){
 			temp.classList.remove("window-focus");
 		}
@@ -389,10 +396,12 @@ class Window {
 		e.stopPropagation();
 		const windows = document.querySelectorAll(".window-focus");
 		const icons = document.querySelectorAll(".icon");
+
 		for(let temp of icons){
 			if(temp.classList.contains("focused"));
 				temp.classList.remove("focused");
 		}
+
 		for(let temp of windows){
 			temp.classList.remove("window-focus");
 		}
