@@ -212,6 +212,19 @@ class Folder {
 	/*
 	드래그 함수.
 	*/
+	addEvent(){
+		const eventMap = new Map();
+
+		eventMap.set("mousedown", this.clickEvent);
+		eventMap.set("click", this.clickEvent);
+		eventMap.set("dblclick", this.dblClickEvent);
+
+		for(let [eventName, eventFunction] of eventMap){
+			this.icon.addEventListener(eventName, eventFunction.bind(this));
+		}
+		this.dragEvent();
+	}
+	
 	dragEvent(){
 		let drag = false;
 		let offsetX = 0;
@@ -248,18 +261,7 @@ class Folder {
 	더블 클릭 이벤트 핸들러.
 	더블 클릭할 시 창이 새로 생긴다.
 	*/
-	addEvent(){
-		const eventMap = new Map();
-
-		eventMap.set("mousedown", this.clickEvent);
-		eventMap.set("click", this.clickEvent);
-		eventMap.set("dblclick", this.dblClickEvent);
-
-		for(let [eventName, eventFunction] of eventMap){
-			this.icon.addEventListener(eventName, eventFunction.bind(this));
-		}
-		this.dragEvent();
-	}
+	
 	clickEvent(e){
 		e.stopPropagation();
 		const icons = document.querySelectorAll(".icon");
