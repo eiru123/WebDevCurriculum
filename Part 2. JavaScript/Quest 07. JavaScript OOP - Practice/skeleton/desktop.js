@@ -383,8 +383,8 @@ class Window {
 				offsetX = x;
 				offsetY = y;
 				
-				if(parseInt(this.window.style.top) < 25 || y < 40) {
-					this.window.style.top = "25px";
+				if(parseInt(this.window.style.top) < 0 || y < 50) {
+					this.window.style.top = 0;
 				}
 			}
 		});

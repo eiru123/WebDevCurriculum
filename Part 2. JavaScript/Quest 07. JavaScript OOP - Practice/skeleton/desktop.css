@@ -4,11 +4,17 @@
     margin: 0;
     box-sizing: border-box;
 }
+html{
+    width: 100%; height: 100%;
+}
 body{
     width: 100%; height: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
 }
 .desktop{
     /* position: relative; */
+    
     width: 100%; height: 100%;
 }
 ul{
@@ -38,9 +44,11 @@ li{
 }
 
 /* 컨텐츠 공간 */
-contents{
-    width:100%; height:100%;
+.contents{
+    position: relative;
+    width: 100%; height: 100%;
     z-index: 1;
+    overflow: hidden;
 }
 /* 아이콘 관련 */
 .icon{

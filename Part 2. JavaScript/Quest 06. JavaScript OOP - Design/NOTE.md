@@ -82,3 +82,5 @@
 * clientX: 현재 브라우저 창의 크기로 위치 반환. 스크롤 된 위치는 포함되지 않음.
 * screenX: 모니터나 화면의 크기로 위치 반환.
 * offsetX: dom 객체의 크기로 위치 반환.
+
+* position: relative; 속성이 있는 요소가 height:100% 가 적용되게 하려면 html, body 모두 height가 100%로 설정되어있어야 한다.
