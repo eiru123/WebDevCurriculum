@@ -18,10 +18,11 @@ ul{
 
 /* 상단바 */
 .topbar{
+    position: relative;
     display: flex;
     justify-content: space-between;
     background-color: rgba(0, 0, 0, 0.7);
-    z-index: 1000;
+    z-index: 100000;
 }
 .gnbList{
     display: flex;
@@ -39,6 +40,7 @@ li{
 /* 컨텐츠 공간 */
 contents{
     width:100%; height:100%;
+    z-index: 1;
 }
 /* 아이콘 관련 */
 .icon{
@@ -51,6 +53,7 @@ contents{
 }
 .focused{
     background-color: rgba(115, 115, 235, 0.7);
+    z-index: 1;
 }
 .icon-image{
     width: 80px; height: 80px;

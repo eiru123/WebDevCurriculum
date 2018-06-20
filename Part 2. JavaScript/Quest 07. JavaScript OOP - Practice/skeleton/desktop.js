@@ -139,7 +139,7 @@ class Icon {
 			drag = true;
 			offsetX = e.pageX;
 			offsetY = e.pageY;
-			this.icon.style.zIndex = Window.getZIndexCount();
+
 		});
 		document.addEventListener("mousemove", (e)=>{
 			if(!drag) return true;
@@ -222,7 +222,7 @@ class Folder {
 			drag = true;
 			offsetX = e.pageX;
 			offsetY = e.pageY;
-			this.icon.style.zIndex = Window.getZIndexCount();
+
 		});
 		document.addEventListener("mousemove", (e)=>{
 			if(!drag) return true;
@@ -316,6 +316,7 @@ class Window {
 		window.appendChild(windowContents);
 		return window;
 	}
+	// 창 상단부분 생성
 	createWindowStatus(name){
 		const status = document.createElement("div");
 		const upper = document.createElement("div");
@@ -397,6 +398,7 @@ class Window {
 		const windows = document.querySelectorAll(".window-focus");
 		const icons = document.querySelectorAll(".icon");
 
+		
 		for(let temp of icons){
 			if(temp.classList.contains("focused"));
 				temp.classList.remove("focused");
@@ -405,6 +407,7 @@ class Window {
 		for(let temp of windows){
 			temp.classList.remove("window-focus");
 		}
+		this.window.style.zIndex = Window.getZIndexCount();
 		this.windowStatus.classList.add("window-focus");
 	}
 	
@@ -416,7 +419,7 @@ class Window {
 	}
 	
 	static getCount(){
-		if(Window.count > 10) return Window.count = 0;
+		// if(Window.count > 10) return Window.count = 0;
 		return (Window.count++)%10;
 	}
 	static getZIndexCount(){
