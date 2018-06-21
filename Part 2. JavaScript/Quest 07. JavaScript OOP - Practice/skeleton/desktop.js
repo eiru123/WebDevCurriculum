@@ -15,11 +15,9 @@ class Desktop {
 		this.createStatusBar();
 		this.contents = this.createContentArea();
 
-		// this.addIcon("folder", this.folderNum, this.contents);
-		// this.addIcon("icon", this.iconNum, this.contents);
-
 		this.addIcon("folder", this.folderNum);
 		this.addIcon("icon", this.iconNum);
+		
 		this.desktop.appendChild(this.contents);
 	}
 
@@ -76,11 +74,11 @@ class Desktop {
 
 		contents.classList.add("contents");
 		contents.addEventListener("click", (e)=>{
-			this.focus(e);
+			this.focusRemove(e);
 		}, false);
 		return contents;
 	}
-	focus(e){
+	focusRemove(e){
 		e.stopPropagation();
 		const icons = document.querySelectorAll(".icon");
 		const windows = document.querySelectorAll(".window-focus");
@@ -93,6 +91,43 @@ class Desktop {
 		for(let temp of windows){
 			temp.classList.remove("window-focus");
 		}
+	}
+	dragEvent(moveDom, controlDom){
+		let drag = false;
+		let offsetX = 0;
+		let offsetY = 0;
+
+		controlDom.addEventListener("mousedown", (e)=>{
+			e.preventDefault();
+			drag = true;
+			offsetX = e.pageX;
+			offsetY = e.pageY;
+			if(moveDom.classList.contains("window"))
+				moveDom.style.zIndex = Window.getZIndexCount();
+		});
+		document.addEventListener("mousemove", (e)=>{
+			if(!drag) return true;
+			let x = e.pageX;
+			let y = e.pageY;
+			
+			let xPos = parseInt(moveDom.style.left) || 0;
+			let yPos = parseInt(moveDom.style.top) || 0;
+
+			if(x != offsetX || y != offsetY){
+				moveDom.style.left = xPos + (x - offsetX) + "px";
+				moveDom.style.top = yPos + (y - offsetY) + "px";
+				offsetX = x;
+				offsetY = y;		
+
+				if(moveDom.classList.contains("window") &&
+					(parseInt(moveDom.style.top) < 0 || y < 50))
+					moveDom.style.top = 0;
+			}
+		});
+		document.addEventListener("mouseup", (e)=>{
+			e.preventDefault();
+			drag = false;
+		});
 	}
 };
 
@@ -132,45 +167,10 @@ class Icon {
 		for(let [eventName, eventFunction] of eventMap){
 			this.icon.addEventListener(eventName, eventFunction.bind(this));
 		}
-		this.dragEvent();
+		this.parentDiv.dragEvent(this.icon, this.icon);
 	}
-	/*
-	드래그 함수
-	*/
-	dragEvent(){
-		let drag = false;
-		let offsetX = 0;
-		let offsetY = 0;
-
-		this.icon.addEventListener("mousedown", (e)=>{
-			e.preventDefault();
-			drag = true;
-			offsetX = e.pageX;
-			offsetY = e.pageY;
-		});
-		document.addEventListener("mousemove", (e)=>{
-			if(!drag) return true;
-			let x = e.pageX;
-			let y = e.pageY;
-			
-			let xPos = parseInt(this.icon.style.left) || 0;
-			let yPos = parseInt(this.icon.style.top) || 0;
-
-			if(x != offsetX || y != offsetY){
-				this.icon.style.left = xPos + (x - offsetX) + "px";
-				this.icon.style.top = yPos + (y - offsetY) + "px";
-				offsetX = x;
-				offsetY = y;		
-			}
-		});
-		document.addEventListener("mouseup", (e)=>{
-			e.preventDefault();
-			drag = false;
-		});
-	}
-	
 	focusEvent(e){
-		this.parentDiv.focus(e);
+		this.parentDiv.focusRemove(e);
 
 		this.icon.classList.add("focused");
 	}
@@ -201,6 +201,7 @@ class Folder {
 class Window {
 	/* TODO: Window 클래스는 어떤 멤버함수와 멤버변수를 가져야 할까요? */
 	constructor(name, parentDiv){
+		this.type = "window";
 		this.parentDiv = parentDiv;
 		this.count = Window.getCount();
 		this.zIndexCount = Window.getZIndexCount();
@@ -266,49 +267,14 @@ class Window {
 		for(let [eventName, eventFunction] of eventMap){
 			this.window.addEventListener(eventName, eventFunction.bind(this));
 		}
-		this.dragEvent();
+		this.parentDiv.dragEvent(this.window, this.windowStatus);
 	}
 	/*
 	드래그 함수.
 	창의 상단부분을 클릭했을시에만 드래그가 가능해야 한다.
 	*/
-	dragEvent(){
-		let drag = false;
-		let offsetX = 0;
-		let offsetY = 0;
-
-		this.windowStatus.addEventListener("mousedown", (e)=>{
-			e.preventDefault();
-			drag = true;
-			offsetX = e.pageX;
-			offsetY = e.pageY;
-			this.window.style.zIndex = Window.getZIndexCount();
-		});
-		document.addEventListener("mousemove", (e)=>{
-			if(!drag) return true;
-			let x = e.pageX;
-			let y = e.pageY;
-			let xPos = parseInt(this.window.style.left) || 0;
-			let yPos = parseInt(this.window.style.top) || 0;
-			
-			if(x != offsetX || y != offsetY){
-				this.window.style.left = xPos + (x - offsetX) + "px";
-				this.window.style.top = yPos + (y - offsetY) + "px";
-				offsetX = x;
-				offsetY = y;
-				
-				if(parseInt(this.window.style.top) < 0 || y < 50) {
-					this.window.style.top = 0;
-				}
-			}
-		});
-		document.addEventListener("mouseup", (e)=>{
-			e.preventDefault();
-			drag = false;
-		});
-	}
 	focusEvent(e){
-		this.parentDiv.focus(e);
+		this.parentDiv.focusRemove(e);
 		this.window.style.zIndex = Window.getZIndexCount();
 		this.windowStatus.classList.add("window-focus");
 	}
