@@ -184,7 +184,7 @@ class Folder {
 	constructor(type, name, parentDiv){
 		this.name = name;
 		this.parentDiv = parentDiv;
-		this.window = null;
+		this.window = new Window(name, parentDiv);
 		this.icon = new Icon(type, name, parentDiv).icon;
 		this.addEvent();
 	}
@@ -194,9 +194,8 @@ class Folder {
 	
 	dblClickEvent(e){
 		e.stopPropagation();
-		if(this.window === null){
-			this.window = new Window(this.name, this.parentDiv);
-			this.parentDiv.contents.appendChild(this.window.window);
+		if(this.window.window.classList.contains("window-closed")){
+			this.window.window.classList.remove("window-closed");
 		}
 		this.icon.classList.remove("focused");
 		this.window.focusEvent(e);
@@ -207,8 +206,8 @@ class Window {
 	/* TODO: Window 클래스는 어떤 멤버함수와 멤버변수를 가져야 할까요? */
 	constructor(name, parentDiv){
 		this.type = "window";
-		this.parentDiv = parentDiv;
 		this.count = Window.getCount();
+		this.parentDiv = parentDiv;
 		this.zIndexCount = Window.getZIndexCount();
 		this.window = this.setWindow(name);
 		this.addEvent();
@@ -226,6 +225,7 @@ class Window {
 		const windowContents = document.createElement("div");
 
 		window.classList.add("window");
+		window.classList.add("window-closed");
 		window.style.top = "120px";
 		window.style.left = "120px";
 		window.style.zIndex = this.zIndexCount;
@@ -236,6 +236,7 @@ class Window {
 		window.appendChild(this.windowStatus);
 		window.appendChild(windowNavigation);
 		window.appendChild(windowContents);
+		this.parentDiv.contents.appendChild(window);
 		return window;
 	}
 	// 창 상단부분 생성
@@ -287,7 +288,7 @@ class Window {
 	종료 버튼을 눌렀을때의 핸들러
 	*/
 	windowCloseEvent(){
-		this.window.remove();
+		this.window.classList.add("window-closed");
 	}
 	
 	static getCount(){
