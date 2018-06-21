@@ -1,7 +1,9 @@
 class Desktop {
 	/* TODO: Desktop 클래스는 어떤 멤버함수와 멤버변수를 가져야 할까요? */
-	constructor(className){
+	constructor(className, folderNum, iconNum){
 		this.desktop = document.querySelector(className);
+		this.folderNum = folderNum;
+		this.iconNum = iconNum;
 		this.setDesktop();
 	}
 	/* 
@@ -13,11 +15,24 @@ class Desktop {
 		this.createStatusBar();
 		this.contents = this.createContentArea();
 
-		this.addIcon("folder1", "folder", this.contents);
-		this.addIcon("folder2", "folder", this.contents);
-		this.addIcon("file", "icon");
+		this.addIcon("folder", this.folderNum, this.contents);
+		this.addIcon("icon", this.iconNum);
 
 		this.desktop.appendChild(this.contents);
+	}
+
+	addIcon(type, num, parentDiv){
+		let icon;
+		/*
+		folder는 더블 클릭시 새로운 창이 생성된다.
+		이 때 새로 생성된 window가 드래그 될 영역을 지정해주기 위해서
+		parentDiv 객체를 전달한다.
+		*/
+		for(let i = 1; i <= num; i++){
+			if(type === "folder") icon = new Folder("folder " + i, parentDiv);
+			else icon = new Icon("icon " + i);
+			this.contents.appendChild(icon.icon);
+		}
 	}
 	// 상태바 생성
 	createStatusBar(){
@@ -75,18 +90,7 @@ class Desktop {
 		return contents;
 	}
 
-	addIcon(name, type, parentDiv){
-		let icon;
-		/*
-		folder는 더블 클릭시 새로운 창이 생성된다.
-		이 때 새로 생성된 window가 드래그 될 영역을 지정해주기 위해서
-		parentDiv 객체를 전달한다.
-		*/
-		if(type === "folder") icon = new Folder(name, parentDiv);
-		else icon = new Icon(name);
-		
-		this.contents.appendChild(icon.icon);
-	}
+	
 };
 
 class Icon {
