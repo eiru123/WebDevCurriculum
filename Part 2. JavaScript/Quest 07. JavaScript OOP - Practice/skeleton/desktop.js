@@ -9,7 +9,7 @@ class Desktop {
 	/* 
 	바탕화면 기본 세팅.
 	macOS를 카피한 바탕화면. 
-	폴더 2개와 아이콘 2개
+	입력된 폴더의 갯수와 아이콘의 갯수로 생성
 	*/
 	setDesktop(){
 		this.createStatusBar();
