@@ -193,6 +193,7 @@ class Folder {
 	}
 	
 	dblClickEvent(e){
+		e.stopPropagation();
 		if(this.window === null){
 			this.window = new Window(this.name, this.parentDiv);
 			this.parentDiv.contents.appendChild(this.window.window);
