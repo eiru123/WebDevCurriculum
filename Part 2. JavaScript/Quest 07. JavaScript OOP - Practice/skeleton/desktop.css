@@ -36,6 +36,7 @@ ul{
 li{
     padding: 0 5px;
     line-height: 25px;
+    overflow: hidden;
 }
 .infoList{
     display: flex;
