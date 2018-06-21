@@ -359,7 +359,6 @@ class Window {
 	*/
 	dragEvent(){
 		let drag = false;
-		let border = false;
 		let offsetX = 0;
 		let offsetY = 0;
 
