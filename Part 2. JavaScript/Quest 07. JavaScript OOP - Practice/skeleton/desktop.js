@@ -1,6 +1,7 @@
 class Desktop {
 	/* TODO: Desktop 클래스는 어떤 멤버함수와 멤버변수를 가져야 할까요? */
 	constructor(className, folderNum, iconNum){
+		this.className = className;
 		this.desktop = document.querySelector(className);
 		this.folderNum = folderNum;
 		this.iconNum = iconNum;
@@ -80,9 +81,8 @@ class Desktop {
 	}
 	focusRemove(e){
 		e.stopPropagation();
-		const icons = document.querySelectorAll(".icon");
-		const windows = document.querySelectorAll(".window-focus");
-
+		const icons = document.querySelectorAll(this.className + " .icon");
+		const windows = document.querySelectorAll(this.className + " .window-focus");
 		for(let temp of icons){
 			if(temp.classList.contains("focused"));
 				temp.classList.remove("focused");
@@ -184,6 +184,7 @@ class Folder {
 	constructor(type, name, parentDiv){
 		this.name = name;
 		this.parentDiv = parentDiv;
+		this.window = null;
 		this.icon = new Icon(type, name, parentDiv).icon;
 		this.addEvent();
 	}
@@ -192,9 +193,12 @@ class Folder {
 	}
 	
 	dblClickEvent(e){
-		const newWindow = new Window(this.name, this.parentDiv).window;
-		this.parentDiv.contents.appendChild(newWindow);
+		if(this.window === null){
+			this.window = new Window(this.name, this.parentDiv);
+			this.parentDiv.contents.appendChild(this.window.window);
+		}
 		this.icon.classList.remove("focused");
+		this.window.focusEvent(e);
 	}
 };
 
@@ -221,11 +225,10 @@ class Window {
 		const windowContents = document.createElement("div");
 
 		window.classList.add("window");
-		window.style.top = 20*this.count + 100 + "px";
-		window.style.left = 20*this.count + 100 + "px";
+		window.style.top = "120px";
+		window.style.left = "120px";
 		window.style.zIndex = this.zIndexCount;
 
-		this.windowStatus.classList.add("window-focus");
 		windowNavigation.classList.add("window-navigation");
 		windowContents.classList.add("window-contents");
 
