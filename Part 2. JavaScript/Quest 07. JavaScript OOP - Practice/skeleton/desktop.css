@@ -61,7 +61,6 @@ li{
 }
 .focused{
     background-color: rgba(115, 115, 235, 0.7);
-    z-index: 1;
 }
 .icon-image{
     width: 80px; height: 80px;

@@ -104,6 +104,8 @@ class Desktop {
 			offsetY = e.pageY;
 			if(moveDom.classList.contains("window"))
 				moveDom.style.zIndex = Window.getZIndexCount();
+			if(moveDom.classList.contains("icon"))
+				moveDom.style.zIndex = Icon.getZIndexCount();
 		});
 		document.addEventListener("mousemove", (e)=>{
 			if(!drag) return true;
@@ -135,7 +137,9 @@ class Icon {
 	/* TODO: Icon 클래스는 어떤 멤버함수와 멤버변수를 가져야 할까요? */
 	constructor(type, name, parentDiv){
 		this.parentDiv = parentDiv;
+		this.type = type;
 		this.icon = this.setIcon(type, name);
+		this.zIndexCount = Icon.getZIndexCount();
 		this.addEvent();
 	}
 	/*
@@ -174,6 +178,9 @@ class Icon {
 
 		this.icon.classList.add("focused");
 	}
+	static getZIndexCount(){
+		return Icon.zIndexCount++;
+	}
 };
 
 // icon과 folder의 기본 속성은 같으므로 
@@ -182,6 +189,7 @@ class Icon {
 class Folder {
 	/* TODO: Folder 클래스는 어떤 멤버함수와 멤버변수를 가져야 할까요? */
 	constructor(type, name, parentDiv){
+		this.type = type;
 		this.name = name;
 		this.parentDiv = parentDiv;
 		this.window = new Window(name, parentDiv);
@@ -300,4 +308,5 @@ class Window {
 };
 
 Window.count = 0;
-Window.zIndexCount = 0;
+Window.zIndexCount = 10000;
+Icon.zIndexCount = 0;
