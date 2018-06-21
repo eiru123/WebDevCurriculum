@@ -29,8 +29,8 @@ class Desktop {
 		parentDiv 객체를 전달한다.
 		*/
 		for(let i = 1; i <= num; i++){
-			if(type === "folder") icon = new Folder("folder " + i, parentDiv);
-			else icon = new Icon("icon " + i);
+			if(type === "folder") icon = new Folder(type, "folder " + i, parentDiv);
+			else icon = new Icon(type, "icon " + i);
 			this.contents.appendChild(icon.icon);
 		}
 	}
@@ -95,15 +95,15 @@ class Desktop {
 
 class Icon {
 	/* TODO: Icon 클래스는 어떤 멤버함수와 멤버변수를 가져야 할까요? */
-	constructor(name){
-		this.icon = this.setIcon(name);
+	constructor(type, name){
+		this.icon = this.setIcon(type, name);
 		this.addEvent();
 	}
 	/*
 	아이콘 기본 세팅.
 	이미지와 아이콘 이름을 가지는 dom 요소 생성.
 	*/
-	setIcon(name){
+	setIcon(type, name){
 		const icon = document.createElement("div");
 		const iconImage = document.createElement("img");
 		const iconName = document.createElement("div");
@@ -111,7 +111,7 @@ class Icon {
 		icon.classList.add("icon");
 
 		iconImage.classList.add("icon-image");
-		iconImage.setAttribute("src", "file.png");
+		iconImage.setAttribute("src", type + ".png");
 		
 		iconName.classList.add("icon-name");
 		iconName.innerHTML = name;
@@ -184,102 +184,19 @@ class Icon {
 	}
 };
 
+// icon과 folder의 기본 속성은 같으므로 
+// folder의 icon은 icon을 이용해서 만든 후
+// doubleclick 이벤트만 추가
 class Folder {
 	/* TODO: Folder 클래스는 어떤 멤버함수와 멤버변수를 가져야 할까요? */
-	constructor(name, parentDiv){
+	constructor(type, name, parentDiv){
 		this.name = name;
-		this.icon = this.setFolder(name);
+		this.icon = new Icon(type, name).icon;
 		this.parentDiv = parentDiv;
 		this.addEvent();
 	}
-	/*
-	폴더 기본 세팅.
-	이미지와 폴더 이름을 가지는 dom 요소 생성.
-	*/
-	setFolder(name){
-		const icon = document.createElement("div");
-		const iconImage = document.createElement("img");
-		const iconName = document.createElement("div");
-
-		icon.classList.add("icon");
-
-		iconImage.classList.add("icon-image");
-		iconImage.setAttribute("src", "Folder-icon.png");
-		
-		iconName.classList.add("icon-name");
-		iconName.innerHTML = name;
-		icon.appendChild(iconImage);
-		icon.appendChild(iconName);
-
-		return icon;
-	}
-	/*
-	드래그 함수.
-	*/
 	addEvent(){
-		const eventMap = new Map();
-
-		eventMap.set("mousedown", this.focusEvent);
-		eventMap.set("click", this.focusEvent);
-		eventMap.set("dblclick", this.dblClickEvent);
-
-		for(let [eventName, eventFunction] of eventMap){
-			this.icon.addEventListener(eventName, eventFunction.bind(this));
-		}
-		this.dragEvent();
-	}
-
-	dragEvent(){
-		let drag = false;
-		let offsetX = 0;
-		let offsetY = 0;
-
-		this.icon.addEventListener("mousedown", (e)=>{
-			e.preventDefault();
-			drag = true;
-			offsetX = e.pageX;
-			offsetY = e.pageY;
-
-		});
-		document.addEventListener("mousemove", (e)=>{
-			if(!drag) return true;
-			let x = e.pageX;
-			let y = e.pageY;
-			
-			let xPos = parseInt(this.icon.style.left) || 0;
-			let yPos = parseInt(this.icon.style.top) || 0;
-
-			if(x != offsetX || y != offsetY){
-				this.icon.style.left = xPos + (x - offsetX) + "px";
-				this.icon.style.top = yPos + (y - offsetY) + "px";
-				offsetX = x;
-				offsetY = y;
-			}
-		});
-		document.addEventListener("mouseup", (e)=>{
-			e.preventDefault();
-			drag = false;
-		});
-	}
-	/*
-	더블 클릭 이벤트 핸들러.
-	더블 클릭할 시 창이 새로 생긴다.
-	*/
-	
-	focusEvent(e){
-		e.stopPropagation();
-		const icons = document.querySelectorAll(".icon");
-		const windows = document.querySelectorAll(".window-focus");
-
-		for(let temp of icons){
-			if(temp.classList.contains("focused"));
-				temp.classList.remove("focused");
-		}
-		
-		for(let temp of windows){
-			temp.classList.remove("window-focus");
-		}
-		this.icon.classList.add("focused");
+		this.icon.addEventListener("dblclick", this.dblClickEvent.bind(this));
 	}
 	
 	dblClickEvent(e){
@@ -314,6 +231,7 @@ class Window {
 		window.style.left = 20*this.count + 100 + "px";
 		window.style.zIndex = this.zIndexCount;
 
+		this.windowStatus.classList.add("window-focus");
 		windowNavigation.classList.add("window-navigation");
 		windowContents.classList.add("window-contents");
 
