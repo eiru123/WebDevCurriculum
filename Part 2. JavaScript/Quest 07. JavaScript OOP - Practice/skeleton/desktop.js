@@ -15,13 +15,15 @@ class Desktop {
 		this.createStatusBar();
 		this.contents = this.createContentArea();
 
-		this.addIcon("folder", this.folderNum, this.contents);
-		this.addIcon("icon", this.iconNum);
+		// this.addIcon("folder", this.folderNum, this.contents);
+		// this.addIcon("icon", this.iconNum, this.contents);
 
+		this.addIcon("folder", this.folderNum);
+		this.addIcon("icon", this.iconNum);
 		this.desktop.appendChild(this.contents);
 	}
 
-	addIcon(type, num, parentDiv){
+	addIcon(type, num){
 		let icon;
 		/*
 		folder는 더블 클릭시 새로운 창이 생성된다.
@@ -29,8 +31,8 @@ class Desktop {
 		parentDiv 객체를 전달한다.
 		*/
 		for(let i = 1; i <= num; i++){
-			if(type === "folder") icon = new Folder(type, "folder " + i, parentDiv);
-			else icon = new Icon(type, "icon " + i);
+			if(type === "folder") icon = new Folder(type, "folder " + i, this);
+			else icon = new Icon(type, "icon " + i, this);
 			this.contents.appendChild(icon.icon);
 		}
 	}
@@ -74,28 +76,30 @@ class Desktop {
 
 		contents.classList.add("contents");
 		contents.addEventListener("click", (e)=>{
-			
-			const icons = document.querySelectorAll(".icon");
-			const windows = document.querySelectorAll(".window-focus");
-
-			for(let temp of icons){
-				if(temp.classList.contains("focused"));
-					temp.classList.remove("focused");
-			}
-			
-			for(let temp of windows){
-				temp.classList.remove("window-focus");
-			}
+			this.focus(e);
 		}, false);
 		return contents;
 	}
+	focus(e){
+		e.stopPropagation();
+		const icons = document.querySelectorAll(".icon");
+		const windows = document.querySelectorAll(".window-focus");
 
-	
+		for(let temp of icons){
+			if(temp.classList.contains("focused"));
+				temp.classList.remove("focused");
+		}
+		
+		for(let temp of windows){
+			temp.classList.remove("window-focus");
+		}
+	}
 };
 
 class Icon {
 	/* TODO: Icon 클래스는 어떤 멤버함수와 멤버변수를 가져야 할까요? */
-	constructor(type, name){
+	constructor(type, name, parentDiv){
+		this.parentDiv = parentDiv;
 		this.icon = this.setIcon(type, name);
 		this.addEvent();
 	}
@@ -143,7 +147,6 @@ class Icon {
 			drag = true;
 			offsetX = e.pageX;
 			offsetY = e.pageY;
-
 		});
 		document.addEventListener("mousemove", (e)=>{
 			if(!drag) return true;
@@ -157,8 +160,7 @@ class Icon {
 				this.icon.style.left = xPos + (x - offsetX) + "px";
 				this.icon.style.top = yPos + (y - offsetY) + "px";
 				offsetX = x;
-				offsetY = y;
-				
+				offsetY = y;		
 			}
 		});
 		document.addEventListener("mouseup", (e)=>{
@@ -168,18 +170,8 @@ class Icon {
 	}
 	
 	focusEvent(e){
-		e.stopPropagation();
-		const icons = document.querySelectorAll(".icon");
-		const windows = document.querySelectorAll(".window-focus");
+		this.parentDiv.focus(e);
 
-		for(let temp of icons){
-			if(temp.classList.contains("focused"));
-				temp.classList.remove("focused");
-		}
-		
-		for(let temp of windows){
-			temp.classList.remove("window-focus");
-		}
 		this.icon.classList.add("focused");
 	}
 };
@@ -191,8 +183,8 @@ class Folder {
 	/* TODO: Folder 클래스는 어떤 멤버함수와 멤버변수를 가져야 할까요? */
 	constructor(type, name, parentDiv){
 		this.name = name;
-		this.icon = new Icon(type, name).icon;
 		this.parentDiv = parentDiv;
+		this.icon = new Icon(type, name, parentDiv).icon;
 		this.addEvent();
 	}
 	addEvent(){
@@ -200,15 +192,16 @@ class Folder {
 	}
 	
 	dblClickEvent(e){
-		const newWindow = new Window(this.name).window;
-		this.parentDiv.appendChild(newWindow);
+		const newWindow = new Window(this.name, this.parentDiv).window;
+		this.parentDiv.contents.appendChild(newWindow);
 		this.icon.classList.remove("focused");
 	}
 };
 
 class Window {
 	/* TODO: Window 클래스는 어떤 멤버함수와 멤버변수를 가져야 할까요? */
-	constructor(name){
+	constructor(name, parentDiv){
+		this.parentDiv = parentDiv;
 		this.count = Window.getCount();
 		this.zIndexCount = Window.getZIndexCount();
 		this.window = this.setWindow(name);
@@ -290,8 +283,6 @@ class Window {
 			offsetX = e.pageX;
 			offsetY = e.pageY;
 			this.window.style.zIndex = Window.getZIndexCount();
-			
-			this.windowStatus.classList.add("window-focus");
 		});
 		document.addEventListener("mousemove", (e)=>{
 			if(!drag) return true;
@@ -317,19 +308,7 @@ class Window {
 		});
 	}
 	focusEvent(e){
-		e.stopPropagation();
-		const windows = document.querySelectorAll(".window-focus");
-		const icons = document.querySelectorAll(".icon");
-
-		
-		for(let temp of icons){
-			if(temp.classList.contains("focused"));
-				temp.classList.remove("focused");
-		}
-
-		for(let temp of windows){
-			temp.classList.remove("window-focus");
-		}
+		this.parentDiv.focus(e);
 		this.window.style.zIndex = Window.getZIndexCount();
 		this.windowStatus.classList.add("window-focus");
 	}
@@ -342,7 +321,6 @@ class Window {
 	}
 	
 	static getCount(){
-		// if(Window.count > 10) return Window.count = 0;
 		return (Window.count++)%10;
 	}
 	static getZIndexCount(){
