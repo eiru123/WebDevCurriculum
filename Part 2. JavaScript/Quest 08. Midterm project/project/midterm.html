@@ -12,8 +12,8 @@
         <template id="add">
             <div class="add-area">
                 <div class="name-tag-area">
-                    <input type="text" class="name">
-                    <input type="text" class="tag">
+                    <input type="text" class="name" required>
+                    <input type="text" class="tag" required>
                 </div>
                 <div class="add-buttons-area">
                     <button class="button">추가</button>
@@ -33,19 +33,19 @@
         </template>
         <template id="plan">
             <div class="plan-area">
-                <div class="name-tag-area">
+                <div class="plan name-tag-area">
                     <div class="name"></div>
                     <div class="tag"></div>
                 </div>
                 <div class="plan-clock-area">
-                    <span class="time">00</span> : 
-                    <span class="time">00</span> : 
-                    <span class="time">00</span>
+                    <span class="hour">00</span> : 
+                    <span class="minute">00</span> : 
+                    <span class="seconde">00</span>
                 </div>
                 <div class="plan-buttons-area">
-                    <button class="button">시작</button>
-                    <button class="button">리셋</button>
-                    <button class="button">삭제</button>
+                    <button class="start button">시작</button>
+                    <button class="reset button">리셋</button>
+                    <button class="remove button">삭제</button>
                 </div>
             </div>
         </template>

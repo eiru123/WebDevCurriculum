@@ -25,7 +25,7 @@ body {
 }
 .button {
     width: 100px;
-    height: 40px;
+    height: 30px;
     margin: 5px 5px;
 }
 /* add button area css */
@@ -43,12 +43,12 @@ body {
 }
 .name{
     width: 300px;
-    margin: 10px 0;
+    margin: 10px 5px;
     min-height: 20px;
 }
 .tag{
     width: 150px;
-    margin: 10px 0;
+    margin: 10px 5px;
     min-height: 20px;
 }
 .add-buttons-area {
@@ -64,8 +64,12 @@ body {
     border: 1px solid black;
 } 
 .plans-contents-area {
-    overflow: scroll;
+    position: relative;
+    width: 100%; height: calc(100% - 60px);
+    overflow-x: hidden;
+    overflow-y: scroll;
 }
+
 .plans-buttons-area {
     width: 100%;
     position: absolute;
@@ -73,6 +77,39 @@ body {
     justify-content: center;
     align-items: center;
     bottom: 7px;
+}
+/* plan area css */
+.plan-area {
+    height: 130px;
+    margin: 5px 5px;
+    background-color: rgba(0, 0, 200, 0.3);
+}
+.plan{
+    height: 30%;
+}
+div.name{
+    width: 290px; height: 30px;
+    padding-left: 10px;
+    line-height: 30px;
+    margin: 0;
+}
+div.tag {
+    width: 140px; height: 30px;
+    text-align: right;
+    padding-right: 10px;
+    line-height: 30px;
+    margin: 0;
+}
+.plan-buttons-area {
+    display: flex;
+    height: 30%;
+    justify-content: space-between;
+}
+.plan-clock-area,span {
+    height: 40%;
+    text-align: center;
+    font-size: 40px;
+
 }
 /* results area css */
 .results-area{
