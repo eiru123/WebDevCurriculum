@@ -21,9 +21,18 @@ class Add{
     makeDom(){
         const template = document.querySelector("#add");
         this.dom = document.importNode(template.content, true);
+        this.addEvent();
     }
     getDom(){
         return this.dom;
+    }
+    addEvent(){
+        const button = this.dom.querySelector(".button");
+        const inputName = this.dom.querySelector(".name");
+        const inputTag = this.dom.querySelector(".tag");
+        
+        button.addEventListener("click", ()=>{
+        });
     }
 }
 
@@ -32,7 +41,7 @@ class PlanArea{
         this.makeDom();
     }
     makeDom(){
-        const template = document.querySelector("#plan-area");
+        const template = document.querySelector("#plans-area");
         this.dom = document.importNode(template.content, true);
     }
     getDom(){
@@ -41,7 +50,9 @@ class PlanArea{
 }
 
 class Plan{
-    constructor(){
+    constructor(name, tag){
+        this.name = name;
+        this.tag = tag;
         this.makeDom();
     }
     makeDom(){
@@ -58,7 +69,7 @@ class ResultArea{
         this.makeDom();
     }
     makeDom(){
-        const template = document.querySelector("#result-area");
+        const template = document.querySelector("#results-area");
         this.dom = document.importNode(template.content, true);
     }
     getDom(){
@@ -67,7 +78,8 @@ class ResultArea{
 }
 
 class Result{
-    constructor(){
+    constructor(tag){
+        this.tag = tag;
         this.makeDom();
     }
     makeDom(){
