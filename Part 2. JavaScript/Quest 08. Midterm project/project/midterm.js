@@ -18,7 +18,6 @@ class App{
         this.allRemoveEvent();
         this.allStopEvent();
         this.totalTimeEvent();
-        this.totalRemoveEvent();
     }
     addEvent(){
         document.addEventListener("add", (e)=>{
@@ -27,7 +26,11 @@ class App{
         });
     }
     allRemoveEvent(){
-        document.addEventListener("allRemove", ()=>{
+        document.addEventListener("allRemove", (e)=>{
+            if(e.run){
+                alert("아직 작동중인 타이머가 있습니다.");
+                return false;
+            }
             this.planArea.allRemoveEvent();
             this.resultArea.allRemoveEvent();
         });
@@ -35,7 +38,7 @@ class App{
     removeEvent(){
         document.addEventListener("remove", (e)=>{
             this.planArea.removePlan(e.name);
-            this.resultArea.removeResult(e.name, e.tag);
+            this.resultArea.removeResult(e);
         });
     }
     allStopEvent(){
@@ -46,11 +49,6 @@ class App{
     totalTimeEvent(){
         document.addEventListener("totalTime", (e)=>{
             this.resultArea.totalTime(e);
-        });
-    }
-    totalRemoveEvent(){
-        document.addEventListener("totalRemove", (e)=>{
-            this.resultArea.totalRemove(e);
         });
     }
 }
@@ -104,16 +102,16 @@ class PlanArea{
         
         button.addEventListener("click", ()=>{
             const event = new Event("allRemove");
+            event.run = false;
+            for(let key of this.planList.keys()){
+                if(this.planList.get(key).clockStart){
+                    event.run = true;
+                }
+            }
             document.dispatchEvent(event);
         });
     }
     allRemoveEvent(){
-        for(let key of this.planList.keys()){
-            if(this.planList.get(key).clockStart){
-                alert("아직 작동중인 타이머가 있습니다.");
-                return false;
-            }
-        }
         this.planList.forEach((value, key, map)=>{
             this.removePlan(key);
         });
@@ -133,11 +131,6 @@ class PlanArea{
     removePlan(name){
         const deletePlan = this.planList.get(name);
         deletePlan.dom.remove();
-
-        const event = new Event("totalRemove");
-        event.milis = deletePlan.milis;
-        document.dispatchEvent(event);
-
         this.planList.delete(name);
     }
     allStopPlan(e){
@@ -205,6 +198,8 @@ class Plan{
             document.dispatchEvent(event);
 
             event = new Event("totalTime");
+            event.name = this.name;
+            event.tag = this.tag;
             if(this.clockStart !== true){
                 this.clockStart = true;
                 this.intervalId = setInterval(this.runWatch.bind(this), 10);
@@ -228,7 +223,7 @@ class Plan{
             this.clock.innerHTML = "00 : 00 : 00";
             clearInterval(this.intervalId);
             const event = new Event("totalTime");
-
+            event.tag = this.tag;
             event.reset = true;
             event.milis = this.milis;
             event.clockStart = this.clockStart;
@@ -252,7 +247,8 @@ class Plan{
             }
             const event = new Event("remove");
             event.name = this.name;
-            event.tag = this.tag
+            event.tag = this.tag;
+            event.milis = this.milis;
             document.dispatchEvent(event);
         });
     }
@@ -262,7 +258,7 @@ class ResultArea{
     constructor(){
         this.milis = 0;
         this.run = false;
-        this.tag = new Map();
+        this.tags = new Map();
         this.checkDuplicate = new Set();
         this.makeDom();
     }
@@ -274,6 +270,104 @@ class ResultArea{
         return this.dom;
     }
     totalTime(e){
+        if(!this.run && e.run){
+            this.run = true;
+            this.intervalId = setInterval(this.runTotalTime.bind(this), 10);
+        }else{
+            if(e.reset) {
+                this.milis -= e.milis;
+            }
+            this.showClock();
+            if(e.clockStart || e.stop) {
+                this.run = false;
+                clearInterval(this.intervalId);
+            }
+        }
+        this.tags.get(e.tag).runTimer(e);
+    }
+    totalRemove(e){
+        this.milis -= e.milis;
+        this.showClock();
+    }
+    runTotalTime(){
+        this.milis++;
+        this.showClock();   
+    }
+    showClock(){
+        const second = this.milis/100;
+        this.hour = Math.floor(second/3600);
+        this.minute = Math.floor((second - (this.hour*3600))/60);
+        this.second = Math.floor(second - this.hour*3600 - this.minute*60);
+
+        if(this.hour < 10) this.hour = "0" + this.hour;
+        if(this.minute < 10) this.minute = "0" + this.minute;
+        if(this.second < 10) this.second = "0" + this.second;
+
+        const clock = this.dom.querySelector(".total");
+        clock.innerHTML = this.hour + " : " + this.minute + " : " + this.second;
+    }
+    addResult(name, tag){
+        if(this.checkDuplicate.has(name)) return false;
+        this.checkDuplicate.add(name);
+        if(!this.tags.has(tag)) {
+            this.tags.set(tag, new ResultPane(tag));
+            this.dom.querySelector(".contents-area").appendChild(this.tags.get(tag).getDom());
+        }
+        this.tags.get(tag).addResult(name, tag);
+    }
+    allRemoveEvent(){
+        this.tags.forEach((value, key, map) => {
+            this.totalRemove(value);
+            value.dom.remove();
+        });
+        this.tags.clear();
+        this.checkDuplicate.clear();
+    }
+    removeResult(e){
+        this.totalRemove(e);
+        this.checkDuplicate.delete(e.name);
+        if(this.tags.get(e.tag).removeResultElement(e))
+            this.tags.delete(e.tag);
+    }
+}
+class ResultPane{
+    constructor(tag){
+        this.milis = 0;
+        this.tag = tag;
+        this.run = false;
+        this.results = new Map();
+        this.makeDom();
+    }
+    makeDom(){
+        const template = document.querySelector("#result-tag-area");
+        this.dom = document.importNode(template.content, true).querySelector(".result-tag-area");
+        this.dom.classList.add(this.tag);
+        this.dom.querySelector(".result-tag").innerHTML = this.selectTagName();
+    }
+    getDom(){
+        return this.dom;
+    }
+    addResult(name, tag){
+        this.results.set(name, tag);
+    }
+    selectTagName(){
+        switch(this.tag){
+            case "default": return "기본";
+            case "study": return "공부";
+            case "exercise": return "운동";
+            case "self-dev": return "자기 계발";
+            case "work": return "업무";
+        }
+    }
+    removeResultElement(e){
+        this.results.delete(e.name);
+        this.totalRemove(e);
+        if(this.results.size === 0){
+            this.dom.remove();
+            return true;
+        }
+    }
+    runTimer(e){
         if(!this.run && e.run){
             this.run = true;
             this.intervalId = setInterval(this.runTotalTime.bind(this), 10);
@@ -306,66 +400,7 @@ class ResultArea{
         if(this.minute < 10) this.minute = "0" + this.minute;
         if(this.second < 10) this.second = "0" + this.second;
 
-        const clock = this.dom.querySelector(".total");
+        const clock = this.dom.querySelector(".clock-area");
         clock.innerHTML = this.hour + " : " + this.minute + " : " + this.second;
-    }
-    addResult(name, tag){
-        if(this.checkDuplicate.has(name)) return false;
-        this.checkDuplicate.add(name);
-        if(!this.tag.has(tag)) {
-            this.tag.set(tag, new ResultPane(tag));
-            this.dom.querySelector(".contents-area").appendChild(this.tag.get(tag).getDom());
-        }
-        this.tag.get(tag).addResult(name, tag);
-    }
-    allRemoveEvent(){
-        
-    }
-    removeResult(name, tag){
-
-    }
-}
-class ResultPane{
-    constructor(tag){
-        this.time = 0;
-        this.tag = tag;
-        this.results = new Map();
-        this.makeDom();
-    }
-    makeDom(){
-        const template = document.querySelector("#result-tag-area");
-        this.dom = document.importNode(template.content, true).querySelector(".result-tag-area");
-        this.dom.classList.add(this.tag);
-        this.dom.querySelector(".result-tag").innerHTML = this.selectTagName();
-    }
-    getDom(){
-        return this.dom;
-    }
-    addResult(name, tag){
-        this.results.set(name, new Result(name, tag));
-    }
-    selectTagName(){
-        switch(this.tag){
-            case "default": return "기본";
-            case "study": return "공부";
-            case "exercise": return "운동";
-            case "self-dev": return "자기 계발";
-            case "work": return "업무";
-        }
-    }
-}
-class Result{
-    constructor(name, tag){
-        this.name = name;
-        this.tag = tag;
-        this.makeDom();
-    }
-    makeDom(){
-        const template = document.querySelector("#result");
-        this.dom = document.importNode(template.content, true).querySelector(".result");
-        
-    }
-    getDom(){
-        return this.dom;
     }
 }

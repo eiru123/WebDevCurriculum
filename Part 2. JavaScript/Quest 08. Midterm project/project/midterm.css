@@ -84,7 +84,6 @@ select.tag {
 .contents-area {
     position: absolute;
     width: 100%; height: calc(100% - 60px);
-    border: 1px solid black;
     overflow-y: auto;
 }
 
