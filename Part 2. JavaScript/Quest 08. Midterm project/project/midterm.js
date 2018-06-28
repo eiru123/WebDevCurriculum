@@ -139,7 +139,7 @@ class PlanArea{
             const button = value.dom.querySelector(".start");
             
             event.allStop = true;
-            if(value.clockStart&& value !== e.obj) button.dispatchEvent(event);
+            if(value.clockStart && value !== e.obj) button.dispatchEvent(event);
         });
     }
 }
@@ -148,7 +148,6 @@ class Plan{
     constructor(name, tag){
         this.name = name;
         this.tag = tag;
-        this.milis = 0;
         this.clockStart = false;
         this.makeDom();
     }
@@ -157,38 +156,15 @@ class Plan{
 
         this.dom = document.importNode(template.content, true).querySelector(".plan-area");
         this.dom.querySelector(".name").innerHTML = this.name;
-        this.dom.querySelector(".tag").innerHTML = this.selectTagName();
+        this.dom.querySelector(".tag").innerHTML = Tag.getTag(this.tag);
         this.dom.classList.add(this.tag);
-        this.clock = this.dom.querySelector(".clock-area");
-
+        this.clock = new Clock(this.dom.querySelector(".clock-area"));
         this.startButtonEvent();
         this.resetButtonEvent();
         this.removeButtonEvent();
     }
     getDom(){
         return this.dom;
-    }
-    selectTagName(){
-        switch(this.tag){
-            case "default": return "기본";
-            case "study": return "공부";
-            case "exercise": return "운동";
-            case "self-dev": return "자기 계발";
-            case "work": return "업무";
-        }
-    }
-    runWatch(){
-        this.milis++;
-        const second = this.milis/100
-        this.hour = Math.floor(second/3600);
-        this.minute = Math.floor((second - (this.hour*3600))/60);
-        this.second = Math.floor(second - this.hour*3600 - this.minute*60);
-
-        if(this.hour < 10) this.hour = "0" + this.hour;
-        if(this.minute < 10) this.minute = "0" + this.minute;
-        if(this.second < 10) this.second = "0" + this.second;
-
-        this.clock.innerHTML = this.hour + " : " + this.minute + " : " + this.second;
     }
     startButtonEvent(){
         const button = this.dom.querySelector(".start");
@@ -202,7 +178,7 @@ class Plan{
             event.tag = this.tag;
             if(this.clockStart !== true){
                 this.clockStart = true;
-                this.intervalId = setInterval(this.runWatch.bind(this), 10);
+                this.intervalId = setInterval(this.clock.runWatch.bind(this.clock), 10);
                 button.innerHTML = "정지";
                 event.run = true;
             }else{
@@ -220,12 +196,11 @@ class Plan{
         const startButton = this.dom.querySelector(".start");
         
         button.addEventListener("click", ()=>{
-            this.clock.innerHTML = "00 : 00 : 00";
             clearInterval(this.intervalId);
             const event = new Event("totalTime");
             event.tag = this.tag;
             event.reset = true;
-            event.milis = this.milis;
+            event.milis = this.clock.milis;
             event.clockStart = this.clockStart;
             document.dispatchEvent(event);
             
@@ -234,7 +209,7 @@ class Plan{
                 this.clockStart = false;
             }
 
-            this.milis = 0;
+            this.clock.reset();
         });
     }
     removeButtonEvent(){
@@ -248,7 +223,7 @@ class Plan{
             const event = new Event("remove");
             event.name = this.name;
             event.tag = this.tag;
-            event.milis = this.milis;
+            event.milis = this.clock.milis;
             document.dispatchEvent(event);
         });
     }
@@ -256,7 +231,6 @@ class Plan{
 
 class ResultArea{
     constructor(){
-        this.milis = 0;
         this.run = false;
         this.tags = new Map();
         this.checkDuplicate = new Set();
@@ -265,6 +239,7 @@ class ResultArea{
     makeDom(){
         const template = document.querySelector("#results-area");
         this.dom = document.importNode(template.content, true).querySelector(".results-area");
+        this.clock = new Clock(this.dom.querySelector(".total"));
     }
     getDom(){
         return this.dom;
@@ -272,39 +247,17 @@ class ResultArea{
     totalTime(e){
         if(!this.run && e.run){
             this.run = true;
-            this.intervalId = setInterval(this.runTotalTime.bind(this), 10);
+            this.intervalId = setInterval(this.clock.runWatch.bind(this.clock), 10);
         }else{
             if(e.reset) {
-                this.milis -= e.milis;
+                this.clock.totalRemove(e);
             }
-            this.showClock();
             if(e.clockStart || e.stop) {
                 this.run = false;
                 clearInterval(this.intervalId);
             }
         }
         this.tags.get(e.tag).runTimer(e);
-    }
-    totalRemove(e){
-        this.milis -= e.milis;
-        this.showClock();
-    }
-    runTotalTime(){
-        this.milis++;
-        this.showClock();   
-    }
-    showClock(){
-        const second = this.milis/100;
-        this.hour = Math.floor(second/3600);
-        this.minute = Math.floor((second - (this.hour*3600))/60);
-        this.second = Math.floor(second - this.hour*3600 - this.minute*60);
-
-        if(this.hour < 10) this.hour = "0" + this.hour;
-        if(this.minute < 10) this.minute = "0" + this.minute;
-        if(this.second < 10) this.second = "0" + this.second;
-
-        const clock = this.dom.querySelector(".total");
-        clock.innerHTML = this.hour + " : " + this.minute + " : " + this.second;
     }
     addResult(name, tag){
         if(this.checkDuplicate.has(name)) return false;
@@ -317,14 +270,14 @@ class ResultArea{
     }
     allRemoveEvent(){
         this.tags.forEach((value, key, map) => {
-            this.totalRemove(value);
+            this.clock.totalRemove(value.getClock());
             value.dom.remove();
         });
         this.tags.clear();
         this.checkDuplicate.clear();
     }
     removeResult(e){
-        this.totalRemove(e);
+        this.clock.totalRemove(e);
         this.checkDuplicate.delete(e.name);
         if(this.tags.get(e.tag).removeResultElement(e))
             this.tags.delete(e.tag);
@@ -332,7 +285,6 @@ class ResultArea{
 }
 class ResultPane{
     constructor(tag){
-        this.milis = 0;
         this.tag = tag;
         this.run = false;
         this.results = new Map();
@@ -342,7 +294,8 @@ class ResultPane{
         const template = document.querySelector("#result-tag-area");
         this.dom = document.importNode(template.content, true).querySelector(".result-tag-area");
         this.dom.classList.add(this.tag);
-        this.dom.querySelector(".result-tag").innerHTML = this.selectTagName();
+        this.dom.querySelector(".result-tag").innerHTML = Tag.getTag(this.tag);
+        this.clock = new Clock(this.dom.querySelector(".clock-area"));
     }
     getDom(){
         return this.dom;
@@ -350,18 +303,9 @@ class ResultPane{
     addResult(name, tag){
         this.results.set(name, tag);
     }
-    selectTagName(){
-        switch(this.tag){
-            case "default": return "기본";
-            case "study": return "공부";
-            case "exercise": return "운동";
-            case "self-dev": return "자기 계발";
-            case "work": return "업무";
-        }
-    }
     removeResultElement(e){
         this.results.delete(e.name);
-        this.totalRemove(e);
+        this.clock.totalRemove(e);
         if(this.results.size === 0){
             this.dom.remove();
             return true;
@@ -370,25 +314,38 @@ class ResultPane{
     runTimer(e){
         if(!this.run && e.run){
             this.run = true;
-            this.intervalId = setInterval(this.runTotalTime.bind(this), 10);
+            this.intervalId = setInterval(this.clock.runWatch.bind(this.clock), 10);
         }else{
             if(e.reset) {
-                this.milis -= e.milis;
+                this.clock.totalRemove(e);
             }
-            this.showClock();
             if(e.clockStart || e.stop) {
                 this.run = false;
                 clearInterval(this.intervalId);
             }
         }
     }
-    totalRemove(e){
-        this.milis -= e.milis;
-        this.showClock();
+    getClock(){
+        return this.clock;
     }
-    runTotalTime(){
+}
+
+class Clock{
+    constructor(dom){
+        this.dom = dom;
+        this.milis = 0;
+    }
+    runWatch(){
         this.milis++;
         this.showClock();   
+    }
+    reset(){
+        this.milis = 0;
+        this.showClock();
+    }
+    totalRemove(clock){
+        this.milis -= clock.milis;
+        this.showClock();
     }
     showClock(){
         const second = this.milis/100;
@@ -400,7 +357,18 @@ class ResultPane{
         if(this.minute < 10) this.minute = "0" + this.minute;
         if(this.second < 10) this.second = "0" + this.second;
 
-        const clock = this.dom.querySelector(".clock-area");
-        clock.innerHTML = this.hour + " : " + this.minute + " : " + this.second;
+        this.dom.innerHTML = this.hour + " : " + this.minute + " : " + this.second;
+    }
+}
+class Tag{
+    constructor(){}
+    static getTag(tag){
+        switch(tag){
+            case "default": return "기본";
+            case "study": return "공부";
+            case "exercise": return "운동";
+            case "self-dev": return "자기 계발";
+            case "work": return "업무";
+        }
     }
 }
