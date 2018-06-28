@@ -1,4 +1,3 @@
-
 class App{
     constructor(){
         this.dom = document.querySelector(".app");
