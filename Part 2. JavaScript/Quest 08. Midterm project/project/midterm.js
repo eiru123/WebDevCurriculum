@@ -17,7 +17,7 @@ class App{
         this.removeEvent();
         this.allRemoveEvent();
         this.allStopEvent();
-        this.totalTimeEvent();
+        this.runTimerEvent();
     }
     addEvent(){
         document.addEventListener("add", (e)=>{
@@ -46,9 +46,9 @@ class App{
             this.planArea.allStopPlan(e);
         });
     }
-    totalTimeEvent(){
-        document.addEventListener("totalTime", (e)=>{
-            this.resultArea.totalTime(e);
+    runTimerEvent(){
+        document.addEventListener("runTimer", (e)=>{
+            this.resultArea.runTimer(e);
         });
     }
 }
@@ -173,7 +173,7 @@ class Plan{
             event.obj = this;
             document.dispatchEvent(event);
 
-            event = new Event("totalTime");
+            event = new Event("runTimer");
             event.name = this.name;
             event.tag = this.tag;
             if(this.clockStart !== true){
@@ -197,7 +197,7 @@ class Plan{
         
         button.addEventListener("click", ()=>{
             clearInterval(this.intervalId);
-            const event = new Event("totalTime");
+            const event = new Event("runTimer");
             event.tag = this.tag;
             event.reset = true;
             event.milis = this.clock.milis;
@@ -244,19 +244,8 @@ class ResultArea{
     getDom(){
         return this.dom;
     }
-    totalTime(e){
-        if(!this.run && e.run){
-            this.run = true;
-            this.intervalId = setInterval(this.clock.runWatch.bind(this.clock), 10);
-        }else{
-            if(e.reset) {
-                this.clock.totalRemove(e);
-            }
-            if(e.clockStart || e.stop) {
-                this.run = false;
-                clearInterval(this.intervalId);
-            }
-        }
+    runTimer(e){
+        this.clock.runClock(e);
         this.tags.get(e.tag).runTimer(e);
     }
     addResult(name, tag){
@@ -312,18 +301,7 @@ class ResultPane{
         }
     }
     runTimer(e){
-        if(!this.run && e.run){
-            this.run = true;
-            this.intervalId = setInterval(this.clock.runWatch.bind(this.clock), 10);
-        }else{
-            if(e.reset) {
-                this.clock.totalRemove(e);
-            }
-            if(e.clockStart || e.stop) {
-                this.run = false;
-                clearInterval(this.intervalId);
-            }
-        }
+        this.clock.runClock(e);
     }
     getClock(){
         return this.clock;
@@ -334,6 +312,7 @@ class Clock{
     constructor(dom){
         this.dom = dom;
         this.milis = 0;
+        this.run = false;
     }
     runWatch(){
         this.milis++;
@@ -346,6 +325,20 @@ class Clock{
     totalRemove(clock){
         this.milis -= clock.milis;
         this.showClock();
+    }
+    runClock(e){
+        if(!this.run && e.run){
+            this.run = true;
+            this.intervalId = setInterval(this.runWatch.bind(this), 10);
+        }else{
+            if(e.reset) {
+                this.totalRemove(e);
+            }
+            if(e.clockStart || e.stop) {
+                this.run = false;
+                clearInterval(this.intervalId);
+            }
+        }
     }
     showClock(){
         const second = this.milis/100;
