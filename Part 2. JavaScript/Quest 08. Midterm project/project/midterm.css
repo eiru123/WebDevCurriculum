@@ -10,9 +10,9 @@ html {
 body {
     width: 100%; height: 100%;
 }
-
 /* app css */
 .app {
+    position: relative;
     display: grid;
     width: 1000px; height: 100%;
     border: 1px solid black;
@@ -46,10 +46,28 @@ body {
     margin: 10px 5px;
     min-height: 20px;
 }
-.tag{
+.tag-area {
     width: 150px;
     margin: 10px 5px;
     min-height: 20px;
+}
+select.tag {
+    width: 100%; height: 100%;
+}
+.default {
+    background-color: azure;
+}
+.study {
+    background-color: #ffafb0;
+}
+.exercise {
+    background-color: #afffba;
+}
+.self-dev {
+    background-color: #aee4ff;
+}
+.work {
+    background-color: #caa6fe;
 }
 .add-buttons-area {
     display: flex;
@@ -63,9 +81,10 @@ body {
     margin: 7px 10px;
     border: 1px solid black;
 } 
-.plans-contents-area {
-    position: relative;
+.contents-area {
+    position: absolute;
     width: 100%; height: calc(100% - 60px);
+    border: 1px solid black;
     overflow-y: auto;
 }
 
@@ -81,7 +100,6 @@ body {
 .plan-area {
     height: 130px;
     margin: 5px 5px;
-    background-color: rgba(0, 0, 200, 0.3);
 }
 .plan{
     height: 30%;
@@ -105,7 +123,7 @@ div.tag {
     justify-content: space-between; 
 }
 .clock-area {
-    height: 40%;
+    width: 100%; height: 40%;
     text-align: center;
     font-size: 40px;
 }
@@ -120,4 +138,17 @@ div.tag {
     width: 100%; height: 40px;
     position: absolute;
     bottom: 7px;
+}
+
+/* result css */
+.result-tag-area {
+    height: 80px;
+    margin: 5px 5px;
+}
+.result-tag {
+    text-align: center;
+    font-size: 30px;
+}
+.result {
+    width: 100%;
 }

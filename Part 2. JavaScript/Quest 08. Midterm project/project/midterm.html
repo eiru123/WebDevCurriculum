@@ -12,8 +12,17 @@
         <template id="add">
             <div class="add-area">
                 <div class="name-tag-area">
-                    <input type="text" class="name" required>
-                    <input type="text" class="tag" required>
+                    <input type="text" class="name">
+                    <div class="tag-area">
+                        <select class="tag">
+                            <option class="default" value="default">기본</option>
+                            <option class="study" value="study">공부</option>
+                            <option class="exercise" value="exercise">운동</option>
+                            <option class="self-dev" value="self-dev">자기 계발</option>
+                            <option class="work" value="work">업무</option>
+                        </select>
+                    </div>
+                    
                 </div>
                 <div class="add-buttons-area">
                     <button class="button">추가</button>
@@ -24,7 +33,7 @@
         <!-- plans area template -->
         <template id="plans-area">
             <div class="plans-area">
-                <div class="plans-contents-area"></div>
+                <div class="contents-area"></div>
                 <div class="plans-buttons-area">
                     <button class="sort button">정렬</button>
                     <button class="all-remove button">모두 삭제</button>
@@ -51,16 +60,18 @@
         <!-- result area template -->
         <template id="results-area">
             <div class="results-area">
-                <div class="results-contents-area"></div>
+                <div class="contents-area"></div>
                 <div class="clock-area total">00 : 00 : 00</div>
             </div>
         </template>
         <template id="result-tag-area">
-            <div class="result-tag-area"></div>
+            <div class="result-tag-area">
+                <div class="result-tag">ss</div>
+                <div class="clock-area tags">00 : 00 : 00</div>
+            </div>
         </template>
         <template id="result">
             <div class="result">
-                <div class="result-tag"></div>
                 <div class="result-name"></div>
                 <div class="result-time"></div>
             </div>

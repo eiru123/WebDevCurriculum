@@ -23,16 +23,19 @@ class App{
     addEvent(){
         document.addEventListener("add", (e)=>{
             this.planArea.addPlan(e.name, e.tag);
+            this.resultArea.addResult(e.name, e.tag);
         });
     }
     allRemoveEvent(){
         document.addEventListener("allRemove", ()=>{
             this.planArea.allRemoveEvent();
+            this.resultArea.allRemoveEvent();
         });
     }
     removeEvent(){
         document.addEventListener("remove", (e)=>{
             this.planArea.removePlan(e.name);
+            this.resultArea.removeResult(e.name, e.tag);
         });
     }
     allStopEvent(){
@@ -71,7 +74,7 @@ class Add{
         
         button.addEventListener("click", ()=>{
             const event = new Event("add");
-            if(inputName.value.length === 0 || inputTag.value.length ===0) {
+            if(inputName.value.length === 0) {
                 alert("input todolist name & tag")
                 return false;
             }
@@ -85,7 +88,6 @@ class Add{
 class PlanArea{
     constructor(){
         this.planList = new Map();
-        this.tagList = new Map();
         this.makeDom();
     }
     makeDom(){
@@ -106,7 +108,6 @@ class PlanArea{
         });
     }
     allRemoveEvent(){
-        
         for(let key of this.planList.keys()){
             if(this.planList.get(key).clockStart){
                 alert("아직 작동중인 타이머가 있습니다.");
@@ -124,7 +125,7 @@ class PlanArea{
             return false;
         }
         const plan = new Plan(name, tag);
-        const plansArea = document.querySelector(".plans-contents-area");
+        const plansArea = document.querySelector(".contents-area");
         plansArea.appendChild(plan.getDom());
         
         this.planList.set(name, plan);
@@ -163,8 +164,8 @@ class Plan{
 
         this.dom = document.importNode(template.content, true).querySelector(".plan-area");
         this.dom.querySelector(".name").innerHTML = this.name;
-        this.dom.querySelector(".tag").innerHTML = this.tag;
-
+        this.dom.querySelector(".tag").innerHTML = this.selectTagName();
+        this.dom.classList.add(this.tag);
         this.clock = this.dom.querySelector(".clock-area");
 
         this.startButtonEvent();
@@ -173,6 +174,15 @@ class Plan{
     }
     getDom(){
         return this.dom;
+    }
+    selectTagName(){
+        switch(this.tag){
+            case "default": return "기본";
+            case "study": return "공부";
+            case "exercise": return "운동";
+            case "self-dev": return "자기 계발";
+            case "work": return "업무";
+        }
     }
     runWatch(){
         this.milis++;
@@ -242,6 +252,7 @@ class Plan{
             }
             const event = new Event("remove");
             event.name = this.name;
+            event.tag = this.tag
             document.dispatchEvent(event);
         });
     }
@@ -251,6 +262,8 @@ class ResultArea{
     constructor(){
         this.milis = 0;
         this.run = false;
+        this.tag = new Map();
+        this.checkDuplicate = new Set();
         this.makeDom();
     }
     makeDom(){
@@ -296,16 +309,61 @@ class ResultArea{
         const clock = this.dom.querySelector(".total");
         clock.innerHTML = this.hour + " : " + this.minute + " : " + this.second;
     }
-}
+    addResult(name, tag){
+        if(this.checkDuplicate.has(name)) return false;
+        this.checkDuplicate.add(name);
+        if(!this.tag.has(tag)) {
+            this.tag.set(tag, new ResultPane(tag));
+            this.dom.querySelector(".contents-area").appendChild(this.tag.get(tag).getDom());
+        }
+        this.tag.get(tag).addResult(name, tag);
+    }
+    allRemoveEvent(){
+        
+    }
+    removeResult(name, tag){
 
-class Result{
+    }
+}
+class ResultPane{
     constructor(tag){
+        this.time = 0;
+        this.tag = tag;
+        this.results = new Map();
+        this.makeDom();
+    }
+    makeDom(){
+        const template = document.querySelector("#result-tag-area");
+        this.dom = document.importNode(template.content, true).querySelector(".result-tag-area");
+        this.dom.classList.add(this.tag);
+        this.dom.querySelector(".result-tag").innerHTML = this.selectTagName();
+    }
+    getDom(){
+        return this.dom;
+    }
+    addResult(name, tag){
+        this.results.set(name, new Result(name, tag));
+    }
+    selectTagName(){
+        switch(this.tag){
+            case "default": return "기본";
+            case "study": return "공부";
+            case "exercise": return "운동";
+            case "self-dev": return "자기 계발";
+            case "work": return "업무";
+        }
+    }
+}
+class Result{
+    constructor(name, tag){
+        this.name = name;
         this.tag = tag;
         this.makeDom();
     }
     makeDom(){
         const template = document.querySelector("#result");
         this.dom = document.importNode(template.content, true).querySelector(".result");
+        
     }
     getDom(){
         return this.dom;
