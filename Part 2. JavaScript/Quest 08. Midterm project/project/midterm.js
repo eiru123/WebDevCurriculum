@@ -78,6 +78,8 @@ class Add{
             event.name = inputName.value;
             event.tag = inputTag.value;
             document.dispatchEvent(event);
+            inputName.value = "";
+            inputTag.querySelector(".default").selected = true;
         });
     }
 }
