@@ -9,9 +9,9 @@ class Notepad {
 		this.setApp();
 	}
 	setApp(){
-		this.menubar = new Menubar();
-		this.tabs = new Tabs();
-		this.content = new Content();
+		this.menubar = new Menubar().dom;
+		this.tabs = new Tabs().dom;
+		this.content = new Content().dom;
 
 		this.dom.appendChild(this.menubar);
 		this.dom.appendChild(this.tabs);
