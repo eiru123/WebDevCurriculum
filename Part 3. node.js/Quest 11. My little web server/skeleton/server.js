@@ -7,6 +7,7 @@ http.createServer((req, res) => {
 	let reqUrl = url.parse(req.url);
 	if(reqUrl.pathname === "/foo"){
 		let query = querystring.parse(reqUrl.query);
+		console.log(JSON.stringify(query));
 		console.log('hello ' + query.bar);
 		let tempStr = '';
 		req.on('data', chunk=>{
