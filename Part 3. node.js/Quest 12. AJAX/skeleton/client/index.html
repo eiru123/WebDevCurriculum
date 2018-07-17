@@ -12,7 +12,9 @@
 		<template id="menubar">
 			<div class="menubar">
 				<ul class="flex">
-					<li><button class="new-file" type="button">새 파일</button></li>
+					<li>
+						<button class="new-file" type="button">새 파일</button>
+					</li>
 					<li>
 						<label for="open">열기</lable>
 						<input id="open" class="open" type="file">
@@ -28,13 +30,14 @@
 			</div>
 		</template>
 		<template id="tab">
-			<button class="tab">
-
-			</button>
+			<div class="tab">
+				<span class="tab-name"></span>
+				<button class="close invisible"></button>
+			</div>
 		</template>
 		<template id="content">
 			<div class="content">
-				<textarea name="content" class="write-space display-out"></textarea>
+				<textarea name="content" class="write-space invisible"></textarea>
 			</div>
 		</template>
 		<script>

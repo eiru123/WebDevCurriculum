@@ -5,33 +5,50 @@ class Notepad {
 		this.menubar = null;
 		this.tabs = null;
 		this.content = null;
-
+		this.i = 1;
 		this.setApp();
 	}
 	setApp(){
-		this.menubar = new Menubar().dom;
-		this.tabs = new Tabs().dom;
-		this.content = new Content().dom;
+		this.menubar = new Menubar(this.dom);
+		this.tabs = new Tabs(this.dom);
+		this.content = new Content(this.dom);
 
-		this.dom.appendChild(this.menubar);
-		this.dom.appendChild(this.tabs);
-		this.dom.appendChild(this.content);
+		this.dom.appendChild(this.menubar.dom);
+		this.dom.appendChild(this.tabs.dom);
+		this.dom.appendChild(this.content.dom);
+
+		this.setEventListeners();
+	}
+	
+	setEventListeners(){
+		this.dom.addEventListener('new', ()=>{
+			console.log(this);
+			this.tabs.addTab("untitle-" + this.i + ".txt");
+			this.i++;
+		});
 	}
 };
 
 class Menubar {
-	constructor(){
+	constructor(parentDom){
 		const template = document.querySelector("#menubar");
-        this.dom = document.importNode(template.content, true).querySelector(".menubar");
+		this.dom = document.importNode(template.content, true).querySelector(".menubar");
+		this.parentDom = parentDom;
+		this.newFile();
 	}
 	newFile(){
 		const button = this.dom.querySelector('.new-file');
-		button.addEventListener('click',()=>{
+		button.addEventListener('click', ()=>{
+			const event = new Event('new');
 
+			this.parentDom.dispatchEvent(event);
 		});
 	}
 	openFile(){
 		const button = this.dom.querySelector('.open');
+		button.addEventListener('click', (e) => {
+			console.log(e);
+		});
 	}
 	saveFile(){
 		const button = this.dom.querySelector('.save');
@@ -42,14 +59,11 @@ class Menubar {
 }
 
 class Tabs {
-	constructor(){
+	constructor(parentDom){
 		const template = document.querySelector("#tabs");
 		this.dom = document.importNode(template.content, true).querySelector(".tabs");
-		
+		this.parentDom = parentDom;
 		//test
-		for(let i=0; i<30;i++){
-			this.addTab("addTab" + (i + 1));
-		}
 	}
 	addTab(name){
 		const newTab = new Tab(name);
@@ -63,10 +77,19 @@ class Tab {
 		this.name = name;
 		this.dom.innerHTML = name;
 	}
+	addClickEvent(){
+		this.dom.addEventListener('click', () => {
+			
+		});
+	}
 }
 class Content {
-	constructor(){
+	constructor(parentDom){
 		const template = document.querySelector("#content");
-        this.dom = document.importNode(template.content, true).querySelector(".content");
+		this.dom = document.importNode(template.content, true).querySelector(".content");
+		this.parentDom = parentDom;
+	}
+	addEventListeners(){
+		// const event;
 	}
 }

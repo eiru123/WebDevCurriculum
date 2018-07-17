@@ -85,12 +85,12 @@ button:hover{
 	width: 10%; height: 60px;
 	text-align: center;
 	line-height: 60px;
+	background-color: #f3f3f3;
 	border: 0;
 	border-right: 1px solid #000000;
 	border-top: 1px solid #000000;
 }
-.focus{
-	outline: none;
+.tab:active{
 	background-color: #bababa;
 }
 /* content */
@@ -105,6 +105,6 @@ button:hover{
 	font-size: 16px;
 	resize: none;
 }
-/* .display-out{
+.invisible{
 	display: none;
-} */
+}
