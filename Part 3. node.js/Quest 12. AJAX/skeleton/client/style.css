@@ -40,22 +40,58 @@ li {
 	flex-direction: column;
 }
 input[type="file"] {
+	position: absolute;
 	width: 1px;
 	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	border: 0;
+}
+label{
+	display: inline-block; 
+	width: 100%; height: 100%;
+	padding: .5em .75em; 
+	color: #000000; 
+	font-size: inherit; 
+	line-height: 70px; 
+	text-align: center;
+	background-color: #f3f3f3; 
+	cursor: pointer; 
+	border: 1px solid #afafaf; 
+}
+label:active{
+	background-color: #bababa;
 }
 button {
 	display: block;
 	width: 80px; height: 80px;
 }
+button:hover{
+	cursor: pointer;
+}
 /* tabs */
 .tabs{
+	position: relative;
 	width: 100%; height: 100%;
 	background-color: blue;
 	grid-area: tabs;
+	display: flex;
+	overflow: hidden;
 }
 /* tab */
 .tab{
-
+	width: 10%; height: 60px;
+	text-align: center;
+	line-height: 60px;
+	border: 0;
+	border-right: 1px solid #000000;
+	border-top: 1px solid #000000;
+}
+.focus{
+	outline: none;
+	background-color: #bababa;
 }
 /* content */
 .content{
@@ -63,3 +99,12 @@ button {
 	background-color: green;
 	grid-area: content;
 }
+.write-space{
+	width: 100%; height: 100%;
+	outline: none;
+	font-size: 16px;
+	resize: none;
+}
+/* .display-out{
+	display: none;
+} */

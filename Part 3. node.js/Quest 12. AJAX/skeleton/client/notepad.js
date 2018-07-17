@@ -24,18 +24,44 @@ class Menubar {
 		const template = document.querySelector("#menubar");
         this.dom = document.importNode(template.content, true).querySelector(".menubar");
 	}
+	newFile(){
+		const button = this.dom.querySelector('.new-file');
+		button.addEventListener('click',()=>{
+
+		});
+	}
+	openFile(){
+		const button = this.dom.querySelector('.open');
+	}
+	saveFile(){
+		const button = this.dom.querySelector('.save');
+	}
+	deleteFile(){
+		const button = this.dom.querySelector('.delete');
+	}
 }
 
 class Tabs {
 	constructor(){
 		const template = document.querySelector("#tabs");
-        this.dom = document.importNode(template.content, true).querySelector(".tabs");
+		this.dom = document.importNode(template.content, true).querySelector(".tabs");
+		
+		//test
+		for(let i=0; i<30;i++){
+			this.addTab("addTab" + (i + 1));
+		}
+	}
+	addTab(name){
+		const newTab = new Tab(name);
+		this.dom.appendChild(newTab.dom);
 	}
 }
 class Tab {
-	constructor(){
+	constructor(name){
 		const template = document.querySelector("#tab");
 		this.dom = document.importNode(template.content, true).querySelector(".tab");
+		this.name = name;
+		this.dom.innerHTML = name;
 	}
 }
 class Content {
