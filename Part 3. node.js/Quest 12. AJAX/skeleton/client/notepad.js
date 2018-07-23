@@ -22,8 +22,10 @@ class Notepad {
 	
 	setEventListeners(){
 		this.dom.addEventListener('new', ()=>{
-			console.log(this);
-			this.tabs.addTab("untitle-" + this.i + ".txt");
+			const name = "untitle-" + this.i + ".txt";
+			this.tabs.addTab(name);
+
+			this.content.newFile(name);
 			this.i++;
 		});
 	}
@@ -47,7 +49,7 @@ class Menubar {
 	openFile(){
 		const button = this.dom.querySelector('.open');
 		button.addEventListener('click', (e) => {
-			console.log(e);
+			// console.log(e);
 		});
 	}
 	saveFile(){
@@ -90,6 +92,26 @@ class Content {
 		this.parentDom = parentDom;
 	}
 	addEventListeners(){
-		// const event;
+	}
+	newFile(name){
+		const data = {name: name};
+		fetch('http://localhost:8080/new', {
+			method: 'POST',
+			body: JSON.stringify(data),
+			headers: new Headers({
+				'Content-Type': 'application/json'
+			})
+		}).then((res) => {
+			
+			if(res.status === 200 || res.status === 201){
+				res.text().then(text => {
+					console.log(text);
+					console.log(JSON.parse(text));
+					
+				});
+			}else{
+				console.error(res.statusText);
+			}
+		}).catch(err => console.error(err));
 	}
 }
