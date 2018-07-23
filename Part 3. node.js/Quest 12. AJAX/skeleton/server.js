@@ -13,14 +13,18 @@ app.get('/', (req, res) => {
 
 /* TODO: 여기에 처리해야 할 요청의 주소별로 동작을 채워넣어 보세요..! */
 app.get('/show', (req, res) => {
-	
-	res.redirect('/');
+	fs.readFile(__dirname + '/data/' + req.query.name, 'utf8', (err, data) => {
+		const jsonData = {data: data};
+
+		res.writeHead(200, {'Content-Type': 'application/json'});
+		res.end(JSON.stringify(jsonData));
+	});
 });
 
 app.get('/move', (req, res) => {
 	res.redirect('/');
 });
-
+ 
 app.post('/save', (req, res) => {
 	res.redirect('/');
 });
@@ -31,22 +35,18 @@ app.post('/new', (req, res) => {
 	fs.stat(fullFileName, (err, stat) => {
 		if(err) return;
 		else{
-			res.redirect('/');
-			console.log(res);
 			res.send();
 			return;
 		}
 	});
 	res.json({name: 'dddd'});
-	console.log(res);
-	console.log(res.body);
+	
 	fs.writeFile(__dirname + '/data/' + req.body.name, '', 'utf8', (err) => {
 		// if(err) {
 		// 	console.log(err);
 		// 	return console.log('error!');
 		// }
 	});
-	res.redirect('/');
 });
 
 const server = app.listen(8080, () => {
