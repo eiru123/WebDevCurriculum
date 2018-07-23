@@ -42,6 +42,11 @@ class Notepad {
 		this.dom.addEventListener('moveTab', (e)=>{
 			this.content.openFile(e.fileName);
 		});
+		this.dom.addEventListener('close', (e)=>{
+			const name = e.fileName;
+			console.log(name);
+			this.tabs.closeTab(name);
+		});
 	}
 };
 
@@ -94,26 +99,29 @@ class Tabs {
 		const template = document.querySelector("#tabs");
 		this.dom = document.importNode(template.content, true).querySelector(".tabs");
 		this.parentDom = parentDom;
-		this.tabs = [];
+		this.tabs = new Map();
 		//test
 	}
 	addTab(name){
 		const newTab = new Tab(name, this.parentDom);
-		this.tabs.forEach((element)=>{
-			console.log(element)
+		this.tabs.forEach((element, key, map)=>{
 			element.dom.classList.remove('focus');
 		});
-		this.tabs.push(newTab);
+		this.tabs.set(name, newTab);
 		this.dom.appendChild(newTab.dom);
 	}
 	getFocusTab(){
 		let name;
 		this.tabs.forEach(tab => {
-			console.log(tab);
 			if(tab.dom.classList.contains('focus'))
 				name = tab.name;
 		});
 		return name;
+	}
+	closeTab(name){
+		console.log(name);
+		this.tabs.get(name).dom.remove();
+		this.tabs.delete(key);
 	}
 }
 class Tab {
@@ -123,13 +131,16 @@ class Tab {
 		this.name = name;
 		this.parentDom = parentDom;
 		this.dom.querySelector('.tab-name').innerHTML = this.name;
-		this.addClickEvent();
+		
+		this.focusEvent('click');
+		this.focusEvent('focus');
+		this.addCloseEvent();
+		this.dom.dispatchEvent(new Event('focus'));
 	}
-	addClickEvent(){
-		this.dom.addEventListener('click', () => {
+	focusEvent(eventName){
+		this.dom.addEventListener(eventName, () => {
 			const tabs = document.querySelectorAll('.tab');
 			tabs.forEach((element)=>{
-				console.log(element);
 				element.classList.remove('focus');
 				element.querySelector('.close').classList.add('invisible');
 			});
@@ -138,6 +149,14 @@ class Tab {
 
 			const event = new Event('moveTab');
 
+			event.fileName = this.name;
+			this.parentDom.dispatchEvent(event);
+		});
+	}
+	addCloseEvent(){
+		this.dom.querySelector('.close').addEventListener('click', ()=>{
+			const event = new Event('close');
+			console.log('close');
 			event.fileName = this.name;
 			this.parentDom.dispatchEvent(event);
 		});
