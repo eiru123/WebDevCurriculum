@@ -5,7 +5,6 @@ class Notepad {
 		this.menubar = null;
 		this.tabs = null;
 		this.content = null;
-		this.i = 1;
 		this.setApp();
 	}
 	setApp(){
@@ -21,31 +20,42 @@ class Notepad {
 	}
 	
 	setEventListeners(){
-		this.dom.addEventListener('new', ()=>{
-			const name = "untitle-" + this.i + ".txt";
-			this.tabs.addTab(name);
-
-			this.content.newFile(name);
-			this.i++;
+		this.dom.addEventListener('new', (e)=>{
+			const name = e.fileName;
+			this.tabs.addTab(name, this.content, true);
 		});
 		this.dom.addEventListener('open', (e)=>{
 			const name = e.fileName;
-
-			this.tabs.addTab(name);
-			this.content.openFile(name);
+			this.tabs.addTab(name, this.content);
 		});
 		this.dom.addEventListener('save', ()=>{
-			const name = this.tabs.getFocusTab();
-			console.log(name);
+			if(this.tabs.isEmpty()){
+				alert('저장할 파일을 선택하세요.');
+				return false;
+			}
+			const name = this.tabs.getFocusedTab();
 			this.content.saveFile(name);
 		});
 		this.dom.addEventListener('moveTab', (e)=>{
 			this.content.openFile(e.fileName);
 		});
 		this.dom.addEventListener('close', (e)=>{
-			const name = e.fileName;
-			console.log(name);
-			this.tabs.closeTab(name);
+			const name = this.tabs.getFocusedTab();
+			this.tabs.closeTab(name, this.content);
+		});
+		this.dom.addEventListener('delete', ()=>{
+			this.dom.dispatchEvent(new Event('close'));
+			const name = this.tabs.getFocusedTab();
+			fetch('http://localhost:8080/delete/' + name, {
+				method: 'DELETE'
+			})
+			.then((res)=>{
+				if(res.status === 200 || res.status === 201){
+					console.log('success');
+				}else{
+					console.error(res.statusText);
+				}
+			});
 		});
 	}
 };
@@ -55,15 +65,41 @@ class Menubar {
 		const template = document.querySelector("#menubar");
 		this.dom = document.importNode(template.content, true).querySelector(".menubar");
 		this.parentDom = parentDom;
+
+		this.existFiles = new Set();
+		this.exist();
+
 		this.newFile();
 		this.openFile();
 		this.saveFile();
+		this.deleteFile();
+	}
+	exist(){
+		fetch('http://localhost:8080/exist')
+		.then((res) => {
+			if(res.status === 200 || res.status === 201){
+				return res.json();
+			}
+		})
+		.then((data) => {
+			data.fileNames.forEach(file => {
+				this.existFiles.add(file);
+			});
+		})
+		.catch(err => console.error(err));
 	}
 	newFile(){
 		const button = this.dom.querySelector('.new-file');
 		button.addEventListener('click', ()=>{
 			const event = new Event('new');
-
+			event.fileName = prompt('파일명을 입력하세요.');
+			if(!event.fileName) {
+				alert('파일명을 입력하세요.');
+				return false;
+			}else if(this.existFiles.has(event.fileName)){
+				alert('같은 이름의 파일이 이미 존재합니다.');
+				return false;
+			}
 			this.parentDom.dispatchEvent(event);
 		});
 	}
@@ -73,6 +109,7 @@ class Menubar {
 			const event = new Event('open');
 
 			event.fileName = button.files[0]['name'];
+			button.value='';
 			this.parentDom.dispatchEvent(event);
 		});
 	}
@@ -80,7 +117,7 @@ class Menubar {
 		const button = this.dom.querySelector('.save');
 		button.addEventListener('click', ()=>{
 			const event = new Event('save');
-
+			
 			this.parentDom.dispatchEvent(event);
 		});
 	}
@@ -100,17 +137,24 @@ class Tabs {
 		this.dom = document.importNode(template.content, true).querySelector(".tabs");
 		this.parentDom = parentDom;
 		this.tabs = new Map();
-		//test
 	}
-	addTab(name){
+	addTab(name, content, newEvent){
+		if(this.tabs.has(name)){
+			console.log('if name');
+			this.tabs.get(name).dom.dispatchEvent(new Event('focus'));
+			return;
+		}
 		const newTab = new Tab(name, this.parentDom);
 		this.tabs.forEach((element, key, map)=>{
 			element.dom.classList.remove('focus');
 		});
 		this.tabs.set(name, newTab);
 		this.dom.appendChild(newTab.dom);
+		if(newEvent) content.newFile(name);
+		else content.openFile(name);
+		console.log(this.tabs);
 	}
-	getFocusTab(){
+	getFocusedTab(){
 		let name;
 		this.tabs.forEach(tab => {
 			if(tab.dom.classList.contains('focus'))
@@ -118,10 +162,15 @@ class Tabs {
 		});
 		return name;
 	}
-	closeTab(name){
-		console.log(name);
+	closeTab(name, content){
+		content.closeTab();
+		console.log(this.tabs.get(name).dom);
 		this.tabs.get(name).dom.remove();
-		this.tabs.delete(key);
+		this.tabs.delete(name);
+	}
+	isEmpty(){
+		if(this.tabs.size === 0) return true;
+		else return false;
 	}
 }
 class Tab {
@@ -138,7 +187,9 @@ class Tab {
 		this.dom.dispatchEvent(new Event('focus'));
 	}
 	focusEvent(eventName){
-		this.dom.addEventListener(eventName, () => {
+		this.dom.addEventListener(eventName, (e) => {
+			e.stopImmediatePropagation();
+			
 			const tabs = document.querySelectorAll('.tab');
 			tabs.forEach((element)=>{
 				element.classList.remove('focus');
@@ -154,10 +205,10 @@ class Tab {
 		});
 	}
 	addCloseEvent(){
-		this.dom.querySelector('.close').addEventListener('click', ()=>{
+		this.dom.querySelector('.close').addEventListener('click', (e)=>{
+			e.stopImmediatePropagation();
+			
 			const event = new Event('close');
-			console.log('close');
-			event.fileName = this.name;
 			this.parentDom.dispatchEvent(event);
 		});
 	}
@@ -188,12 +239,13 @@ class Content {
 		})
 		.then(() => {
 			const writeArea = this.dom.querySelector('.write-space');
-			writeArea.innerHTML = '';
+			writeArea.value = '';
 			writeArea.classList.remove('invisible');
 		}).catch(err => console.error(err));
 	}
 	openFile(name){
 		const data = 'http://localhost:8080/show?name=' + name;
+		
 		fetch(data)
 		.then((res) => {
 			if(res.status === 200 || res.status === 201){
@@ -204,19 +256,19 @@ class Content {
 		})
 		.then((data) => {
 			const writeArea = this.dom.querySelector('.write-space');
-			writeArea.innerHTML = data.data || '';
+			writeArea.value = data.data || '';
 			writeArea.classList.remove('invisible');
 		})
 		.catch(err => console.error(err));
 	}
 	saveFile(name){
-		const htmlData = this.dom.querySelector('.write-space').innerHTML || '';
+		const htmlData = this.dom.querySelector('.write-space').value || '';
 		const saveData = {
 			name: name,
 			data: htmlData
 		};
 		fetch('http://localhost:8080/save', {
-			method: 'POST',
+			method: 'PUT',
 			body: JSON.stringify(saveData),
 			headers: new Headers({
 				'Content-Type': 'application/json'
@@ -225,11 +277,14 @@ class Content {
 			if(res.status === 200 || res.status === 201){
 				res.text().then(text => {
 					console.log(text);
-					console.log(JSON.parse(text));
 				});
 			}else{
 				console.error(res.statusText);
 			}
 		}).catch(err => console.error(err));
+	}
+	closeTab(){
+		const writeArea = this.dom.querySelector('.write-space');
+		writeArea.value = '';
 	}
 }

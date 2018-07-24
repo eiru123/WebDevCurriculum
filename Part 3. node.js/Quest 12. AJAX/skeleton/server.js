@@ -21,12 +21,12 @@ app.get('/show', (req, res) => {
 	});
 });
 
-app.get('/move', (req, res) => {
-	res.redirect('/');
-});
- 
-app.post('/save', (req, res) => {
-	res.redirect('/');
+app.get('/exist', (req, res) =>{
+	const fileNames = fs.readdirSync(__dirname + '/data');
+	
+	const fileNameJson = {fileNames: fileNames};
+	res.writeHead(200, {'Content-Type': 'application/json'});
+	res.end(JSON.stringify(fileNameJson));
 });
 
 app.post('/new', (req, res) => {
@@ -42,19 +42,36 @@ app.post('/new', (req, res) => {
 	res.json({name: 'dddd'});
 	
 	fs.writeFile(__dirname + '/data/' + req.body.name, '', 'utf8', (err) => {
-		// if(err) {
-		// 	console.log(err);
-		// 	return console.log('error!');
-		// }
+		if(err) {
+			console.log(err);
+			return console.log('error!');
+		}
 	});
 });
 
+app.put('/save', (req, res) => {
+	let fileName = req.body.name;
+	let fullFileName = __dirname + '/data/' + fileName;
+	fs.stat(fullFileName, (err, stat) => {
+		if(err) return;
+		else{
+			res.send();
+			return;
+		}
+	});
+	fs.writeFile(__dirname + '/data/' + req.body.name, req.body.data, 'utf8', (err) => {
+		if(err) {
+			console.log(err);
+			return console.log('error!');
+		}
+	});
+});
+
+app.delete('/delete/:fileName', (req, res) => {
+	fs.unlink(__dirname + '/data/' + req.params.fileName, (err)=>{
+		if(err) return console.error(err);
+	});
+});
 const server = app.listen(8080, () => {
 	console.log('Server started!');
 });
-
-// 나중에 이름 변경 관련 기능을 위해 사용!
-// console.log(fs.stat(__dirname + '/data/' + req.body.name, (err, stat) => {
-// 	console.log(err);
-// 	console.log(stat);
-// }));

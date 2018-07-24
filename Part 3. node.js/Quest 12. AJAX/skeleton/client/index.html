@@ -32,12 +32,14 @@
 		<template id="tab">
 			<div class="tab focus">
 				<span class="tab-name"></span>
-				<object class="close" data="windowclose.svg" type="image/svg+xml">
+				<div class='close'>
+					<img src="windowclose.svg">
+				</div>
 			</div>
 		</template>
 		<template id="content">
 			<div class="content">
-				<textarea name="content" class="write-space invisible"></textarea>
+				<textarea name="content" class="write-space"></textarea>
 			</div>
 		</template>
 		<script>
