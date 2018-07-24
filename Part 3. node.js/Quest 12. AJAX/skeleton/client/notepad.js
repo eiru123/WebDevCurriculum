@@ -233,15 +233,13 @@ class Content {
 			})
 		}).then((res) => {
 			if(res.status === 200 || res.status === 201){
-				console.log('success');
+				this.writeArea.value = '';
+				this.writeArea.classList.remove('invisible');
 			}else{
 				console.error(res.statusText);
 			}
 		})
-		.then(() => {
-			this.writeArea.value = '';
-			this.writeArea.classList.remove('invisible');
-		}).catch(err => console.error(err));
+		.catch(err => console.error(err));
 	}
 	openFile(name){
 		const data = 'http://localhost:8080/show?name=' + name;
