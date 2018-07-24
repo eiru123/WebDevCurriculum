@@ -39,7 +39,6 @@ app.post('/new', (req, res) => {
 			return;
 		}
 	});
-	res.json({name: 'dddd'});
 	
 	fs.writeFile(__dirname + '/data/' + req.body.name, '', 'utf8', (err) => {
 		if(err) {
@@ -50,15 +49,6 @@ app.post('/new', (req, res) => {
 });
 
 app.put('/save', (req, res) => {
-	let fileName = req.body.name;
-	let fullFileName = __dirname + '/data/' + fileName;
-	fs.stat(fullFileName, (err, stat) => {
-		if(err) return;
-		else{
-			res.send();
-			return;
-		}
-	});
 	fs.writeFile(__dirname + '/data/' + req.body.name, req.body.data, 'utf8', (err) => {
 		if(err) {
 			console.log(err);
