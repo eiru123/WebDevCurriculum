@@ -20,14 +20,17 @@ class Notepad {
 	}
 	
 	setEventListeners(){
+		// new File event
 		this.dom.addEventListener('new', (e)=>{
 			const name = e.fileName;
 			this.tabs.addTab(name, this.content, true);
 		});
+		// open event
 		this.dom.addEventListener('open', (e)=>{
 			const name = e.fileName;
 			this.tabs.addTab(name, this.content);
 		});
+		// save event
 		this.dom.addEventListener('save', ()=>{
 			if(this.tabs.isEmpty()){
 				alert('저장할 파일을 선택하세요.');
@@ -36,13 +39,16 @@ class Notepad {
 			const name = this.tabs.getFocusedTab();
 			this.content.saveFile(name);
 		});
+		// move tab event
 		this.dom.addEventListener('moveTab', (e)=>{
 			this.content.openFile(e.fileName);
 		});
+		// close event
 		this.dom.addEventListener('close', (e)=>{
 			const name = this.tabs.getFocusedTab();
 			this.tabs.closeTab(name, this.content);
 		});
+		// delete event
 		this.dom.addEventListener('delete', ()=>{
 			this.dom.dispatchEvent(new Event('close'));
 			const name = this.tabs.getFocusedTab();
@@ -140,7 +146,6 @@ class Tabs {
 	}
 	addTab(name, content, newEvent){
 		if(this.tabs.has(name)){
-			console.log('if name');
 			this.tabs.get(name).dom.dispatchEvent(new Event('focus'));
 			return;
 		}
@@ -152,7 +157,6 @@ class Tabs {
 		this.dom.appendChild(newTab.dom);
 		if(newEvent) content.newFile(name);
 		else content.openFile(name);
-		console.log(this.tabs);
 	}
 	getFocusedTab(){
 		let name;
@@ -164,7 +168,6 @@ class Tabs {
 	}
 	closeTab(name, content){
 		content.closeTab();
-		console.log(this.tabs.get(name).dom);
 		this.tabs.get(name).dom.remove();
 		this.tabs.delete(name);
 	}
@@ -218,6 +221,7 @@ class Content {
 		const template = document.querySelector("#content");
 		this.dom = document.importNode(template.content, true).querySelector(".content");
 		this.parentDom = parentDom;
+		this.writeArea = this.dom.querySelector('.write-space');
 	}
 	newFile(name){
 		const data = {name: name};
@@ -229,18 +233,14 @@ class Content {
 			})
 		}).then((res) => {
 			if(res.status === 200 || res.status === 201){
-				res.text().then(text => {
-					console.log(text);
-					console.log(JSON.parse(text));
-				});
+				console.log('success');
 			}else{
 				console.error(res.statusText);
 			}
 		})
 		.then(() => {
-			const writeArea = this.dom.querySelector('.write-space');
-			writeArea.value = '';
-			writeArea.classList.remove('invisible');
+			this.writeArea.value = '';
+			this.writeArea.classList.remove('invisible');
 		}).catch(err => console.error(err));
 	}
 	openFile(name){
@@ -255,14 +255,13 @@ class Content {
 			}
 		})
 		.then((data) => {
-			const writeArea = this.dom.querySelector('.write-space');
-			writeArea.value = data.data || '';
-			writeArea.classList.remove('invisible');
+			this.writeArea.value = data.data || '';
+			this.writeArea.classList.remove('invisible');
 		})
 		.catch(err => console.error(err));
 	}
 	saveFile(name){
-		const htmlData = this.dom.querySelector('.write-space').value || '';
+		const htmlData = this.writeArea.value || '';
 		const saveData = {
 			name: name,
 			data: htmlData
@@ -284,7 +283,6 @@ class Content {
 		}).catch(err => console.error(err));
 	}
 	closeTab(){
-		const writeArea = this.dom.querySelector('.write-space');
-		writeArea.value = '';
+		this.writeArea.value = '';
 	}
 }
