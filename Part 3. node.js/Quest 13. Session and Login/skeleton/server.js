@@ -47,7 +47,9 @@ app.post('/new', (req, res) => {
 		}
 	});
 });
-
+app.post('/login', (req, res) => {
+	res.redirect('/');
+});
 app.put('/save', (req, res) => {
 	fs.writeFile(__dirname + '/data/' + req.body.name, req.body.data, 'utf8', (err) => {
 		if(err) {
