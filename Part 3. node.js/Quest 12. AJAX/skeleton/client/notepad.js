@@ -140,11 +140,9 @@ class Menubar {
 class Tabs {
 	constructor(parentDom){
 		const template = document.querySelector("#tabs");
-		this.dom = document.importNode(template.content, true).querySelector(".tabs-area");
+		this.dom = document.importNode(template.content, true).querySelector(".tabs");
 		this.parentDom = parentDom;
 		this.tabs = new Map();
-		this.login = false;
-		this.setLoginCheck();
 	}
 	addTab(name, content, newEvent){
 		if(this.tabs.has(name)){
@@ -156,24 +154,9 @@ class Tabs {
 			element.dom.classList.remove('focus');
 		});
 		this.tabs.set(name, newTab);
-		this.dom.querySelector('.tabs').appendChild(newTab.dom);
+		this.dom.appendChild(newTab.dom);
 		if(newEvent) content.newFile(name);
 		else content.openFile(name);
-	}
-	// 로그인이 되어있는지 아닌지 체크하여 login 관련 창에 아이디나 사용자없음을 표시
-	setLoginCheck(id){
-		const loginCheck = this.dom.querySelector('.login-check');
-		if(this.login){
-			loginCheck.innerHTML = id;
-		}else{
-			loginCheck.innerHTML = '사용자 없음';
-		}
-	}	
-	setLogin(login){
-		this.login = login;
-	}
-	getLogin(){
-		return this.login;
 	}
 	getFocusedTab(){
 		let name;

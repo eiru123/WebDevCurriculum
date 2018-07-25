@@ -5,20 +5,30 @@ class Notepad {
 		this.menubar = null;
 		this.tabs = null;
 		this.content = null;
+		this.login = null;
+
 		this.setApp();
 	}
 	setApp(){
 		this.menubar = new Menubar(this.dom);
 		this.tabs = new Tabs(this.dom);
 		this.content = new Content(this.dom);
+		this.login = new Login(this.dom);
 
 		this.dom.appendChild(this.menubar.dom);
 		this.dom.appendChild(this.tabs.dom);
 		this.dom.appendChild(this.content.dom);
+		this.dom.appendChild(this.login.dom);
 
 		this.setEventListeners();
 	}
-	
+	adjustEventLiseners(){
+		if(this.tabs.getLogin()){
+			this.setEventListeners();
+		}else{
+			this.removeEventListeners();
+		}
+	}
 	setEventListeners(){
 		// new File event
 		this.dom.addEventListener('new', (e)=>{
@@ -63,6 +73,12 @@ class Notepad {
 				}
 			});
 		});
+		this.dom.addEventListener('login', ()=>{
+			this.login.toggleInvisible();
+		});
+	}
+	removeEventListeners(){
+
 	}
 };
 
@@ -79,6 +95,7 @@ class Menubar {
 		this.openFile();
 		this.saveFile();
 		this.deleteFile();
+		this.login();
 	}
 	exist(){
 		fetch('http://localhost:8080/exist')
@@ -135,14 +152,24 @@ class Menubar {
 			this.parentDom.dispatchEvent(event);
 		});
 	}
+	login(){
+		const button = this.dom.querySelector('.login');
+		button.addEventListener('click', () => {
+			const event = new Event('login');
+
+			this.parentDom.dispatchEvent(event);
+		});
+	}
 }
 
 class Tabs {
 	constructor(parentDom){
 		const template = document.querySelector("#tabs");
-		this.dom = document.importNode(template.content, true).querySelector(".tabs");
+		this.dom = document.importNode(template.content, true).querySelector(".tabs-area");
 		this.parentDom = parentDom;
 		this.tabs = new Map();
+		this.login = false;
+		this.setLoginCheck();
 	}
 	addTab(name, content, newEvent){
 		if(this.tabs.has(name)){
@@ -154,9 +181,24 @@ class Tabs {
 			element.dom.classList.remove('focus');
 		});
 		this.tabs.set(name, newTab);
-		this.dom.appendChild(newTab.dom);
+		this.dom.querySelector('.tabs').appendChild(newTab.dom);
 		if(newEvent) content.newFile(name);
 		else content.openFile(name);
+	}
+	// 로그인이 되어있는지 아닌지 체크하여 login 관련 창에 아이디나 사용자없음을 표시
+	setLoginCheck(id){
+		const loginCheck = this.dom.querySelector('.login-check');
+		if(this.login){
+			loginCheck.innerHTML = id;
+		}else{
+			loginCheck.innerHTML = '사용자 없음';
+		}
+	}	
+	setLogin(login){
+		this.login = login;
+	}
+	getLogin(){
+		return this.login;
 	}
 	getFocusedTab(){
 		let name;
@@ -282,5 +324,16 @@ class Content {
 	}
 	closeTab(){
 		this.writeArea.value = '';
+	}
+}
+class Login{
+	constructor(parentDom){
+		const template = document.querySelector("#login");
+		this.dom = document.importNode(template.content, true).querySelector(".login-form");
+		this.parentDom = parentDom;
+	}
+	toggleInvisible(){
+		if(this.dom.classList.contains('invisible')) this.dom.classList.remove('invisible');
+		else this.dom.classList.add('invisible');
 	}
 }

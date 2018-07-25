@@ -48,7 +48,7 @@ input[type="file"] {
 	clip: rect(0, 0, 0, 0);
 	border: 0;
 }
-label{
+li>label{
 	display: inline-block; 
 	width: 100%; height: 100%;
 	padding: .5em .75em; 
@@ -60,7 +60,7 @@ label{
 	cursor: pointer; 
 	border: 1px solid #afafaf; 
 }
-label:active{
+li>label:active{
 	background-color: #bababa;
 }
 button {
@@ -71,12 +71,22 @@ button:hover {
 	cursor: pointer;
 }
 /* tabs */
+.tabs-area{
+	display: flex;
+	width: 100%; height: 100%;
+	grid-area: tabs;
+	justify-content: space-between;
+}
 .tabs {
 	position: relative;
 	width: 100%; height: 100%;
-	grid-area: tabs;
 	display: flex;
 	overflow: hidden;
+}
+.login-check {
+	width: 120px; height: 60px;
+	text-align: center;
+	line-height: 60px;
 }
 /* tab */
 .tab {
@@ -107,16 +117,23 @@ button:hover {
 	background-color: #000000;
 }
 /* content */
-.content{
+.content {
 	width: 100%; height: 100%;
 	grid-area: content;
 }
-.write-space{
+.write-space {
 	width: 100%; height: 100%;
 	outline: none;
 	font-size: 16px;
 	resize: none;
 }
-.invisible{
+.invisible {
 	display: none;
+}
+
+/* login */
+.login-form {
+	position: absolute;
+	width: 300px; height: 150px;
+	border: 1px solid #000000;
 }

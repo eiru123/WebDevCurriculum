@@ -13,22 +13,20 @@
 			<div class="menubar">
 				<ul class="flex">
 					<li>
-						<button class="new-file">새 파일</button>
+						<button class="new-file" type="button">새 파일</button>
 					</li>
 					<li>
 						<label for="open">열기</lable>
 						<input id="open" class="open" type="file">
 					</li>
-					<li><button class="save">저장</button></li>
-					<li><button class="delete">삭제</button></li>
-					<li><button class="login">로그인</button></li>
+					<li><button class="save" type="button">저장</button></li>
+					<li><button class="delete" type="button">삭제</button></li>
 				</ul>
 			</div>
 		</template>
 		<template id="tabs">
-			<div class="tabs-area">
-				<div class="tabs"></div>
-				<div class="login-check"></div>
+			<div class="tabs">
+
 			</div>
 		</template>
 		<template id="tab">
@@ -42,23 +40,6 @@
 		<template id="content">
 			<div class="content">
 				<textarea name="content" class="write-space"></textarea>
-			</div>
-		</template>
-		<template id="login"></template>
-			<div class="login-form invisible">
-				<form method="post">
-					<table>
-						<tr>
-							<td><label>Username</label></td>
-							<td><input type="text" name="login"></td>
-						</tr>
-						<tr>
-							<td><label>Password</label></td>
-							<td><input type="password" name="password"></td>
-						</tr>
-						<input type="submit" name="">
-					</table>
-				</form>
 			</div>
 		</template>
 		<script>
