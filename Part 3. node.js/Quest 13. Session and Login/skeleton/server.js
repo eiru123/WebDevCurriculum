@@ -54,12 +54,21 @@ app.post('/new', (req, res) => {
 	});
 });
 app.post('/login', (req, res) => {
-	console.log(req.body);
-	console.log(users);
-	console.log(users.get('user'));
-	console.log(users.get('knowre'));
-	console.log(users.get('admin'));
+	const username = req.body.username;
+	const password = req.body.password;
+	
+	if(findUser(username, password)){
+		// 세션생성
+	}
 });
+
+app.get('/logout', (req, res) => {
+	// 세션파기
+});
+function findUser(name, password){
+	if(users.has(name) && users.get(name) === password) return true;
+	else return false;
+}
 app.put('/save', (req, res) => {
 	fs.writeFile(__dirname + '/data/' + req.body.name, req.body.data, 'utf8', (err) => {
 		if(err) {
