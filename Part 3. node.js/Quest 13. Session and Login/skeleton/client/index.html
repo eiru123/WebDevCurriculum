@@ -41,23 +41,21 @@
 		</template>
 		<template id="content">
 			<div class="content">
-				<textarea name="content" class="write-space"></textarea>
+				<textarea name="content" class="write-space" readonly></textarea>
 			</div>
 		</template>
 		<template id="login">
 			<div class="login-form invisible">
-				<form action="/login" method="POST">
-					<div class="login-table">
-						<span>Username</span>
-						<input type="text" name="login">
-						<span>Password</span>
-						<input type="password" name="password">
-						<div class="blank"></div>
-						<div class="submit-area">
-							<input class="submit" type="submit" name="">
-						</div>
+				<div class="login-table">
+					<span>Username</span>
+					<input class="input" type="text" name="name" autocomplete="off">
+					<span>Password</span>
+					<input class="input" type="password" name="password">
+					<div class="blank"></div>
+					<div class="submit-area">
+						<button class="submit" name="">로그인</button>
 					</div>
-				</form>
+				</div>
 			</div>
 		</template>
 		<script>

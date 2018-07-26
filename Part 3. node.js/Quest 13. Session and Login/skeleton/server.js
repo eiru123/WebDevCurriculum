@@ -4,8 +4,14 @@ const express = require('express'),
 	fs = require('fs'),
 	app = express();
 
+const users = new Map([['knowre', '1234'],
+	['user', '4567'],
+	['admin', 'dltmd']
+]);
+
 app.use(express.static('client'));
-app.use(bodyparser.json({ extended:false}));
+app.use(bodyparser.urlencoded({ extended:false}));
+app.use(bodyparser.json());
 
 app.get('/', (req, res) => {
 	res.sendFile(path.join(__dirname, 'index.html'));
@@ -48,7 +54,11 @@ app.post('/new', (req, res) => {
 	});
 });
 app.post('/login', (req, res) => {
-	res.redirect('/');
+	console.log(req.body);
+	console.log(users);
+	console.log(users.get('user'));
+	console.log(users.get('knowre'));
+	console.log(users.get('admin'));
 });
 app.put('/save', (req, res) => {
 	fs.writeFile(__dirname + '/data/' + req.body.name, req.body.data, 'utf8', (err) => {

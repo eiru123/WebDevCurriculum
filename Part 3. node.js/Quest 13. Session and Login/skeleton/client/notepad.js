@@ -322,6 +322,12 @@ class Content {
 			}
 		}).catch(err => console.error(err));
 	}
+	setReadOnly(){
+		this.dom.setAttribute('readonly', 'true');
+	}
+	removeReadOnly(){
+		this.dom.removeAttribute('readonly');
+	}
 	closeTab(){
 		this.writeArea.value = '';
 	}
@@ -331,6 +337,32 @@ class Login{
 		const template = document.querySelector("#login");
 		this.dom = document.importNode(template.content, true).querySelector(".login-form");
 		this.parentDom = parentDom;
+		this.buttonListener();
+	}
+	buttonListener(){
+		const button = this.dom.querySelector('.submit');
+		button.addEventListener('click', ()=>{
+				const username = this.dom.querySelector('[name="name"]').value;
+				const password = this.dom.querySelector('[name="password"]').value;
+
+				if(!username || !password) {
+					alert('아이디 또는 비밀번호를 입력하세요.');
+					return false;
+				}
+				const loginData = {
+					username: username,
+					password: password
+				};
+				fetch('http://localhost:8080/login', {
+					method: 'POST',
+					body: JSON.stringify(loginData),
+					headers: new Headers({
+						'Content-Type': 'application/json'
+					})
+				}).then((res) => {
+
+				}).catch(err => console.error(err));
+		});
 	}
 	toggleInvisible(){
 		if(this.dom.classList.contains('invisible')) this.dom.classList.remove('invisible');
