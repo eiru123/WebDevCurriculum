@@ -78,6 +78,9 @@ class Notepad {
 		this.dom.addEventListener('login', ()=>{
 			this.login.toggleInvisible();
 		});
+		this.dom.addEventListener('setReadOnly', ()=>{
+			this.content.setReadOnly();
+		});
 	}
 	removeEventListeners(){
 
@@ -240,10 +243,21 @@ class Tabs {
 		content.closeTab();
 		this.tabs.get(name).dom.remove();
 		this.tabs.delete(name);
+		if(this.tabs.size === 0){
+			this.parentDom.dispatchEvent(new Event('setReadOnly'));
+		}
 	}
 	isEmpty(){
 		if(this.tabs.size === 0) return true;
 		else return false;
+	}
+	// 로그아웃시 모든 탭 삭제
+	tabsClear(){
+		this.tabs.map((value, key, map) => {
+			value.dom.remove();
+		});
+		this.tabs.clear();
+		this.parentDom.dispatchEvent(new Event('setReadOnly'));
 	}
 }
 class Tab {
@@ -292,14 +306,10 @@ class Content {
 		this.dom = document.importNode(template.content, true).querySelector(".content");
 		this.parentDom = parentDom;
 		this.writeArea = this.dom.querySelector('.write-space');
-
-		this.dom.addEventListener('click', ()=>{
-			console.log(this.writeArea.selectionStart);
-		});
 	}
 	newFile(name){
 		const data = {name: name};
-		fetch('http://localhost:8080/new', {
+		fetch('http://localhost:8080/file', {
 			method: 'POST',
 			body: JSON.stringify(data),
 			headers: new Headers({
@@ -316,9 +326,11 @@ class Content {
 		.catch(err => console.error(err));
 	}
 	openFile(name){
-		const data = 'http://localhost:8080/show?name=' + name;
+		const data = 'http://localhost:8080/file?name=' + name;
 		
-		fetch(data)
+		fetch(data, {
+			headers: new Headers({Accept: 'text/plain'})
+		})
 		.then((res) => {
 			if(res.status === 200 || res.status === 201){
 				return res.json();
@@ -338,7 +350,7 @@ class Content {
 			name: name,
 			data: htmlData
 		};
-		fetch('http://localhost:8080/save', {
+		fetch('http://localhost:8080/file', {
 			method: 'PUT',
 			body: JSON.stringify(saveData),
 			headers: new Headers({
@@ -359,6 +371,9 @@ class Content {
 	}
 	removeReadOnly(){
 		this.writeArea.removeAttribute('readonly');
+	}
+	getCursorPosition(){
+		return this.writeArea.selectionStart;
 	}
 	closeTab(){
 		this.writeArea.value = '';

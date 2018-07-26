@@ -50,7 +50,6 @@ class Notepad {
 		});
 		// delete event
 		this.dom.addEventListener('delete', ()=>{
-			this.dom.dispatchEvent(new Event('close'));
 			const name = this.tabs.getFocusedTab();
 			fetch('http://localhost:8080/delete/' + name, {
 				method: 'DELETE'
@@ -62,6 +61,7 @@ class Notepad {
 					console.error(res.statusText);
 				}
 			});
+			this.dom.dispatchEvent(new Event('close'));
 		});
 	}
 };
