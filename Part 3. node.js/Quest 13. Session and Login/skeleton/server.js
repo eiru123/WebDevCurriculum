@@ -2,6 +2,7 @@ const express = require('express'),
 	path = require('path'),
 	bodyparser = require('body-parser'),
 	fs = require('fs'),
+	session = require('express-session'),
 	app = express();
 
 const users = new Map([['knowre', '1234'],
@@ -12,6 +13,11 @@ const users = new Map([['knowre', '1234'],
 app.use(express.static('client'));
 app.use(bodyparser.urlencoded({ extended:false}));
 app.use(bodyparser.json());
+app.use(session({
+	secret: 'dfasdfanka',
+	resave: false,
+	saveUninitialized: true
+}));
 
 app.get('/', (req, res) => {
 	res.sendFile(path.join(__dirname, 'index.html'));
@@ -56,14 +62,24 @@ app.post('/new', (req, res) => {
 app.post('/login', (req, res) => {
 	const username = req.body.username;
 	const password = req.body.password;
-	
+	const sess = req.session;
+	console.dir(sess);
 	if(findUser(username, password)){
 		// 세션생성
+		sess.name = username;
+		sess.password = password;
+		console.dir(sess);
 	}
+	console.dir(sess);
+	res.end();
 });
 
 app.get('/logout', (req, res) => {
 	// 세션파기
+	console.dir(req.session);
+	delete req.session.username;
+	console.dir(req.session);
+	res.redirect('/');
 });
 function findUser(name, password){
 	if(users.has(name) && users.get(name) === password) return true;

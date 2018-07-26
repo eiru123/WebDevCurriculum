@@ -2,6 +2,7 @@
   "private": true,
   "dependencies": {
     "body-parser": "^1.18.3",
-    "express": "*"
+    "express": "*",
+    "express-session": "^1.15.6"
   }
 }

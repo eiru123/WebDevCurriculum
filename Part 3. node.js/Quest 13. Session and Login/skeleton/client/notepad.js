@@ -38,6 +38,8 @@ class Notepad {
 		// open event
 		this.dom.addEventListener('open', (e)=>{
 			const name = e.fileName;
+			if(this.content.writeArea.hasAttribute('readonly')) 
+				this.content.removeReadOnly();
 			this.tabs.addTab(name, this.content);
 		});
 		// save event
@@ -60,7 +62,6 @@ class Notepad {
 		});
 		// delete event
 		this.dom.addEventListener('delete', ()=>{
-			this.dom.dispatchEvent(new Event('close'));
 			const name = this.tabs.getFocusedTab();
 			fetch('http://localhost:8080/delete/' + name, {
 				method: 'DELETE'
@@ -72,6 +73,7 @@ class Notepad {
 					console.error(res.statusText);
 				}
 			});
+			this.dom.dispatchEvent(new Event('close'));
 		});
 		this.dom.addEventListener('login', ()=>{
 			this.login.toggleInvisible();
@@ -96,6 +98,7 @@ class Menubar {
 		this.saveFile();
 		this.deleteFile();
 		this.login();
+		this.logout();
 	}
 	exist(){
 		fetch('http://localhost:8080/exist')
@@ -130,7 +133,7 @@ class Menubar {
 		const button = this.dom.querySelector('.open');
 		button.addEventListener('change', () => {
 			const event = new Event('open');
-
+			
 			event.fileName = button.files[0]['name'];
 			button.value='';
 			this.parentDom.dispatchEvent(event);
@@ -156,9 +159,33 @@ class Menubar {
 		const button = this.dom.querySelector('.login');
 		button.addEventListener('click', () => {
 			const event = new Event('login');
-
+			this.loginButtonChange();
 			this.parentDom.dispatchEvent(event);
 		});
+	}
+	logout(){
+		const button = this.dom.querySelector('.logout');
+		button.addEventListener('click', () => {
+			const event = new Event('logout');
+			if(!confirm('로그아웃 하시겠습니까?')) return false;
+			this.loginButtonChange();
+			fetch('http://localhost:8080/logout').then((res) => {
+
+				}).catch(err => console.error(err));
+			this.parentDom.dispatchEvent(event);
+		});
+	}
+	loginButtonChange(){
+		const login = this.dom.querySelector('.loginli');
+		const logout = this.dom.querySelector('.logoutli');
+
+		if(login.classList.contains('invisible')){
+			logout.classList.add('invisible');
+			login.classList.remove('invisible');
+		}else{
+			login.classList.add('invisible');
+			logout.classList.remove('invisible');
+		}
 	}
 }
 
@@ -168,7 +195,7 @@ class Tabs {
 		this.dom = document.importNode(template.content, true).querySelector(".tabs-area");
 		this.parentDom = parentDom;
 		this.tabs = new Map();
-		this.login = false;
+		this.loginBool = false;
 		this.setLoginCheck();
 	}
 	addTab(name, content, newEvent){
@@ -188,17 +215,17 @@ class Tabs {
 	// 로그인이 되어있는지 아닌지 체크하여 login 관련 창에 아이디나 사용자없음을 표시
 	setLoginCheck(id){
 		const loginCheck = this.dom.querySelector('.login-check');
-		if(this.login){
+		if(this.loginBool){
 			loginCheck.innerHTML = id;
 		}else{
 			loginCheck.innerHTML = '사용자 없음';
 		}
 	}	
 	setLogin(login){
-		this.login = login;
+		this.loginBool = login;
 	}
 	getLogin(){
-		return this.login;
+		return this.loginBool;
 	}
 	getFocusedTab(){
 		let name;
@@ -206,6 +233,7 @@ class Tabs {
 			if(tab.dom.classList.contains('focus'))
 				name = tab.name;
 		});
+
 		return name;
 	}
 	closeTab(name, content){
@@ -264,6 +292,10 @@ class Content {
 		this.dom = document.importNode(template.content, true).querySelector(".content");
 		this.parentDom = parentDom;
 		this.writeArea = this.dom.querySelector('.write-space');
+
+		this.dom.addEventListener('click', ()=>{
+			console.log(this.writeArea.selectionStart);
+		});
 	}
 	newFile(name){
 		const data = {name: name};
@@ -323,10 +355,10 @@ class Content {
 		}).catch(err => console.error(err));
 	}
 	setReadOnly(){
-		this.dom.setAttribute('readonly', 'true');
+		this.writeArea.setAttribute('readonly', 'true');
 	}
 	removeReadOnly(){
-		this.dom.removeAttribute('readonly');
+		this.writeArea.removeAttribute('readonly');
 	}
 	closeTab(){
 		this.writeArea.value = '';
@@ -360,7 +392,10 @@ class Login{
 						'Content-Type': 'application/json'
 					})
 				}).then((res) => {
-
+					if(res.status === 200 || res.status === 201){
+						console.log('success');
+						this.parentDom.dispatchEvent(new Event('login'));
+					}
 				}).catch(err => console.error(err));
 		});
 	}
