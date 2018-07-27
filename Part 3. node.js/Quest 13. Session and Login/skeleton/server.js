@@ -18,18 +18,18 @@ app.use(session({
 	resave: false,
 	saveUninitialized: true
 }));
-// app.use((req, res, next)=>{
-// 	//처음 앱 생성시 data 폴더가 없을 경우 생성해준다.
-// 	fs.readdir(__dirname + '/data', (err)=>{
-// 		if(err) {
-// 			console.log('none');
-// 			fs.mkdir(__dirname + '/data',(err)=>{
-// 				if(err) console.error(err);
-// 			});
-// 		}
-		
-// 	});
-// });
+app.use((req, res, next)=>{
+	//처음 앱 생성시 data 폴더가 없을 경우 생성해준다.
+	fs.readdir(__dirname + '/data', (err)=>{
+		if(err) {
+			console.log('none');
+			fs.mkdir(__dirname + '/data',(err)=>{
+				if(err) console.error(err);
+			});
+		}
+	});
+	next();
+});
 app.get('/', (req, res) => {
 	res.sendFile(path.join(__dirname, 'index.html'));
 });
