@@ -5,26 +5,38 @@ const express = require('express'),
 	session = require('express-session'),
 	app = express();
 
-const users = new Map([['knowre', '1234'],
+const users = new Map([
+	['knowre', '1234'],
 	['user', '4567'],
 	['admin', 'dltmd']
 ]);
 
 app.use(express.static('client'));
-app.use(bodyparser.urlencoded({ extended:false}));
 app.use(bodyparser.json());
 app.use(session({
 	secret: 'dfasdfanka',
 	resave: false,
 	saveUninitialized: true
 }));
-
+// app.use((req, res, next)=>{
+// 	//처음 앱 생성시 data 폴더가 없을 경우 생성해준다.
+// 	fs.readdir(__dirname + '/data', (err)=>{
+// 		if(err) {
+// 			console.log('none');
+// 			fs.mkdir(__dirname + '/data',(err)=>{
+// 				if(err) console.error(err);
+// 			});
+// 		}
+		
+// 	});
+// });
 app.get('/', (req, res) => {
 	res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 /* TODO: 여기에 처리해야 할 요청의 주소별로 동작을 채워넣어 보세요..! */
 app.get('/exist', (req, res) =>{
+	console.log('wht');
 	const fileNames = fs.readdirSync(__dirname + '/data');
 	
 	const fileNameJson = {fileNames: fileNames};
@@ -77,18 +89,21 @@ app.delete('/file/:fileName', (req, res) => {
 });
 
 app.post('/login', (req, res) => {
+	console.log('login');
 	const username = req.body.username;
 	const password = req.body.password;
 	const sess = req.session;
+	let success = false;
 	console.dir(sess);
 	if(findUser(username, password)){
 		// 세션생성
 		sess.name = username;
 		sess.password = password;
 		console.dir(sess);
+		success = true;
 	}
 	console.dir(sess);
-	res.end();
+	res.end(JSON.stringify({success: success}));
 });
 
 app.get('/logout', (req, res) => {

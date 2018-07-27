@@ -75,8 +75,9 @@ class Notepad {
 			});
 			this.dom.dispatchEvent(new Event('close'));
 		});
-		this.dom.addEventListener('login', ()=>{
+		this.dom.addEventListener('login-area', (e)=>{
 			this.login.toggleInvisible();
+			if(e.success) this.menubar.loginButtonChange();
 		});
 		this.dom.addEventListener('setReadOnly', ()=>{
 			this.content.setReadOnly();
@@ -104,6 +105,7 @@ class Menubar {
 		this.logout();
 	}
 	exist(){
+		console.log('exist');
 		fetch('http://localhost:8080/exist')
 		.then((res) => {
 			if(res.status === 200 || res.status === 201){
@@ -161,8 +163,8 @@ class Menubar {
 	login(){
 		const button = this.dom.querySelector('.login');
 		button.addEventListener('click', () => {
-			const event = new Event('login');
-			this.loginButtonChange();
+			const event = new Event('login-area');
+			
 			this.parentDom.dispatchEvent(event);
 		});
 	}
@@ -409,7 +411,16 @@ class Login{
 				}).then((res) => {
 					if(res.status === 200 || res.status === 201){
 						console.log('success');
-						this.parentDom.dispatchEvent(new Event('login'));
+						return res.json();
+					}
+				}).then((data) => {
+					console.log(data);
+					if(data.success){
+						const event = new Event('login-area');
+						event.success = data.success;
+						this.parentDom.dispatchEvent(event);
+					}else{
+						
 					}
 				}).catch(err => console.error(err));
 		});
