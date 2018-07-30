@@ -76,8 +76,41 @@ class Notepad {
 			this.dom.dispatchEvent(new Event('close'));
 		});
 		this.dom.addEventListener('login-area', (e)=>{
-			this.login.toggleInvisible();
 			if(e.success) this.menubar.loginButtonChange();
+			else if(e.success === false) {
+				alert('잘못된 아이디 또는 비밀번호입니다.');
+				return false;
+			}
+			this.login.toggleInvisible();
+		});
+		this.dom.addEventListener('logout', ()=> {
+			const tabs = this.tabs.getTabs();
+			const focusedTabs = this.tabs.getFocusedTab();
+			const cursorPosition = this.content.getCursorPosition();
+			const username = this.login.getUserName();
+
+			const data = {
+				tabs: tabs,
+				focusedTabs: focusedTabs,
+				cursorPosition: cursorPosition,
+				username: username
+			};
+			// document.cookie = data;
+
+			fetch('http://localhost:8080/logout', {
+				method: 'POST',
+				body: JSON.stringify(data),
+				headers: new Headers({
+					'Content-Type': 'application/json'
+				})
+			}).then((res)=>{
+				if(res.status === 200){
+					console.log('success');
+					this.menubar.loginButtonChange();
+				} 
+			}).catch((err) => {
+				console.error(err);
+			});
 		});
 		this.dom.addEventListener('setReadOnly', ()=>{
 			this.content.setReadOnly();
@@ -172,11 +205,15 @@ class Menubar {
 		const button = this.dom.querySelector('.logout');
 		button.addEventListener('click', () => {
 			const event = new Event('logout');
+			let success = false;
 			if(!confirm('로그아웃 하시겠습니까?')) return false;
-			this.loginButtonChange();
-			fetch('http://localhost:8080/logout').then((res) => {
-
-				}).catch(err => console.error(err));
+			// this.loginButtonChange();
+			// fetch('http://localhost:8080/logout').then((res) => {
+			// 		return res.json();
+			// 	}).then((data)=>{
+			// 		if(data.success) success = data.success;
+			// 	}).catch(err => console.error(err));
+			// if(!success) return false;
 			this.parentDom.dispatchEvent(event);
 		});
 	}
@@ -216,6 +253,14 @@ class Tabs {
 		this.dom.querySelector('.tabs').appendChild(newTab.dom);
 		if(newEvent) content.newFile(name);
 		else content.openFile(name);
+	}
+	getTabs(){
+		const openedTabs = []
+		this.tabs.keys().forEach((value, key, map)=>{
+			openedTabs.push(key);
+		});
+		console.log(openedTabs);
+		return this.tabs.keys();
 	}
 	// 로그인이 되어있는지 아닌지 체크하여 login 관련 창에 아이디나 사용자없음을 표시
 	setLoginCheck(id){
@@ -386,6 +431,7 @@ class Login{
 		const template = document.querySelector("#login");
 		this.dom = document.importNode(template.content, true).querySelector(".login-form");
 		this.parentDom = parentDom;
+		this.username = null;
 		this.buttonListener();
 	}
 	buttonListener(){
@@ -415,15 +461,18 @@ class Login{
 					}
 				}).then((data) => {
 					console.log(data);
+					const event = new Event('login-area');
+					event.success = data.success;
+					this.parentDom.dispatchEvent(event);
 					if(data.success){
-						const event = new Event('login-area');
-						event.success = data.success;
-						this.parentDom.dispatchEvent(event);
-					}else{
-						
+						this.username = username;
 					}
+					
 				}).catch(err => console.error(err));
 		});
+	}
+	getUserName(){
+		return this.username;
 	}
 	toggleInvisible(){
 		if(this.dom.classList.contains('invisible')) this.dom.classList.remove('invisible');

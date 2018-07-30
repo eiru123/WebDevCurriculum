@@ -2,6 +2,7 @@ const express = require('express'),
 	path = require('path'),
 	bodyparser = require('body-parser'),
 	fs = require('fs'),
+	cookieParser = require('cookie-parser'),
 	session = require('express-session'),
 	app = express();
 
@@ -13,6 +14,7 @@ const users = new Map([
 
 app.use(express.static('client'));
 app.use(bodyparser.json());
+app.use(cookieParser());
 app.use(session({
 	secret: 'dfasdfanka',
 	resave: false,
@@ -31,16 +33,21 @@ app.use((req, res, next)=>{
 	next();
 });
 app.get('/', (req, res) => {
+	res.cookie('string', 'cookie');
+	res.cookie('ddd', 'dddd');
 	res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 /* TODO: 여기에 처리해야 할 요청의 주소별로 동작을 채워넣어 보세요..! */
 app.get('/exist', (req, res) =>{
-	console.log('wht');
 	const fileNames = fs.readdirSync(__dirname + '/data');
 	
 	const fileNameJson = {fileNames: fileNames};
+	res.cookie('string', 'cookie');
+	res.cookie('ddd', 'dddd');
+	console.log(req.cookies);
 	res.writeHead(200, {'Content-Type': 'application/json'});
+	
 	res.end(JSON.stringify(fileNameJson));
 });
 
@@ -106,12 +113,20 @@ app.post('/login', (req, res) => {
 	res.end(JSON.stringify({success: success}));
 });
 
-app.get('/logout', (req, res) => {
+app.post('/logout', (req, res) => {
 	// 세션파기
 	console.dir(req.session);
 	delete req.session.username;
 	console.dir(req.session);
-	res.redirect('/');
+	console.dir(req.body);
+	let success = false;
+	req.session.destroy(function(err){
+		if(err) { throw err;}
+		console.log('logout success');
+		success = true;
+		res.end(JSON.stringify({success: success}));
+	});
+	res.end(JSON.stringify({success: success}));
 });
 
 function findUser(name, password){
