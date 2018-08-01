@@ -34,6 +34,7 @@ class Notepad {
 		this.dom.addEventListener('new', (e)=>{
 			const name = e.fileName;
 			this.tabs.addTab(name, this.content, true);
+			this.content.removeReadOnly();
 		});
 		// open event
 		this.dom.addEventListener('open', (e)=>{
@@ -81,22 +82,25 @@ class Notepad {
 				alert('잘못된 아이디 또는 비밀번호입니다.');
 				return false;
 			}
+			console.log(e.has);
+			if(e.has){
+				this.tabs.openTabs(e.data, this.content);
+			}
 			this.login.toggleInvisible();
 		});
 		this.dom.addEventListener('logout', ()=> {
 			const tabs = this.tabs.getTabs();
-			const focusedTabs = this.tabs.getFocusedTab();
+			const focusedTab = this.tabs.getFocusedTab();
 			const cursorPosition = this.content.getCursorPosition();
 			const username = this.login.getUserName();
 
 			const data = {
 				tabs: tabs,
-				focusedTabs: focusedTabs,
+				focusedTab: focusedTab,
 				cursorPosition: cursorPosition,
 				username: username
 			};
-			// document.cookie = data;
-
+			console.log(data);
 			fetch('http://localhost:8080/logout', {
 				method: 'POST',
 				body: JSON.stringify(data),
@@ -107,6 +111,8 @@ class Notepad {
 				if(res.status === 200){
 					console.log('success');
 					this.menubar.loginButtonChange();
+					this.content.closeTab();
+					this.tabs.tabsClear();
 				} 
 			}).catch((err) => {
 				console.error(err);
@@ -115,9 +121,6 @@ class Notepad {
 		this.dom.addEventListener('setReadOnly', ()=>{
 			this.content.setReadOnly();
 		});
-	}
-	removeEventListeners(){
-
 	}
 };
 
@@ -228,6 +231,7 @@ class Menubar {
 			login.classList.add('invisible');
 			logout.classList.remove('invisible');
 		}
+		console.log('loginButtonChange');
 	}
 }
 
@@ -242,7 +246,7 @@ class Tabs {
 	}
 	addTab(name, content, newEvent){
 		if(this.tabs.has(name)){
-			this.tabs.get(name).dom.dispatchEvent(new Event('focus'));
+			this.focusTab(name);
 			return;
 		}
 		const newTab = new Tab(name, this.parentDom);
@@ -256,11 +260,14 @@ class Tabs {
 	}
 	getTabs(){
 		const openedTabs = []
-		this.tabs.keys().forEach((value, key, map)=>{
+		for(let key of this.tabs.keys()){
 			openedTabs.push(key);
-		});
-		console.log(openedTabs);
-		return this.tabs.keys();
+		}
+	
+		return openedTabs;
+	}
+	focusTab(name){
+		this.tabs.get(name).dom.dispatchEvent(new Event('focus'));
 	}
 	// 로그인이 되어있는지 아닌지 체크하여 login 관련 창에 아이디나 사용자없음을 표시
 	setLoginCheck(id){
@@ -283,7 +290,6 @@ class Tabs {
 			if(tab.dom.classList.contains('focus'))
 				name = tab.name;
 		});
-
 		return name;
 	}
 	closeTab(name, content){
@@ -300,11 +306,19 @@ class Tabs {
 	}
 	// 로그아웃시 모든 탭 삭제
 	tabsClear(){
-		this.tabs.map((value, key, map) => {
+		this.tabs.forEach((value, key, map) => {
 			value.dom.remove();
 		});
 		this.tabs.clear();
 		this.parentDom.dispatchEvent(new Event('setReadOnly'));
+	}
+	openTabs(data, content){
+		data.tabs.map(name =>{
+			this.addTab(name, content);
+		});
+		this.focusTab(data.focusedTab);
+		content.removeReadOnly();
+		content.setCursor(data.cursorPosition);
 	}
 }
 class Tab {
@@ -422,6 +436,10 @@ class Content {
 	getCursorPosition(){
 		return this.writeArea.selectionStart;
 	}
+	setCursor(position){
+		console.log(position);
+		this.writeArea.selectionStart = position;
+	}
 	closeTab(){
 		this.writeArea.value = '';
 	}
@@ -456,18 +474,17 @@ class Login{
 					})
 				}).then((res) => {
 					if(res.status === 200 || res.status === 201){
-						console.log('success');
 						return res.json();
 					}
 				}).then((data) => {
-					console.log(data);
 					const event = new Event('login-area');
 					event.success = data.success;
+					event.has = data.has;
+					event.data = data;
 					this.parentDom.dispatchEvent(event);
 					if(data.success){
 						this.username = username;
 					}
-					
 				}).catch(err => console.error(err));
 		});
 	}
@@ -475,7 +492,13 @@ class Login{
 		return this.username;
 	}
 	toggleInvisible(){
-		if(this.dom.classList.contains('invisible')) this.dom.classList.remove('invisible');
-		else this.dom.classList.add('invisible');
+		if(this.dom.classList.contains('invisible')) {
+			this.dom.classList.remove('invisible');
+		}
+		else {
+			this.dom.classList.add('invisible');
+			this.dom.querySelector('[name="name"]').value = '';
+			this.dom.querySelector('[name="password"]').value = '';
+		}
 	}
 }

@@ -12,6 +12,7 @@ const users = new Map([
 	['admin', 'dltmd']
 ]);
 
+const usersData = new Map();
 app.use(express.static('client'));
 app.use(bodyparser.json());
 app.use(cookieParser());
@@ -96,37 +97,46 @@ app.delete('/file/:fileName', (req, res) => {
 });
 
 app.post('/login', (req, res) => {
-	console.log('login');
 	const username = req.body.username;
 	const password = req.body.password;
 	const sess = req.session;
 	let success = false;
-	console.dir(sess);
 	if(findUser(username, password)){
 		// 세션생성
 		sess.name = username;
-		sess.password = password;
-		console.dir(sess);
 		success = true;
 	}
+	if(usersData.has(username)){
+		console.log('user');
+		const user = usersData.get(username);
+		user.success = success;
+		user.has = true;
+		res.send(JSON.stringify(user));
+	}
 	console.dir(sess);
-	res.end(JSON.stringify({success: success}));
+	res.end(JSON.stringify({
+		success: success,
+		has: false
+	}));
 });
 
 app.post('/logout', (req, res) => {
 	// 세션파기
-	console.dir(req.session);
-	delete req.session.username;
-	console.dir(req.session);
-	console.dir(req.body);
+	const userData = req.body;
+	const sess = req.session;
+	console.log('logout');
+	console.dir(sess);
+	usersData.set(userData.username, userData);
 	let success = false;
-	req.session.destroy(function(err){
+	sess.destroy(function(err){
 		if(err) { throw err;}
 		console.log('logout success');
 		success = true;
 		res.end(JSON.stringify({success: success}));
 	});
+	console.log(usersData);
 	res.end(JSON.stringify({success: success}));
+	
 });
 
 function findUser(name, password){
