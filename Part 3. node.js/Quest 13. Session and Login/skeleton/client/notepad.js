@@ -438,7 +438,11 @@ class Content {
 	}
 	setCursor(position){
 		console.log(position);
-		this.writeArea.selectionStart = position;
+		this.writeArea.focus();
+		console.log(this.writeArea.setSelectionRange);
+		this.writeArea.setSelectionRange(position, position);
+		// const range = this.writeArea.createRange();
+		// range.setStart()
 	}
 	closeTab(){
 		this.writeArea.value = '';
