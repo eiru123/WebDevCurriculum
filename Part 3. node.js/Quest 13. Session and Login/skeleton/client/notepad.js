@@ -64,7 +64,7 @@ class Notepad {
 		// delete event
 		this.dom.addEventListener('delete', ()=>{
 			const name = this.tabs.getFocusedTab();
-			fetch('http://localhost:8080/delete/' + name, {
+			fetch('http://localhost:8080/file/' + name, {
 				method: 'DELETE'
 			})
 			.then((res)=>{
@@ -316,7 +316,7 @@ class Tabs {
 		data.tabs.map(name =>{
 			this.addTab(name, content);
 		});
-		this.focusTab(data.focusedTab);
+		if(data.focusedTab) this.focusTab(data.focusedTab);
 		content.removeReadOnly();
 		content.setCursor(data.cursorPosition);
 	}
@@ -482,6 +482,7 @@ class Login{
 					}
 				}).then((data) => {
 					const event = new Event('login-area');
+					console.log(data);
 					event.success = data.success;
 					event.has = data.has;
 					event.data = data;

@@ -34,12 +34,38 @@ app.use((req, res, next)=>{
 	next();
 });
 app.get('/', (req, res) => {
-	res.cookie('string', 'cookie');
-	res.cookie('ddd', 'dddd');
 	res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 /* TODO: 여기에 처리해야 할 요청의 주소별로 동작을 채워넣어 보세요..! */
+app.post('/login', (req, res) => {
+	const username = req.body.username;
+	const password = req.body.password;
+	const sess = req.session;
+	let success = false;
+	if(findUser(username, password)){
+		// 세션생성
+		sess.name = username;
+		success = true;
+	}
+	sess.save(()=>{
+		if(usersData.has(username)){
+			console.log('user');
+			const user = usersData.get(username);
+			user.success = success;
+			user.has = true;
+			res.send(JSON.stringify(user));
+		}else{
+			res.end(JSON.stringify({
+				success: success,
+				has: false
+			}));
+		}
+	});
+	
+	console.log('login');
+		console.log(sess);
+});
 app.get('/exist', (req, res) =>{
 	const fileNames = fs.readdirSync(__dirname + '/data');
 	
@@ -53,7 +79,8 @@ app.get('/exist', (req, res) =>{
 });
 
 app.get('/file', (req, res) => {
-	console.log(req.headers);
+	console.log('get');
+	console.log(req.session);
 	fs.readFile(__dirname + '/data/' + req.query.name, 'utf8', (err, data) => {
 		const jsonData = {data: data};
 
@@ -63,6 +90,8 @@ app.get('/file', (req, res) => {
 });
 
 app.post('/file', (req, res) => {
+	console.log('post');
+	console.log(req.session);
 	let fileName = req.body.name;
 	let fullFileName = __dirname + '/data/' + fileName;
 	fs.stat(fullFileName, (err, stat) => {
@@ -82,6 +111,8 @@ app.post('/file', (req, res) => {
 });
 
 app.put('/file', (req, res) => {
+	console.log('put');
+	console.log(req.session);
 	fs.writeFile(__dirname + '/data/' + req.body.name, req.body.data, 'utf8', (err) => {
 		if(err) {
 			console.log(err);
@@ -91,34 +122,13 @@ app.put('/file', (req, res) => {
 });
 
 app.delete('/file/:fileName', (req, res) => {
+	console.log('delete');
 	fs.unlink(__dirname + '/data/' + req.params.fileName, (err)=>{
 		if(err) return console.error(err);
 	});
 });
 
-app.post('/login', (req, res) => {
-	const username = req.body.username;
-	const password = req.body.password;
-	const sess = req.session;
-	let success = false;
-	if(findUser(username, password)){
-		// 세션생성
-		sess.name = username;
-		success = true;
-	}
-	if(usersData.has(username)){
-		console.log('user');
-		const user = usersData.get(username);
-		user.success = success;
-		user.has = true;
-		res.send(JSON.stringify(user));
-	}
-	console.dir(sess);
-	res.end(JSON.stringify({
-		success: success,
-		has: false
-	}));
-});
+
 
 app.post('/logout', (req, res) => {
 	// 세션파기
@@ -131,9 +141,12 @@ app.post('/logout', (req, res) => {
 	sess.destroy(function(err){
 		if(err) { throw err;}
 		console.log('logout success');
+		console.log(sess);
 		success = true;
 		res.end(JSON.stringify({success: success}));
 	});
+	res.clearCookie('sid');
+	console.log(sess);
 	console.log(usersData);
 	res.end(JSON.stringify({success: success}));
 	
