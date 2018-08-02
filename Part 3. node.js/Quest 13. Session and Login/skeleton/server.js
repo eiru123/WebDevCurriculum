@@ -17,7 +17,7 @@ app.use(express.static('client'));
 app.use(bodyparser.json());
 app.use(cookieParser());
 app.use(session({
-	secret: 'dfasdfanka',
+	secret: 'mysecret',
 	resave: false,
 	saveUninitialized: true
 }));
@@ -34,6 +34,8 @@ app.use((req, res, next)=>{
 	next();
 });
 app.get('/', (req, res) => {
+	console.log(req.session);
+	console.log('///');
 	res.sendFile(path.join(__dirname, 'index.html'));
 });
 
@@ -48,6 +50,7 @@ app.post('/login', (req, res) => {
 		sess.name = username;
 		success = true;
 	}
+	console.log(sess);
 	sess.save(()=>{
 		if(usersData.has(username)){
 			console.log('user');
@@ -64,7 +67,7 @@ app.post('/login', (req, res) => {
 	});
 	
 	console.log('login');
-		console.log(sess);
+	console.log(sess);
 });
 app.get('/exist', (req, res) =>{
 	const fileNames = fs.readdirSync(__dirname + '/data');
@@ -74,7 +77,7 @@ app.get('/exist', (req, res) =>{
 	res.cookie('ddd', 'dddd');
 	console.log(req.cookies);
 	res.writeHead(200, {'Content-Type': 'application/json'});
-	
+	console.log(req.session);
 	res.end(JSON.stringify(fileNameJson));
 });
 
