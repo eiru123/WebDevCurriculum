@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <div>
+        <button>Click Me!</button>
+    </div>
+    <div class="serverInfo">
+        Server is running on <span data-replace="platform">???</span>
+        with Node <span data-replace="nodeVersion">???</span>. It has
+        been up for <span data-replace="uptime">???</span>seconds.
+    </div>
+    <script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script>
+        function logEvent(handlerName, type, cancel, stop, stopImmediate){
+            return function(evt){
+                if(cancel) evt.preventDefault();
+                if(stop) evt.stopPropagation();
+                if(stopImmediate) evt.stopImmediatePropagation();
+                console.log(`${type}: ${handlerName}` + (evt.defaultPrevented? ' (canceled)': ''));
+            }
+        }
+
+        function addEventLogger(elt, type, action){
+            const capture = type === 'capture';
+            elt.addEventListener('click',
+            logEvent(elt.tagName, type, action==='cancel', 
+            action==='stop', action==='stop!'), capture);
+        }
+
+        const body = document.querySelector('body');
+        const div = document.querySelector('div');
+        const button = document.querySelector('button');
+        
+        addEventLogger(body, 'capture');
+        addEventLogger(body, 'bubble');
+        addEventLogger(div, 'capture', 'stop');
+        addEventLogger(div, 'bubble', );
+        addEventLogger(button, 'capture', );
+        addEventLogger(button, 'bubble');
+        
+        // function refreshServerInfo(){
+        //     const req = new XMLHttpRequest();
+        //     req.addEventListener('load', function(){
+        //         const data = JSON.parse(this.responseText);
+
+        //         const serverInfo = document.querySelector('.serverInfo');
+
+        //         Object.keys(data).forEach(p => {
+        //             const replacements = serverInfo.querySelectorAll(`[data-replace="${p}"]`);
+        //             for(let r of replacements){
+        //                 r.textContent = data[p];
+        //             }
+        //         });
+        //     });
+        //     req.open('GET', 'http://localhost:7070', true);
+        //     req.send();
+        // }
+        // refreshServerInfo();
+        // $(function(){
+        //     const $paras = $('p');
+        //     console.log($paras.length);
+        //     typeof $paras;
+        //     console.log($paras instanceof $);
+        //     console.log($paras instanceof jQuery);
+        // });
+        // const $newPara = $('<p>Newly created paragraph...</p>');
+        // $('div').html(`<i>All</i> PARAGRAPH REPLACED`);
+       
+    </script>
+</body>
+</html>

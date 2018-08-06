@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <style>
+        .callout{
+            border: solid 1px #ff0080;
+            margin: 2px 4px;
+            padding: 2px 6px;
+        }
+        .code{
+            background: #ccc;
+            margin: 1px 2px;
+            padding: 1px 4px;
+            font-family: monospace;
+        }
+        .highlight{
+            background: #ff0;
+            font-style: italic;
+        }
+    </style>
+    <title>Document</title>
+</head>
+<body>
+    <header>
+        <h1>Simple HTML</h1>
+    </header>
+    <div id="content">
+        <p>This is a <i>simple</i>HTML file.</p>
+        <div class="callout">
+            <p>This is as fancy as we'll get!</p>
+        </div>
+        <p>IDs (such as <span class="code">#content</span>)
+        are unique (there can only be one per page).</p>
+        <p>Classes (such as <span class="code">.callout</span>)
+        can be used on many elements.</p>
+        <div id="callout2" class="callout fancy">
+            <p>A single HTML element can have multiple classes.</p>
+        </div>
+
+        <button data-action="highlight" data-containing="unique">
+            Highlight paragraphs containing "unique"
+        </button>
+        <button data-action="removeHighlights">
+            Remove highlights
+        </button>
+    </div>
+    <script>
+        const p1 = document.createElement('p');
+        const p2 = document.createElement('p');
+
+        p1.textContent = "I was created dynamically!";
+        p2.textContent = "I was also created dynamically!";
+
+        const parent = document.getElementById('content');
+        const firstChild = parent.childNodes[0];
+
+        parent.insertBefore(p1, firstChild);
+        parent.appendChild(p2);
+
+        function printDOM(node, prefix){
+            console.log(prefix + node.nodeName);
+            for(let i=0; i<node.childNodes.length; i++){
+                printDOM(node.childNodes[i], prefix + '\t');
+            }
+        }
+        function highlightParas(containing){
+            if(typeof containing === 'string')
+                containing = new RegExp(`\\b${containing}\\b`, 'i');
+            const paras = document.getElementsByTagName('p');
+            console.log(paras);
+            for(let p of paras){
+                if(!containing.test(p.textContent)) continue;
+                p.classList.add('highlight');
+            }
+        }
+        function removeParaHighlights(){
+            const paras = document.querySelectorAll('p.highlight');
+            for(let p of paras){
+                p.classList.remove('highlight');
+            }
+        }
+        printDOM(document, '');
+
+        const highlightActions = document.querySelectorAll('[data-action="highlight"]');
+        for(let a of highlightActions){
+            a.addEventListener('click', evt => {
+                evt.preventDefault();
+                highlightParas(a.dataset.containing);
+            });
+        }
+
+        const removeHighlightActions = document.querySelectorAll('[data-action="removeHighlights"]');
+        for(let a of removeHighlightActions){
+            a.addEventListener('click', evt => {
+                evt.preventDefault();
+                removeParaHighlights();
+            });
+        }
+    </script>
+</body>
+</html>

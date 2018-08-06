@@ -57,9 +57,9 @@ app.post('/login', (req, res) => {
 			const user = usersData.get(username);
 			user.success = success;
 			user.has = true;
-			res.send(JSON.stringify(user));
+			res.json(JSON.stringify(user));
 		}else{
-			res.end(JSON.stringify({
+			res.json(JSON.stringify({
 				success: success,
 				has: false
 			}));
@@ -71,14 +71,9 @@ app.post('/login', (req, res) => {
 });
 app.get('/exist', (req, res) =>{
 	const fileNames = fs.readdirSync(__dirname + '/data');
-	
+	req.session.user = 'leeseung';
 	const fileNameJson = {fileNames: fileNames};
-	res.cookie('string', 'cookie');
-	res.cookie('ddd', 'dddd');
-	console.log(req.cookies);
-	res.writeHead(200, {'Content-Type': 'application/json'});
-	console.log(req.session);
-	res.end(JSON.stringify(fileNameJson));
+	res.json(JSON.stringify(fileNameJson));
 });
 
 app.get('/file', (req, res) => {
@@ -87,8 +82,8 @@ app.get('/file', (req, res) => {
 	fs.readFile(__dirname + '/data/' + req.query.name, 'utf8', (err, data) => {
 		const jsonData = {data: data};
 
-		res.writeHead(200, {'Content-Type': 'application/json'});
-		res.end(JSON.stringify(jsonData));
+		// res.writeHead(200, {'Content-Type': 'application/json'});
+		res.json(JSON.stringify(jsonData));
 	});
 });
 
@@ -100,7 +95,7 @@ app.post('/file', (req, res) => {
 	fs.stat(fullFileName, (err, stat) => {
 		if(err) return;
 		else{
-			res.send();
+			res.end();
 			return;
 		}
 	});
@@ -146,12 +141,12 @@ app.post('/logout', (req, res) => {
 		console.log('logout success');
 		console.log(sess);
 		success = true;
-		res.end(JSON.stringify({success: success}));
+		res.json(JSON.stringify({success: success}));
 	});
 	res.clearCookie('sid');
 	console.log(sess);
 	console.log(usersData);
-	res.end(JSON.stringify({success: success}));
+	res.json(JSON.stringify({success: success}));
 	
 });
 

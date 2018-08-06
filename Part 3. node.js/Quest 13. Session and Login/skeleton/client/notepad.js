@@ -149,6 +149,7 @@ class Menubar {
 			}
 		})
 		.then((data) => {
+			data = JSON.parse(data);
 			data.fileNames.forEach(file => {
 				this.existFiles.add(file);
 			});
@@ -400,6 +401,8 @@ class Content {
 			}
 		})
 		.then((data) => {
+			console.log('open');
+			console.log(data);
 			this.writeArea.value = data.data || '';
 			this.writeArea.classList.remove('invisible');
 		})

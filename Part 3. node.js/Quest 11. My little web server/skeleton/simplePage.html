@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <input type="text" id="foo">
+    <script>
+        function refreshServerInfo(){
+            const req = new XMLHttpRequest();
+            req.addEventListener('load', function(){
+                const data = JSON.parse(this.responseText);
+                const serverInfo = document.querySelector('.serverInfo');
+
+                Object.keys(data).forEach( p => {
+                    const replacements = serverInfo.querySelectorAll(`[data-replace='${p}']`);
+                    for(let r of replacements){
+                        r.textContent = data[p];
+                    }
+                });
+            });
+            // req.open('GET', 'http://localhost:8080/foo?bar=adsfasdf', true);
+            req.open('POST', 'http://localhost:8080/foo');
+            req.send("bar=dfasdf");
+            console.log(req);
+        }
+        refreshServerInfo();
+    </script>
+</body>
+</html>
