@@ -63,7 +63,7 @@ li>label{
 li>label:active{
 	background-color: #bababa;
 }
-button {
+button, a {
 	display: block;
 	width: 80px; height: 80px;
 }

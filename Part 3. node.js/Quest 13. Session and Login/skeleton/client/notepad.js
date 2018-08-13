@@ -5,7 +5,6 @@ class Notepad {
 		this.menubar = null;
 		this.tabs = null;
 		this.content = null;
-		this.login = null;
 
 		this.setApp();
 	}
@@ -13,21 +12,12 @@ class Notepad {
 		this.menubar = new Menubar(this.dom);
 		this.tabs = new Tabs(this.dom);
 		this.content = new Content(this.dom);
-		this.login = new Login(this.dom);
 
 		this.dom.appendChild(this.menubar.dom);
 		this.dom.appendChild(this.tabs.dom);
 		this.dom.appendChild(this.content.dom);
-		this.dom.appendChild(this.login.dom);
 
 		this.setEventListeners();
-	}
-	adjustEventLiseners(){
-		if(this.tabs.getLogin()){
-			this.setEventListeners();
-		}else{
-			this.removeEventListeners();
-		}
 	}
 	setEventListeners(){
 		// new File event
@@ -65,7 +55,8 @@ class Notepad {
 		this.dom.addEventListener('delete', ()=>{
 			const name = this.tabs.getFocusedTab();
 			fetch('http://localhost:8080/file/' + name, {
-				method: 'DELETE'
+				method: 'DELETE',
+				credentials: 'include'
 			})
 			.then((res)=>{
 				if(res.status === 200 || res.status === 201){
@@ -76,44 +67,36 @@ class Notepad {
 			});
 			this.dom.dispatchEvent(new Event('close'));
 		});
-		this.dom.addEventListener('login-area', (e)=>{
-			if(e.success) this.menubar.loginButtonChange();
-			else if(e.success === false) {
-				alert('잘못된 아이디 또는 비밀번호입니다.');
-				return false;
-			}
-			console.log(e.has);
-			if(e.has){
-				this.tabs.openTabs(e.data, this.content);
-			}
-			this.login.toggleInvisible();
+		this.dom.addEventListener('login', (e)=>{
+			this.tabs.openTabs(e.userData, this.content);
 		});
 		this.dom.addEventListener('logout', ()=> {
+			console.log('logout');
 			const tabs = this.tabs.getTabs();
 			const focusedTab = this.tabs.getFocusedTab();
 			const cursorPosition = this.content.getCursorPosition();
-			const username = this.login.getUserName();
 
 			const data = {
 				tabs: tabs,
 				focusedTab: focusedTab,
 				cursorPosition: cursorPosition,
-				username: username
 			};
 			console.log(data);
-			fetch('http://localhost:8080/logout', {
+			fetch('http://localhost:8080/logout'
+			, {
 				method: 'POST',
-				body: JSON.stringify(data),
+				body: JSON.stringify({userData: data}),
+				credentials: 'include',
 				headers: new Headers({
 					'Content-Type': 'application/json'
 				})
 			}).then((res)=>{
 				if(res.status === 200){
 					console.log('success');
-					this.menubar.loginButtonChange();
 					this.content.closeTab();
 					this.tabs.tabsClear();
-				} 
+					location.href='/login';
+				}
 			}).catch((err) => {
 				console.error(err);
 			});
@@ -137,12 +120,13 @@ class Menubar {
 		this.openFile();
 		this.saveFile();
 		this.deleteFile();
-		this.login();
 		this.logout();
 	}
 	exist(){
 		console.log('exist');
-		fetch('http://localhost:8080/exist')
+		fetch('http://localhost:8080/exist',{
+			credentials: 'include'
+		})
 		.then((res) => {
 			if(res.status === 200 || res.status === 201){
 				return res.json();
@@ -153,6 +137,11 @@ class Menubar {
 			data.fileNames.forEach(file => {
 				this.existFiles.add(file);
 			});
+			if(data.userData){
+				const event = new Event('login');
+				event.userData = data.userData;
+				this.parentDom.dispatchEvent(event);
+			}
 		})
 		.catch(err => console.error(err));
 	}
@@ -184,6 +173,7 @@ class Menubar {
 	saveFile(){
 		const button = this.dom.querySelector('.save');
 		button.addEventListener('click', ()=>{
+			if(!confirm('저장하시겠습니까?')) return false;
 			const event = new Event('save');
 			
 			this.parentDom.dispatchEvent(event);
@@ -197,42 +187,17 @@ class Menubar {
 			this.parentDom.dispatchEvent(event);
 		});
 	}
-	login(){
-		const button = this.dom.querySelector('.login');
-		button.addEventListener('click', () => {
-			const event = new Event('login-area');
-			
-			this.parentDom.dispatchEvent(event);
-		});
-	}
 	logout(){
 		const button = this.dom.querySelector('.logout');
-		button.addEventListener('click', () => {
+		console.log(button);
+		button.addEventListener('click', (e) => {
 			const event = new Event('logout');
 			let success = false;
-			if(!confirm('로그아웃 하시겠습니까?')) return false;
-			// this.loginButtonChange();
-			// fetch('http://localhost:8080/logout').then((res) => {
-			// 		return res.json();
-			// 	}).then((data)=>{
-			// 		if(data.success) success = data.success;
-			// 	}).catch(err => console.error(err));
-			// if(!success) return false;
+			if(!confirm('로그아웃 하시겠습니까?')) {
+				return false;
+			}
 			this.parentDom.dispatchEvent(event);
 		});
-	}
-	loginButtonChange(){
-		const login = this.dom.querySelector('.loginli');
-		const logout = this.dom.querySelector('.logoutli');
-
-		if(login.classList.contains('invisible')){
-			logout.classList.add('invisible');
-			login.classList.remove('invisible');
-		}else{
-			login.classList.add('invisible');
-			logout.classList.remove('invisible');
-		}
-		console.log('loginButtonChange');
 	}
 }
 
@@ -243,7 +208,6 @@ class Tabs {
 		this.parentDom = parentDom;
 		this.tabs = new Map();
 		this.loginBool = false;
-		this.setLoginCheck();
 	}
 	addTab(name, content, newEvent){
 		if(this.tabs.has(name)){
@@ -269,21 +233,6 @@ class Tabs {
 	}
 	focusTab(name){
 		this.tabs.get(name).dom.dispatchEvent(new Event('focus'));
-	}
-	// 로그인이 되어있는지 아닌지 체크하여 login 관련 창에 아이디나 사용자없음을 표시
-	setLoginCheck(id){
-		const loginCheck = this.dom.querySelector('.login-check');
-		if(this.loginBool){
-			loginCheck.innerHTML = id;
-		}else{
-			loginCheck.innerHTML = '사용자 없음';
-		}
-	}	
-	setLogin(login){
-		this.loginBool = login;
-	}
-	getLogin(){
-		return this.loginBool;
 	}
 	getFocusedTab(){
 		let name;
@@ -374,6 +323,7 @@ class Content {
 		fetch('http://localhost:8080/file', {
 			method: 'POST',
 			body: JSON.stringify(data),
+			credentials: 'include',
 			headers: new Headers({
 				'Content-Type': 'application/json'
 			})
@@ -391,7 +341,8 @@ class Content {
 		const data = 'http://localhost:8080/file?name=' + name;
 		
 		fetch(data, {
-			headers: new Headers({Accept: 'text/plain'})
+			headers: new Headers({Accept: 'text/plain'}),
+			credentials: 'include'
 		})
 		.then((res) => {
 			if(res.status === 200 || res.status === 201){
@@ -401,8 +352,6 @@ class Content {
 			}
 		})
 		.then((data) => {
-			console.log('open');
-			console.log(data);
 			this.writeArea.value = data.data || '';
 			this.writeArea.classList.remove('invisible');
 		})
@@ -419,7 +368,8 @@ class Content {
 			body: JSON.stringify(saveData),
 			headers: new Headers({
 				'Content-Type': 'application/json'
-			})
+			}),
+			credentials: 'include'
 		}).then((res) => {
 			if(res.status === 200 || res.status === 201){
 				res.text().then(text => {
@@ -440,73 +390,10 @@ class Content {
 		return this.writeArea.selectionStart;
 	}
 	setCursor(position){
-		console.log(position);
 		this.writeArea.focus();
-		console.log(this.writeArea.setSelectionRange);
 		this.writeArea.setSelectionRange(position, position);
-		// const range = this.writeArea.createRange();
-		// range.setStart()
 	}
 	closeTab(){
 		this.writeArea.value = '';
-	}
-}
-class Login{
-	constructor(parentDom){
-		const template = document.querySelector("#login");
-		this.dom = document.importNode(template.content, true).querySelector(".login-form");
-		this.parentDom = parentDom;
-		this.username = null;
-		this.buttonListener();
-	}
-	buttonListener(){
-		const button = this.dom.querySelector('.submit');
-		button.addEventListener('click', ()=>{
-				const username = this.dom.querySelector('[name="name"]').value;
-				const password = this.dom.querySelector('[name="password"]').value;
-
-				if(!username || !password) {
-					alert('아이디 또는 비밀번호를 입력하세요.');
-					return false;
-				}
-				const loginData = {
-					username: username,
-					password: password
-				};
-				fetch('http://localhost:8080/login', {
-					method: 'POST',
-					body: JSON.stringify(loginData),
-					headers: new Headers({
-						'Content-Type': 'application/json'
-					})
-				}).then((res) => {
-					if(res.status === 200 || res.status === 201){
-						return res.json();
-					}
-				}).then((data) => {
-					const event = new Event('login-area');
-					console.log(data);
-					event.success = data.success;
-					event.has = data.has;
-					event.data = data;
-					this.parentDom.dispatchEvent(event);
-					if(data.success){
-						this.username = username;
-					}
-				}).catch(err => console.error(err));
-		});
-	}
-	getUserName(){
-		return this.username;
-	}
-	toggleInvisible(){
-		if(this.dom.classList.contains('invisible')) {
-			this.dom.classList.remove('invisible');
-		}
-		else {
-			this.dom.classList.add('invisible');
-			this.dom.querySelector('[name="name"]').value = '';
-			this.dom.querySelector('[name="password"]').value = '';
-		}
 	}
 }

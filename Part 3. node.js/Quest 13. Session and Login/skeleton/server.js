@@ -13,13 +13,14 @@ const users = new Map([
 ]);
 
 const usersData = new Map();
-app.use(express.static('client'));
+
 app.use(bodyparser.json());
+app.use(bodyparser.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(session({
 	secret: 'mysecret',
 	resave: false,
-	saveUninitialized: true
+	saveUninitialized: false
 }));
 app.use((req, res, next)=>{
 	//처음 앱 생성시 data 폴더가 없을 경우 생성해준다.
@@ -33,12 +34,20 @@ app.use((req, res, next)=>{
 	});
 	next();
 });
-app.get('/', (req, res) => {
+app.use('/client', express.static(__dirname + '/client'));
+app.use((req, res, next) => {
+	console.log(req.path);
 	console.log(req.session);
-	console.log('///');
-	res.sendFile(path.join(__dirname, 'index.html'));
+	if((req.session && req.session.username) || req.path === '/login') return next();
+	else return res.redirect('/login');
 });
 
+app.get('/', (req, res) => {
+	res.sendFile(path.join(__dirname, '/client/index.html'));
+});
+app.get('/login', (req, res) => {
+	res.sendFile(path.join(__dirname, '/client/login.html'));
+});
 /* TODO: 여기에 처리해야 할 요청의 주소별로 동작을 채워넣어 보세요..! */
 app.post('/login', (req, res) => {
 	const username = req.body.username;
@@ -47,33 +56,23 @@ app.post('/login', (req, res) => {
 	let success = false;
 	if(findUser(username, password)){
 		// 세션생성
-		sess.name = username;
+		sess.username = username;
 		success = true;
+		res.redirect('/');
+	} else {
+		res.redirect('/login');
 	}
-	console.log(sess);
-	sess.save(()=>{
-		if(usersData.has(username)){
-			console.log('user');
-			const user = usersData.get(username);
-			user.success = success;
-			user.has = true;
-			res.json(JSON.stringify(user));
-		}else{
-			res.json(JSON.stringify({
-				success: success,
-				has: false
-			}));
-		}
-	});
 	
-	console.log('login');
-	console.log(sess);
 });
 app.get('/exist', (req, res) =>{
 	const fileNames = fs.readdirSync(__dirname + '/data');
-	req.session.user = 'leeseung';
-	const fileNameJson = {fileNames: fileNames};
-	res.json(JSON.stringify(fileNameJson));
+	let data = null;
+	if(req.session.username) data = usersData.get(req.session.username);
+	const jsonData = {
+		fileNames: fileNames,
+		userData: data
+	}
+	res.json(JSON.stringify(jsonData));
 });
 
 app.get('/file', (req, res) => {
@@ -81,10 +80,10 @@ app.get('/file', (req, res) => {
 	console.log(req.session);
 	fs.readFile(__dirname + '/data/' + req.query.name, 'utf8', (err, data) => {
 		const jsonData = {data: data};
-
-		// res.writeHead(200, {'Content-Type': 'application/json'});
-		res.json(JSON.stringify(jsonData));
+		console.log(jsonData);
+		res.json(jsonData);
 	});
+	
 });
 
 app.post('/file', (req, res) => {
@@ -130,24 +129,15 @@ app.delete('/file/:fileName', (req, res) => {
 
 app.post('/logout', (req, res) => {
 	// 세션파기
-	const userData = req.body;
+	console.log(req.body);
+	const userData = req.body.userData;
 	const sess = req.session;
-	console.log('logout');
-	console.dir(sess);
-	usersData.set(userData.username, userData);
-	let success = false;
-	sess.destroy(function(err){
-		if(err) { throw err;}
-		console.log('logout success');
-		console.log(sess);
-		success = true;
-		res.json(JSON.stringify({success: success}));
-	});
-	res.clearCookie('sid');
-	console.log(sess);
-	console.log(usersData);
-	res.json(JSON.stringify({success: success}));
-	
+	usersData.set(sess.username, userData);
+	console.log(sess.username);
+	console.log(usersData.get(sess.username));
+	sess.destroy((()=>{
+		res.redirect('/login');
+	}));
 });
 
 function findUser(name, password){
