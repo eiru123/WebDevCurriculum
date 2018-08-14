@@ -95,7 +95,35 @@
             (출처): https://lalwr.blogspot.com/2016/02/db-index.html
 
     * DB에 사용자의 암호를 평문으로 저장하지 않고도 사용자의 암호를 인증하는 것이 가능한 이유는 무엇일까?
-
+        * 사용자의 암호를 평문으로 저장하지 않고 DB 내에 암호화 함수를 사용하여 저장했다고 하자. 이 때 사용된 암호화 함수는 SHA()라고 가정한다면 해쉬 함수는 위의 정리에 나와있듯이 같은 값에는 항상 같은 해쉬값을 반환한다. 따라서 사용자의 패스워드가 올바르게 입력됐다면 같은 해쉬 함수를 사용하여 복호화한  후 비교했을 때 같다면 제대로 된 비밀번호를 입력했다는 것이 되고 그것이 아니라면 다르느 비밀번호를 입력했다는 것이 된다. 따라서 사용자의 암호를 평문으로 저장하지 않고도 사용자의 암호를 인증하는 것이 가능하다.
 * SQL이란?
     * Structured Query Language
-    * 관계형 데이터베이스가 데이터를 조작하기 위한 언어. c;p.≥
+    * 관계형 데이터베이스가 데이터를 조작하기 위한 언어.
+* 스토리지 엔진
+    * MySQL 엔진은 요청된 SQL문장을 분석하거나 최적화 하는 등 DBMS의 두뇌에 해당하는 처리를 수행하고, 실제 데이터를 디스크 스토리지에 저장하거나 디스크 스토리지로부터 데이터를 읽어오는 부분은 스토리지 엔진을 이용. MySQL 서버에서 MySQL 엔진은 하나만 사용할 수 있지만 스토리지 엔진은 여러 개 사용할 수 있다. 
+* 핸들러
+    * MySQL 엔진이 각 스토리지 엔진에게 데이터를 읽어오거나 저장하도록 명령하려면 핸들러를 꼭 통해야 한다.
+* 하나의 쿼리 작업은 여러 하위 작업으로 나뉘는데, 각 하위 작업이 MySQL 엔진 영역에서 처리되느지 아니면 스토리지 엔진 영역에서 처리되는지 구분할 줄 알아야 하는것이 중요하다.
+* 쿼리 캐시: 쿼리의 결과를 저장해둔다.
+
+* table 
+    * users table:
+    ```
+    CREATE TABLE users(
+        userId VARCHAR(32) NOT NULL,
+        password VARCHAR(64) NOT NULL,
+        focusedTab VARCHAR(32),
+        cursorPos MEDIUMINT [UNSIGNED],
+        PRIMARY KEY(userId)
+    );
+    ```
+    * files table:
+    ```
+    CREATE TABLE files(
+        userId VARCHAR(32) NOT NULL,
+        filename VARCHAR(32) NOT NULL,
+        content MEDIUMTEXT,
+        open TINYINT(1),
+        PRIMARY KEY(userId, filename).
+        FOREIGN KEY(userId) REFERENCES users(userId) ON UPDATE CASCADE ON DELETE CASCADE
+    );
