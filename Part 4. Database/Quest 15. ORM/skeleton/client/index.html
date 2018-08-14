@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="/client/style.css">
+	<script src="/client/notepad.js"></script>
+</head>
+
+<body>
+	<!-- TODO: 이 곳을 채워 클라이언트를 만들어 보세요 -->
+	<section class="app"></section>
+
+	<template id="menubar">
+		<div class="menubar">
+			<ul class="flex">
+				<li>
+					<button class="new-file">새 파일</button>
+				</li>
+				<li>
+					<label for="open">열기</lable>
+						<input id="open" class="open" type="file">
+				</li>
+				<li>
+					<button class="save">저장</button>
+				</li>
+				<li>
+					<button class="delete">삭제</button>
+				</li>
+				<li class="logoutli">
+					<button class="logout">로그아웃</button>
+				</li>
+			</ul>
+		</div>
+	</template>
+	<template id="tabs">
+		<div class="tabs-area">
+			<div class="tabs"></div>
+			<div class="login-check"></div>
+		</div>
+	</template>
+	<template id="tab">
+		<div class="tab focus">
+			<span class="tab-name"></span>
+			<div class='close'>
+				<img src="/client/windowclose.svg">
+			</div>
+		</div>
+	</template>
+	<template id="content">
+		<div class="content">
+			<textarea name="content" class="write-space" readonly></textarea>
+		</div>
+	</template>
+	<script>
+		let notepad = new Notepad();
+	</script>
+</body>
+
+</html>
