@@ -113,7 +113,7 @@
         userId VARCHAR(32) NOT NULL,
         password VARCHAR(64) NOT NULL,
         focusedTab VARCHAR(32),
-        cursorPos MEDIUMINT [UNSIGNED],
+        cursorPos MEDIUMINT UNSIGNED,
         PRIMARY KEY(userId)
     );
     ```
