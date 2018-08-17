@@ -12,7 +12,7 @@ const users = new Map([
 	['admin', 'dltmd']
 ]);
 
-const usersData = new Map();
+const usersDta = new Map();
 
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({extended: false}));
