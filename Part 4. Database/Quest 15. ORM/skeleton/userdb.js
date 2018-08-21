@@ -71,20 +71,20 @@ const Files = sequelize.define('files', {
     tableName: 'files'
 });
 
-// Users.sync()
-//     .then(() => {
-//         console.log('users table create success');
-//     })
-//     .catch(err => {
-//         console.error(err);
-//     });
-// Files.sync()
-//     .then(() => {
-//         console.log('files table create success');
-//     })
-//     .catch(err => {
-//         console.error(err);
-//     });
+Users.sync()
+    .then(() => {
+        console.log('users table create success');
+    })
+    .catch(err => {
+        console.error(err);
+    });
+Files.sync()
+    .then(() => {
+        console.log('files table create success');
+    })
+    .catch(err => {
+        console.error(err);
+    });
 // Users.hasMany(Files, {as: 'newTable'});
 // console.dir(Users);
 // console.dir(Files);
