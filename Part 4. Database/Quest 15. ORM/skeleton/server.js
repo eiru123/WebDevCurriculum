@@ -1,7 +1,6 @@
 const express = require('express'),
 	path = require('path'),
 	bodyparser = require('body-parser'),
-	fs = require('fs'),
 	cookieParser = require('cookie-parser'),
 	session = require('express-session'),
 	userDB = require('./userdb');
@@ -15,18 +14,7 @@ app.use(session({
 	resave: false,
 	saveUninitialized: false
 }));
-app.use((req, res, next)=>{
-	//처음 앱 생성시 data 폴더가 없을 경우 생성해준다.
-	fs.readdir(__dirname + '/data', (err)=>{
-		if(err) {
-			console.log('none');
-			fs.mkdir(__dirname + '/data',(err)=>{
-				if(err) console.error(err);
-			});
-		}
-	});
-	next();
-});
+
 app.use('/client', express.static(__dirname + '/client'));
 app.use((req, res, next) => {
 	console.log(req.path);
@@ -125,10 +113,7 @@ app.post('/logout', (req, res) => {
 			res.redirect('/login');
 		});
 	};
-	// userDB.logoutUpdate(sess, userData);
-	// sess.destroy((()=>{
-	// 	res.redirect('/login');
-	// }));
+	
 	logout();
 });
 
