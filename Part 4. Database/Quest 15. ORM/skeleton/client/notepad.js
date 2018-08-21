@@ -32,6 +32,7 @@ class Notepad {
 			if(this.content.writeArea.hasAttribute('readonly')) 
 				this.content.removeReadOnly();
 			this.tabs.addTab(name, this.content);
+			console.log(this.tabs.isEmpty());
 		});
 		// save event
 		this.dom.addEventListener('save', ()=>{
@@ -40,6 +41,7 @@ class Notepad {
 				return false;
 			}
 			const name = this.tabs.getFocusedTab();
+			
 			this.content.saveFile(name);
 		});
 		// move tab event
@@ -61,6 +63,7 @@ class Notepad {
 			.then((res)=>{
 				if(res.status === 200 || res.status === 201){
 					console.log('success');
+					this.menubar.deleteFileDom(name);
 				}else{
 					console.error(res.statusText);
 				}
@@ -112,8 +115,8 @@ class Menubar {
 		const template = document.querySelector("#menubar");
 		this.dom = document.importNode(template.content, true).querySelector(".menubar");
 		this.parentDom = parentDom;
-
-		this.existFiles = new Set();
+		this.files = this.dom.querySelector('.files');
+		this.existFiles = new Map();
 		this.exist();
 
 		this.newFile();
@@ -121,6 +124,20 @@ class Menubar {
 		this.saveFile();
 		this.deleteFile();
 		this.logout();
+	}
+	makeFileElement(name){
+		const filesDom = document.createElement('button');
+		filesDom.classList.add('open-file');
+		filesDom.innerHTML = name;
+		filesDom.addEventListener('click', ()=>{
+			const event = new Event('open');
+			
+			event.fileName = name;
+			this.files.classList.add('invisible');
+			this.parentDom.dispatchEvent(event);
+		});
+		this.existFiles.set(name, filesDom);
+		this.files.appendChild(filesDom);
 	}
 	exist(){
 		console.log('exist');
@@ -134,8 +151,9 @@ class Menubar {
 		})
 		.then((data) => {
 			data = JSON.parse(data);
+			console.log(data.fileNames);
 			data.fileNames.forEach(file => {
-				this.existFiles.add(file);
+				this.makeFileElement(file);
 			});
 			if(data.userData){
 				const event = new Event('login');
@@ -157,17 +175,17 @@ class Menubar {
 				alert('같은 이름의 파일이 이미 존재합니다.');
 				return false;
 			}
+			this.makeFileElement(event.fileName);
 			this.parentDom.dispatchEvent(event);
 		});
 	}
 	openFile(){
 		const button = this.dom.querySelector('.open');
-		button.addEventListener('change', () => {
-			const event = new Event('open');
-			
-			event.fileName = button.files[0]['name'];
-			button.value='';
-			this.parentDom.dispatchEvent(event);
+		button.addEventListener('click', () => {
+			if(this.files.classList.contains('invisible'))
+				this.files.classList.remove('invisible');
+			else
+				this.files.classList.add('invisible');
 		});
 	}
 	saveFile(){
@@ -183,9 +201,13 @@ class Menubar {
 		const button = this.dom.querySelector('.delete');
 		button.addEventListener('click', ()=>{
 			const event = new Event('delete');
-
+			if(!confirm('메모를 지우시겠습니까?')) return false;
 			this.parentDom.dispatchEvent(event);
 		});
+	}
+	deleteFileDom(name){
+		this.existFiles.get(name).remove();
+		this.existFiles.delete(name);
 	}
 	logout(){
 		const button = this.dom.querySelector('.logout');
@@ -246,9 +268,8 @@ class Tabs {
 		content.closeTab();
 		this.tabs.get(name).dom.remove();
 		this.tabs.delete(name);
-		if(this.tabs.size === 0){
-			this.parentDom.dispatchEvent(new Event('setReadOnly'));
-		}
+		
+		this.parentDom.dispatchEvent(new Event('setReadOnly'));
 	}
 	isEmpty(){
 		if(this.tabs.size === 0) return true;
@@ -263,11 +284,12 @@ class Tabs {
 		this.parentDom.dispatchEvent(new Event('setReadOnly'));
 	}
 	openTabs(data, content){
-		data.tabs.map(name =>{
+		data.openTabs.forEach(name =>{
 			this.addTab(name, content);
 		});
 		if(data.focusedTab) this.focusTab(data.focusedTab);
-		content.removeReadOnly();
+		
+		if(!this.isEmpty()) content.removeReadOnly();
 		content.setCursor(data.cursorPosition);
 	}
 }
@@ -353,7 +375,7 @@ class Content {
 		})
 		.then((data) => {
 			this.writeArea.value = data.data || '';
-			this.writeArea.classList.remove('invisible');
+			this.removeReadOnly();
 		})
 		.catch(err => console.error(err));
 	}
@@ -384,6 +406,7 @@ class Content {
 		this.writeArea.setAttribute('readonly', 'true');
 	}
 	removeReadOnly(){
+		console.log('remove');
 		this.writeArea.removeAttribute('readonly');
 	}
 	getCursorPosition(){

@@ -38,7 +38,21 @@ li {
 	display: flex;
 	flex-direction: column;
 }
-input[type="file"] {
+.files{
+	position: absolute;
+	left: 80px; top: 80px;
+	width: 300px; height: 200px;
+	overflow: scroll;
+}
+.open-file {
+	width:300px;
+	height: 25px;
+	border: 1px solid black;
+	font-size: 20px;
+	text-align: left;
+	line-height: 25px;
+}
+/* input[type="file"] {
 	position: absolute;
 	width: 1px;
 	height: 1px;
@@ -47,8 +61,8 @@ input[type="file"] {
 	overflow: hidden;
 	clip: rect(0, 0, 0, 0);
 	border: 0;
-}
-li>label{
+} */
+/* li>label{
 	display: inline-block; 
 	width: 100%; height: 100%;
 	padding: .5em .75em; 
@@ -62,7 +76,7 @@ li>label{
 }
 li>label:active{
 	background-color: #bababa;
-}
+} */
 button, a {
 	display: block;
 	width: 80px; height: 80px;
