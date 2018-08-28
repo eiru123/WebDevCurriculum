@@ -1,8 +1,8 @@
 <template>
     <div class="note">
-        <menubar></menubar>
-        <tab-menu></tab-menu>
-        <content-view></content-view>
+        <menubar :focusedTab="focusedTab" @openFile="openFile"></menubar>
+        <tab-menu :tabs="tabs" :focusedTab="focusedTab" @closeTab="closeTab"></tab-menu>
+        <content-view :focusedTab="focusedTab"></content-view>
     </div>
 </template>
 
@@ -12,10 +12,29 @@
     import ContentView from './note-view/ContentView.vue';
     
     export default {
+        data() {
+            return {
+                tabs: [],
+                focusedTab: ''
+            }
+        },
         components: {
             Menubar,
             TabMenu,
             ContentView,
+        },
+        created() {
+            console.log('notepad created');
+        },
+        methods: {
+            openFile(file){
+                console.log(file);
+                this.tabs.push(file);
+                console.log(this.tabs);
+            },
+            closeTab(index){
+                this.tabs.splice(index, 1);
+            }
         }
     }
 </script>
