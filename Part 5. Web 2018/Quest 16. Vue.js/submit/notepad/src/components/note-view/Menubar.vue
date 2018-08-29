@@ -69,6 +69,7 @@
             },
             save(name){
                 console.log(name);
+                console.log(this.tabs);
             },
             delete(name){
                 const focusedIndex = this.existTab.indexOf(this.focusedTab);

@@ -1,6 +1,6 @@
 <template>
     <div class="tab-menu">
-        <div class="tab focus" v-for="(tab, index) in tabs" :key="index">
+        <div class="tab" v-for="(tab, index) in tabs" :key="index">
             <span class="tab-name">{{ tab }}</span>
 			<div class='close' @click="closeTab(index)">
 				<img src="../../assets/windowclose.svg">
