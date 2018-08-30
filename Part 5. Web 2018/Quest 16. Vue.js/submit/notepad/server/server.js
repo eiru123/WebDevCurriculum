@@ -3,7 +3,8 @@ const express = require('express'),
 	bodyparser = require('body-parser'),
 	cookieParser = require('cookie-parser'),
 	session = require('express-session'),
-	userDB = require('./userdb');
+	userDB = require('./userdb'),
+	auth = require('./auth'),
 	app = express();
 
 app.use(bodyparser.json());
@@ -15,45 +16,29 @@ app.all('/*', (req, res, next) => {
 	res.header('Access-Control-Allow-Headers', 'Origin, Content-Type, X-Requested-With');
 	next();
 });
-// app.use(session({
-// 	secret: 'mysecret',
-// 	resave: false,
-// 	saveUninitialized: false
-// }));
 
-// app.use('/', express.static(__dirname + '/dist'));
-// app.use((req, res, next) => {
-// 	console.log(req.path);
-// 	console.log(req.session);
-// 	if((req.session && req.session.username) || req.path === '/login') return next();
-// 	else return res.redirect('/login');
-// // });
-
-// app.get('/', (req, res) => {
-// 	res.sendFile(path.join(__dirname, '/index.html'));
-// });
-// app.get('/login', (req, res) => {
-// 	res.sendFile(path.join(__dirname, '/client/login.html'));
-// });
 /* TODO: 여기에 처리해야 할 요청의 주소별로 동작을 채워넣어 보세요..! */
 app.post('/login', (req, res) => {
 	const username = req.body.username;
 	const password = req.body.password;
-	const sess = req.session;
 	let success = false;
 	
 	userDB.userCheck(username, password)
 	.then(result => {
 		if(result){
 			// 세션생성
-			sess.username = username;
+			const accessToken = auth.signToken(username);
+			console.log(accessToken);
 			success = true;
+			res.json({accessToken})
 			res.redirect('/');
 		} else {
 			res.redirect('/login');
 		}
 	});
 });
+
+app.use(auth.ensureAuth());
 app.get('/exist', (req, res) =>{
 	let data = null;
 	let fileNames = [];
