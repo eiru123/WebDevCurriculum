@@ -18,7 +18,7 @@ export default new VueRouter({
             path: '/',
             name: 'notepad',
             component: Note,
-            // beforeEnter: checkAuth()
+            //beforeEnter: checkAuth()
         },
         {
             path: '/login',
