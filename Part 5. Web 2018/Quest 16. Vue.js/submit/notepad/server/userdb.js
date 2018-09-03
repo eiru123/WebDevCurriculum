@@ -94,6 +94,8 @@ class UserDB{
     }
     async userCheck(userId, password){
         let check = false;
+        console.log(password);
+        console.log(typeof(this.makeHash().update(password).digest('hex')));
         const user = await Users.findAll({
             where: {
                 userId: userId,

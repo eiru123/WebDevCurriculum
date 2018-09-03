@@ -19,10 +19,12 @@ app.all('/*', (req, res, next) => {
 
 /* TODO: 여기에 처리해야 할 요청의 주소별로 동작을 채워넣어 보세요..! */
 app.post('/login', (req, res) => {
+	console.log(req.body);
 	const username = req.body.username;
 	const password = req.body.password;
 	let success = false;
-	
+	let redirectPath = null;
+	console.log(password);
 	userDB.userCheck(username, password)
 	.then(result => {
 		if(result){
@@ -30,15 +32,20 @@ app.post('/login', (req, res) => {
 			const accessToken = auth.signToken(username);
 			console.log(accessToken);
 			success = true;
-			res.json({accessToken})
+			redirectPath = '/';
+			res.json({
+				accessToken,
+				redirectPath
+			});
 			res.redirect('/');
 		} else {
-			res.redirect('/login');
+			redirectPath = '/login';
+			res.json({redirectPath});
 		}
 	});
 });
 
-app.use(auth.ensureAuth());
+// app.use(auth.ensureAuth());
 app.get('/exist', (req, res) =>{
 	let data = null;
 	let fileNames = [];
