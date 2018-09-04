@@ -18,12 +18,15 @@
         },
         methods: {
             login(username, password) {
-                
+                this.$store.dispatch('login', {username, password}).then(data => this.$router.push(data))
+                .catch((err => console.error(err)));
             }
         }
     }
 </script>
 
 <style scoped>
-
+div {
+    margin: 10px;
+}
 </style>

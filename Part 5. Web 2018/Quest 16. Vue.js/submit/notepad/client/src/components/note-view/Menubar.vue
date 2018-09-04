@@ -3,7 +3,7 @@
         <button v-for="(value, key) in buttons" :key="key" @click="buttonEvent(key)"> {{ value }}</button>
         <div v-if="showMenu" class="files">
             <ul>
-                <li v-for="file in existTab" :key="file" class="open-file" @click="openFile(file)">{{ file }}</li>
+                <li v-for="(file, index) in getExistFiles" :key="index" class="open-file" @click="openFile(file)">{{ file }}</li>
             </ul>
         </div>
     </div>
@@ -11,6 +11,7 @@
 
 <script>
     import axios from 'axios';
+    import {mapGetters} from 'vuex';
     export default {
         data() {
             return {
@@ -22,59 +23,51 @@
                     logout: "로그아웃"
                 },
                 showMenu: false,
-                existTab: [],
                 focusedTab: '',
                 host: 'http://localhost:3000'
             }
         },
         created() {
-            axios.get(`${this.host}/exist`).then(res => {
-                const data = JSON.parse(res.data);
-                data.fileNames.forEach(file => {
-                    this.existTab.push(file);
-                });
-            }).catch(err => {
-                console.error(err);
-            });
+            this.$store.dispatch('exist');
+        },
+        computed: {
+            ...mapGetters([
+                'getExistFiles'
+            ])
         },
         methods: {
             buttonEvent(name) {
                 switch(name){
-                    case 'newFile': this.newFile(name); break;
-                    case 'open': this.open(name); break;
-                    case 'save': this.save(name); break;
-                    case 'delete': this.delete(name); break;
-                    case 'logout': this.logout(name); break;
+                    case 'newFile': this.newFile(); break;
+                    case 'open': this.open(); break;
+                    case 'save': this.save(); break;
+                    case 'delete': this.delete(); break;
+                    case 'logout': this.logout(); break;
                 }
             },
             newFile(){
-                const name = prompt('파일명을 입력해주세요.');
-                axios.defaults.headers.post['Content-Type'] = "application/json";
-                axios.post(`${this.host}/file`, {
-                    name: name
-                }).then(res => {
-                    this.$emit('openFile', name);
-                }).catch(err => {
-                    console.error(err);
-                });
+                const filename = prompt('파일명을 입력해주세요.');
+                this.$store.dispatch('newFile', filename)
+                .catch(err => console.error(err));
             },
             open(){
                 this.showMenu = !this.showMenu;
             },
             openFile(file){
                 this.open();
-                this.$emit('openFile', file);
+                this.$store.dispatch('openFile', file);
             },
-            save(name){
-                this.$emit('save', true);
+            save(){
+                this.$store.dispatch('save');
             },
             delete(name){
-                const focusedIndex = this.existTab.indexOf(this.focusedTab);
-                if(focusedIndex !== -1)
-                    this.existTab.splice(focusedIndex, 1);
+                this.$store.dispatch('delete');
             },
             logout(name){
-                console.log(name);
+                if(!confirm('로그아웃 하시겠습니까?')) return false;this.$store.dispatch('logout').then(()=>{
+                    this.$router.push('login');
+                });
+                
             }
         }
     }

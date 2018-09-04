@@ -15,7 +15,7 @@ const auth = {
             }
 
             try {
-                req.user = this.verify(authorization);
+                req.user = this.verify(authorization).userId;
             } catch (e) {
                 res.status(401);
                 throw e;

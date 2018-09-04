@@ -12,50 +12,44 @@ app.use(bodyparser.urlencoded({extended: false}));
 app.use(cookieParser());
 app.all('/*', (req, res, next) => {
 	res.header('Access-Control-Allow-Origin', 'http://localhost:8080');
-	res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE');
-	res.header('Access-Control-Allow-Headers', 'Origin, Content-Type, X-Requested-With');
+	res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE, OPTIONS');
+	res.header('Access-Control-Allow-Headers', 'Origin, Content-Type, X-Requested-With, Authorization');
 	next();
 });
 
 /* TODO: 여기에 처리해야 할 요청의 주소별로 동작을 채워넣어 보세요..! */
-app.post('/login', (req, res) => {
-	console.log(req.body);
+app.post('/login', (req, res, next) => {
 	const username = req.body.username;
 	const password = req.body.password;
 	let success = false;
 	let redirectPath = null;
-	console.log(password);
 	userDB.userCheck(username, password)
 	.then(result => {
+		let data;
 		if(result){
 			// 세션생성
 			const accessToken = auth.signToken(username);
-			console.log(accessToken);
-			success = true;
 			redirectPath = '/';
-			res.json({
+			data = {
 				accessToken,
 				redirectPath
-			});
-			res.redirect('/');
+			};
 		} else {
 			redirectPath = '/login';
-			res.json({redirectPath});
+			data = {redirectPath};
 		}
+		res.json(data);
 	});
 });
 
-// app.use(auth.ensureAuth());
-app.get('/exist', (req, res) =>{
+app.get('/exist', auth.ensureAuth(), (req, res) =>{
 	let data = null;
 	let fileNames = [];
 	
 	const getData = async () => {
 		try{
-			// const files = await userDB.getFiles(req.session.username);
-			// const userData = await userDB.getUsers(req.session.username);
-			const files = await userDB.getFiles('knowre');
-			const userData = await userDB.getUsers('knowre');
+			const files = await userDB.getFiles(req.user);
+			const userData = await userDB.getUsers(req.user);
 
 			data = userData[0].dataValues;
 			data['openTabs'] = [];
@@ -85,14 +79,15 @@ app.get('/exist', (req, res) =>{
 	});
 });
 
-app.get('/file', (req, res) => {
-	userDB.getContent(req.session.username, req.query.name, res);
+// app.use('/file', auth.ensureAuth());
+app.get('/file', auth.ensureAuth(), async (req, res) => {
+	const data = await userDB.getContent(req.user, req.query.filename);
+	res.json(data);
 });
 
-app.post('/file', (req, res) => {
+app.post('/file', auth.ensureAuth(), (req, res) => {
 	let fileName = req.body.name;
-	console.log(fileName);
-	userDB.createFiles('knowre', fileName)
+	userDB.createFiles(req.user, fileName)
 	.then(result => {
 		res.end();
 	}).catch(err => {
@@ -100,29 +95,24 @@ app.post('/file', (req, res) => {
 	});
 });
 
-app.put('/file', (req, res) => {
-	userDB.updateFile(req.session.username, req.body.name, req.body.data, res);
+app.put('/file', auth.ensureAuth(), async (req, res) => {
+	await userDB.updateFile(req.user, req.body.name, req.body.content);
+	res.end();
 });
 
-app.delete('/file/:filename', (req, res) => {
-	userDB.deleteFile(req.session.username, req.params.filename, res);
+app.delete('/file', auth.ensureAuth(), async (req, res) => {
+	await userDB.deleteFile(req.user, req.query.filename);
+	res.end();
 });
-
-app.post('/logout', (req, res) => {
-	// 세션파기
-	
+app.post('/logout', auth.ensureAuth(), 	(req, res) => {
 	const userData = req.body.userData;
-	const sess = req.session;
 	const logout = async () => {
-		await userDB.logoutUpdate(sess.username, userData);
-		await sess.destroy(()=>{
-			res.redirect('/login');
-		});
+		await userDB.logoutUpdate(req.user, userData);
 	};
 	
 	logout();
+	res.end();
 });
-
 const server = app.listen(3000, () => {
 	console.log('Server started!');
 });

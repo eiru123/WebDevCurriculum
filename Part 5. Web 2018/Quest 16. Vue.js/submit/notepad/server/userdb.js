@@ -94,8 +94,7 @@ class UserDB{
     }
     async userCheck(userId, password){
         let check = false;
-        console.log(password);
-        console.log(typeof(this.makeHash().update(password).digest('hex')));
+       
         const user = await Users.findAll({
             where: {
                 userId: userId,
@@ -118,15 +117,14 @@ class UserDB{
         });
         return files;
     }
-    getContent(userId, filename, res){
-        Files.findOne({
+    getContent(userId, filename){
+        return Files.findOne({
             where: {
                 userId: userId,
-                filename, filename
+                filename: filename
             }
         }).then(result => {
-            const jsonData = {data: result.dataValues.content};
-            res.json(jsonData);
+            return {content: result.dataValues.content};
         });
     }
     createFiles(userId, filename){
@@ -134,24 +132,21 @@ class UserDB{
             userId: userId,
             filename: filename,
             open: 0
-        }).then(user => {
-            console.log(user);
         }).catch(err=>{
             console.error(err)
         });
     }
-    deleteFile(userId, filename, res){
-        console.log('delete');
+    deleteFile(userId, filename){
         Files.destroy({
             where: {
                 userId: userId,
                 filename: filename
             }
-        }).then(err => {
-            res.end();
+        }).catch(err => {
+            console.error(err);
         });
     }
-    updateFile(userId, filename, content, res){
+    updateFile(userId, filename, content){
         Files.update({
             content: content
         }, {
@@ -165,8 +160,7 @@ class UserDB{
     }
     async logoutUpdate(userId, data){
         await Users.update({
-            focusedTab: data.focusedTab,
-            cursorPos: data.cursorPosition
+            focusedTab: data.focusedTab
         }, {
             where: {
                 userId: userId
@@ -177,6 +171,7 @@ class UserDB{
         await Files.update({open: 0}, {
             where: {userId: userId}
         }).then(err => console.error(err));
+        console.log(data.tabs);
         data.tabs.forEach(name =>{
             Files.update({
                 open: 1

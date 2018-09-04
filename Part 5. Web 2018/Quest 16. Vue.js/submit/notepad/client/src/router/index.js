@@ -6,24 +6,29 @@ import store from '../store';
 
 Vue.use(VueRouter);
 
-function checkAuth(to, from, next) {
-    if (store.getters.isAuthenticated) return next();
-    next('/login');
+const checkAuth = () => (to, from, next) => {
+    const name = to.name;
+    if (store.getters.isAuthenticated) {
+        return name === 'login'? next('/') : next();
+    }
+    return name === 'login'? next() : next('/login');
 }
 
-export default new VueRouter({
+const router =  new VueRouter({
     mode: 'history',
+    beforeEach: checkAuth(),
     routes: [
         {
             path: '/',
             name: 'notepad',
             component: Note,
-            //beforeEnter: checkAuth()
         },
         {
             path: '/login',
             name: 'login',
-            component: Login
+            component: Login,
         }
     ]
 })
+router.beforeEach(checkAuth());
+export default router;

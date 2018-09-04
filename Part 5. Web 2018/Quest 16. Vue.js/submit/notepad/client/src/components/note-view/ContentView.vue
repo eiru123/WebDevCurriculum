@@ -1,22 +1,26 @@
 <template>
     <div class="content-view">
-        <textarea class="write-space" v-model="content"></textarea>
+        <textarea class="write-space" v-model="content" :readonly="getReadonly"></textarea>
     </div>
 </template>
 
 <script>
     import axios from 'axios';
+    import {mapGetters} from 'vuex';
+
     export default {
-        data() {
-            return {
-                content: '',
-                host: 'http://localhost:8080'
-            }
-        },
-        watch: {
-            content: function(){
-                console.log(this.content);
-            }
+        computed: {
+            content: {
+                get () {
+                    return this.$store.getters.getContent;
+                },
+                set (content) {
+                    this.$store.commit('setContent', content);
+                }
+            },
+            ...mapGetters([
+                'getReadonly'
+            ])
         }
     }
 </script>

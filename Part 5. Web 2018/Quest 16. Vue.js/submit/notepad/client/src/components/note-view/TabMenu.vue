@@ -1,8 +1,8 @@
 <template>
     <div class="tab-menu">
-        <div class="tab" v-for="(tab, index) in tabs" :key="index">
-            <span class="tab-name">{{ tab }}</span>
-			<div class='close' @click="closeTab(index)">
+        <div :class="{tab:true, focus: focus}" v-for="({filename, focus}, index) in getOpenTabs" :key="index" @click="focusTab(filename)">
+            <span class="tab-name">{{ filename }}</span>
+			<div class='close' @click.stop="deleteOpenTabs(index)">
 				<img src="../../assets/windowclose.svg">
 			</div>
         </div>
@@ -10,12 +10,20 @@
 </template>
 
 <script>
+	import {mapGetters, mapMutations, mapActions} from 'vuex';
     export default {
-        props: ['tabs'],
+        computed: {
+			...mapGetters([
+				'getOpenTabs'
+			])
+		},
         methods: {
-            closeTab(index){
-                this.$emit('closeTab', index);
-            }
+            ...mapMutations([
+				'deleteOpenTabs'
+			]),
+			...mapActions([
+				'focusTab'
+			])
         }
     }
 </script>
