@@ -35,4 +35,7 @@
 	font-size: 16px;
 	resize: none;
 }
+.write-space:focus {
+	cursor: default;
+}
 </style>

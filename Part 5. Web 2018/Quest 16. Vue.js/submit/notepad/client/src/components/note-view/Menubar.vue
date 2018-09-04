@@ -10,7 +10,6 @@
 </template>
 
 <script>
-    import axios from 'axios';
     import {mapGetters} from 'vuex';
     export default {
         data() {
@@ -23,8 +22,6 @@
                     logout: "로그아웃"
                 },
                 showMenu: false,
-                focusedTab: '',
-                host: 'http://localhost:3000'
             }
         },
         created() {

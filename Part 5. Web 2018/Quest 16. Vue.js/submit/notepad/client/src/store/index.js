@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import axios from 'axios';
-
+import swal from 'sweetalert';
 Vue.use(Vuex);
 
 const apiHost = 'http://localhost:3000';
@@ -9,9 +9,34 @@ function sendToken() {
     const {accessToken} = localStorage;
     if(accessToken) {
         return axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
-    }
+	}
+}
+function addInterceptor() {
+	const {accessToken} = localStorage;
+	axios.interceptors.response.use(function (req) {
+		return req;
+	}, function (error) {
+		console.log(error);
+		if (401 === error.response.status) {
+			swal({
+				title: "로그인 만료",
+				text: "로그인 정보가 만료되었습니다. 다시 로그인 해주세요.",
+				type: "warning",
+				showCancelButton: true,
+				confirmButtonColor: "#DD6B55",
+				confirmButtonText: "Yes",
+				closeOnConfirm: false
+			}).then(function(){
+				delete localStorage.accessToken;
+				window.location = '/login';
+			});
+		} else {
+			return Promise.reject(error);
+		}
+	});
 }
 sendToken();
+addInterceptor();
 export default new Vuex.Store({
     state: {
         accessToken: null,
@@ -63,7 +88,7 @@ export default new Vuex.Store({
                     tab.focus = true;
                 }
             });
-            state.readonly = false;
+            if(filename) state.readonly = false;
             state.focusedTab = filename;
         },
         addOpenTabs(state, filename) {
@@ -123,7 +148,6 @@ export default new Vuex.Store({
                 userData: userData
             }).then(() => {
                 axios.defaults.headers.common['Authorization'] = undefined;
-				// context.commit('logout');
             })
             .catch(err => console.error(err));
             context.commit('logout');

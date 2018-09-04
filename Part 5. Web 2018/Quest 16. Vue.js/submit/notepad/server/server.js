@@ -11,7 +11,7 @@ app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({extended: false}));
 app.use(cookieParser());
 app.all('/*', (req, res, next) => {
-	res.header('Access-Control-Allow-Origin', 'http://localhost:8080');
+	res.header('Access-Control-Allow-Origin', '*');
 	res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE, OPTIONS');
 	res.header('Access-Control-Allow-Headers', 'Origin, Content-Type, X-Requested-With, Authorization');
 	next();
@@ -27,7 +27,6 @@ app.post('/login', (req, res, next) => {
 	.then(result => {
 		let data;
 		if(result){
-			// 세션생성
 			const accessToken = auth.signToken(username);
 			redirectPath = '/';
 			data = {
