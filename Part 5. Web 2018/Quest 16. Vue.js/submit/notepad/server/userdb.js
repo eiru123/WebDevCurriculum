@@ -124,7 +124,9 @@ class UserDB{
                 filename: filename
             }
         }).then(result => {
-            return {content: result.dataValues.content};
+            if(result) return {content: result.dataValues.content};
+        }).catch(err=>{
+            console.error(err)
         });
     }
     createFiles(userId, filename){
