@@ -78,7 +78,7 @@ app.get('/exist', auth.ensureAuth(), (req, res) =>{
 	});
 });
 
-// app.use('/file', auth.ensureAuth());
+app.all('/file', auth.ensureAuth());
 app.get('/file', auth.ensureAuth(), async (req, res) => {
 	const data = await userDB.getContent(req.user, req.query.filename);
 	res.json(data);

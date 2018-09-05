@@ -16,7 +16,7 @@ function addInterceptor() {
 	axios.interceptors.response.use(function (req) {
 		return req;
 	}, function (error) {
-		console.log(error);
+		console.dir(error);
 		if (401 === error.response.status) {
 			swal({
 				title: "로그인 만료",
@@ -55,7 +55,6 @@ export default new Vuex.Store({
             return state.existFiles;
         },
         getOpenTabs(state){
-            console.log(state.openTabs);
             return state.openTabs;
         },
         getContent(state) {

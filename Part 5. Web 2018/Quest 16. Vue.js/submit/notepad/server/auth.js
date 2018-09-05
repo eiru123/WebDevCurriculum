@@ -8,7 +8,6 @@ const auth = {
     },
     ensureAuth() {
         return (req, res, next) => {
-            console.log(req.headers);
             const {authorization} = req.headers;
             if(!authorization) {
                 res.status(401);
