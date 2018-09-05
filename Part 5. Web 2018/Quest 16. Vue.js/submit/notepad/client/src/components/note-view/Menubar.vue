@@ -44,6 +44,7 @@
             },
             newFile(){
                 const filename = prompt('파일명을 입력해주세요.');
+                if(filename === '') return alert('파일명을 입력하셔야합니다');
                 this.$store.dispatch('newFile', filename)
                 .catch(err => console.error(err));
             },
