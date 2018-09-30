@@ -1,0 +1,46 @@
+{
+  "name": "notepad",
+  "description": "A Vue.js project",
+  "version": "1.0.0",
+  "author": "SeungLee <ls0408@naver.com>",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "dev": "webpack-dev-server --mode development --open --hot",
+    "build": "webpack --mode production --progress --hide-modules"
+  },
+  "dependencies": {
+    "apollo-boost": "^0.1.16",
+    "babel-polyfill": "^6.26.0",
+    "graphql": "^14.0.2",
+    "sweetalert": "^2.1.0",
+    "vue": "^2.5.11",
+    "vue-apollo": "^3.0.0-beta.25",
+    "vue-router": "^3.0.1",
+    "vuex": "^3.0.1"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 8"
+  ],
+  "devDependencies": {
+    "@babel/cli": "^7.0.0",
+    "@babel/core": "^7.0.0",
+    "@babel/polyfill": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
+    "@babel/preset-stage-3": "^7.0.0",
+    "babel-core": "^6.26.0",
+    "babel-loader": "^8.0.2",
+    "babel-preset-env": "^1.6.0",
+    "babel-preset-stage-3": "^6.24.1",
+    "cross-env": "^5.0.5",
+    "css-loader": "^0.28.7",
+    "file-loader": "^1.1.4",
+    "vue-loader": "^15.4.1",
+    "vue-template-compiler": "^2.4.4",
+    "webpack": "^4.17.2",
+    "webpack-cli": "^3.1.0",
+    "webpack-dev-server": "^3.1.8"
+  }
+}
