@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const { AuthenticationError } = require('apollo-server');
 const secret = 'notepad key';
 const expiresIn = 60 * 60;
 
@@ -8,16 +9,16 @@ const auth = {
     },
     ensureAuth(headers) {
         const {authorization} = headers;
+        
         if(!authorization) {
-            res.status(401);
             throw Error('No Authorization headers');
         }
 
         try {
             return user = this.verify(authorization).userId;
         } catch (e) {
-            res.status(401);
-            throw e;
+            console.log(e);
+            throw new AuthenticationError('jwt token is expired');
         }   
     },
     verify (token) {

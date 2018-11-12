@@ -8,6 +8,7 @@ Vue.use(VueRouter);
 
 const checkAuth = () => (to, from, next) => {
     const name = to.name;
+    
     if (store.getters.isAuthenticated) {
         return name === 'login'? next('/') : next();
     }
