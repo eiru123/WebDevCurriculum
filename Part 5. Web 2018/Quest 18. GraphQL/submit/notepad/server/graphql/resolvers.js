@@ -2,8 +2,8 @@ const userDB = require('./userdb');
 const auth = require('./auth');
 const resolvers = {
     Query: {
-        getUser: async (parent, {userId}) => {
-            console.log(userId);
+        // getUser: async (parent, {userId}, {userId}) => {
+        getUser: async (parent, _, {userId}) => {
             let data = null;
             let existFiles = [];
             try{
@@ -23,7 +23,6 @@ const resolvers = {
             }catch(err){
                 console.error(err);
             }
-            console.log(data.openTabs);
             return {
                 userId: userId,
                 focusedTab: data.focusedTab,
@@ -32,13 +31,14 @@ const resolvers = {
                 openTabs: data.openTabs
             };
         },
-        getFile: async (parent, { userId, filename }) => {
+        // getFile: async (parent, { userId, filename }) => {
+        getFile: async (parent, { filename }, {userId}) => {
             const data = await userDB.getContent(userId, filename);
             return data;
         }
     },
     Mutation: {
-        login: async (root, { userId, password }) => {
+        login: async (root, { userId, password }, {headers}) => {
             let data = null;
             let redirectPath = null;
             const check = await userDB.userCheck(userId, password)
@@ -56,25 +56,38 @@ const resolvers = {
             }
             return data;
         },
-        newFile: async (root, { info }) => {
+        logout: async (root, {logoutInfo}, {userId}) => {
             try{
-                await userDB.createFiles(info.userId, info.filename);
+                await userDB.logoutUpdate(userId, logoutInfo);
+            }catch(err){
+                console.error(err);
+            }
+        },
+        // newFile: async (root, { info }) => {
+        newFile: async (root, { filename }, { userId }) => {
+            try{
+                // await userDB.createFiles(info.userId, info.filename);
+                await userDB.createFiles(userId, filename);
                 return true;
             }catch(err){
                 console.error(err);
             }
         },
-        updateFile: async (root, { info, content }) => {
+        // updateFile: async (root, { info, content }) => {
+        updateFile: async (root, { filename, content }, {userId}) => {
             try{
-                await userDB.updateFile(info.userId, info.filename, content);
+                // await userDB.updateFile(info.userId, info.filename, content);
+                await userDB.updateFile(userId, filename, content);
                 return true;
             }catch(err){
                 console.error(err);
             }
         },
-        deleteFile: async (root, { info }) => {
+        // deleteFile: async (root, { info }) => {
+        deleteFile: async (root, { filename }, {userId}) => {
             try{
-                await userDB.deleteFile(info.userId, info.filename);
+                // await userDB.deleteFile(info.userId, info.filename);
+                await userDB.deleteFile(userId, filename);
                 return true;
             }catch(err){
                 console.error(err);

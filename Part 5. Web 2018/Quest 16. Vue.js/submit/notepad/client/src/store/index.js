@@ -188,10 +188,10 @@ export default new Vuex.Store({
                 }
             }).then(({data}) => {
                 context.commit('focusTab', filename);
-                if(filename){
+                // if(filename){
                     context.commit('addOpenTabs', filename);
                     context.commit('setContent', data.content);
-                }
+                // }
             }).catch(err => console.error(err));
         },
         focusTab(context, filename) {

@@ -18,7 +18,10 @@
         },
         methods: {
             login(username, password) {
-                this.$store.dispatch('login', {username, password}).then(data => this.$router.push(data))
+                this.$store.dispatch('login', {username, password}).then(data => {
+                    console.log(data);
+                    this.$router.push(data)
+                })
                 .catch((err => console.error(err)));
             }
         }

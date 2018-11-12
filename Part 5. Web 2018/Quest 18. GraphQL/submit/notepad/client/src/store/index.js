@@ -2,41 +2,13 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import axios from 'axios';
 import swal from 'sweetalert';
+import gql from 'graphql-tag';
+import apolloClient from '../apollo';
+
 Vue.use(Vuex);
 
 const apiHost = 'http://localhost:3000';
-function sendToken() {
-    const {accessToken} = localStorage;
-    if(accessToken) {
-        return axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
-	}
-}
-function addInterceptor() {
-	const {accessToken} = localStorage;
-	axios.interceptors.response.use(function (req) {
-		return req;
-	}, function (error) {
-		console.dir(error);
-		if (401 === error.response.status) {
-			swal({
-				title: "로그인 만료",
-				text: "로그인 정보가 만료되었습니다. 다시 로그인 해주세요.",
-				type: "warning",
-				showCancelButton: true,
-				confirmButtonColor: "#DD6B55",
-				confirmButtonText: "Yes",
-				closeOnConfirm: false
-			}).then(function(){
-				delete localStorage.accessToken;
-				window.location = '/login';
-			});
-		} else {
-			return Promise.reject(error);
-		}
-	});
-}
-sendToken();
-addInterceptor();
+
 export default new Vuex.Store({
     state: {
         accessToken: null,
@@ -123,109 +95,162 @@ export default new Vuex.Store({
         }
     },
     actions: {
-        login({commit}, {username, password}) {
-            return axios.post(`${apiHost}/login`, {username, password})
-            .then(({data}) => {
-                if(data.redirectPath === '/'){
-                    commit('login', data);
-                    axios.defaults.headers.common['Authorization'] = `Bearer ${data.accessToken}`;
+        async login({commit}, {username, password}) {
+            const mutation = gql`mutation ($userId: String!, $password: String!){
+                login (userId: $userId, password: $password){
+                    accessToken
+                    redirectPath
                 }
-                return data.redirectPath;
-            })
-            .catch(err => console.log(err));
+            }`,
+            variables = {
+                userId: username,
+                password: password
+            },
+            req = await apolloClient.mutate({ mutation, variables });
+			if (req.hasOwnProperty('error')) {
+				console.error(req.error);
+				return;
+            }
+            commit('login', req.data.login);
+            return req.data.login.redirectPath;
         },
         async logout(context) {
-            let tabs = [];
+            const openTabs = [];
             context.state.openTabs.forEach(({filename}) => {
-                tabs.push(filename);
+                openTabs.push(filename);
             })
-            let userData = {
-                tabs: tabs,
+            const variables = {
+                openTabs: openTabs,
                 focusedTab: context.state.focusedTab
-			}
-            await axios.post(`${apiHost}/logout`, {
-                userData: userData
-            }).then(() => {
-                axios.defaults.headers.common['Authorization'] = undefined;
-            })
-            .catch(err => console.error(err));
-            context.commit('logout');
-        },
-        exist({dispatch, commit}) {
-            axios.get(`${apiHost}/exist`).then(res => {
-                const data = JSON.parse(res.data);
-                const userData = data.userData;
-                
-                // graphql로 변경시
-                // userData는 지우고 모두 data로 처리하면 된다.
-                
-                data.fileNames.forEach(file => {
-                    commit('addExistFile', file);
-                });
-                userData.openTabs.forEach(tab => {
-                    commit('addOpenTabs', tab);
-                });
-                commit('focusTab', userData.focusedTab);
-                dispatch('openFile', userData.focusedTab);
-            }).catch(err => {
-                console.error(err);
-            });
-        },
-        newFile(context, filename) {
-            if(context.state.existFiles.includes(filename)) {
-                return alert('이미 있는 이름입니다.');
             }
-            axios.post(`${apiHost}/file`, {
-                name: filename
-            }).then(res => {
+            const mutation = gql`mutation ($logoutInfo: LogoutInfo){
+                logout(logoutInfo: $logoutInfo)
+            }`;
+            const req = await apolloClient.mutate({mutation, variables});
+            if (req.hasOwnProperty('error')) {
+				console.error(req.error);
+				return;
+            }
+            context.commit('logout');
+            return true;
+        },
+        async exist({dispatch, commit}) {
+            const query = gql`query {
+                getUser{
+                    userId
+                    focusedTab
+                    cursorPos
+                    existFiles
+                    openTabs
+                }
+            }`,
+            req = await apolloClient.query({ query });
+            if (req.hasOwnProperty('error')) {
+                console.error(req.error);
+                return;
+            }
+            const data = req.data.getUser;
+            data.existFiles.forEach(file => {
+                commit('addExistFile', file);
+            });
+            data.openTabs.forEach(file => {
+                commit('addOpenTabs', file);
+            });
+            commit('focusTab', data.focusedTab);
+            dispatch('openFile', data.focusedTab);
+            
+        },
+        async newFile(context, filename) {
+            const mutation = gql`mutation ($filename: String!){
+                newFile (filename: $filename)
+            }`, variables = {
+                filename
+            }, req = await apolloClient.mutate({ mutation, variables });
+            
+            if (req.hasOwnProperty('error')) {
+                console.error(req.error);
+                return;
+            }
+            if(req.data.newFile){
                 context.commit('focusTab', filename);
                 context.commit('addExistFile', filename);
                 context.commit('addOpenTabs', filename);
-            }).catch(err => {
-                console.error(err);
-            });
+            }
         },
-        openFile(context, filename) {
-            axios.get(`${apiHost}/file`, {
-                params: {
-                    filename: filename
+        async openFile(context, filename) {
+            const query = gql`query ($filename: String!){
+                getFile(filename: $filename){
+                    content
                 }
-            }).then(({data}) => {
-                context.commit('focusTab', filename);
-                if(filename){
-                    context.commit('addOpenTabs', filename);
-                    context.commit('setContent', data.content);
-                }
-            }).catch(err => console.error(err));
+            }`;
+            const variables = {
+                filename: filename
+            };
+            
+            const req = await apolloClient.query({ query, variables });
+            if (req.hasOwnProperty('error')) {
+                console.error(req.error);
+                return;
+            }
+            context.commit('addOpenTabs', filename);
+            context.dispatch('focusTab', filename);
         },
-        focusTab(context, filename) {
-            if(!filename) filename = context.state.focusedTab;
-            axios.get(`${apiHost}/file`, {
-                params: {
-                    filename: filename
+        async focusTab(context, filename) {
+            let content = '';
+            const query = gql`query ($filename: String!){
+                getFile(filename: $filename){
+                    content
                 }
-            }).then(({data}) => {
-                context.commit('focusTab', filename);
-                context.commit('setContent', data.content);
-            }).catch(err => console.error(err));
+            }`;
+            const variables = {
+                filename: filename
+            };
+            
+            const req = await apolloClient.query({ query, variables });
+            if (req.hasOwnProperty('error')) {
+                console.error(req.error);
+                return;
+            }
+            if(req.data.getFile){
+                content = req.data.getFile.content;
+            }
+            context.commit('setContent', content);
+            context.commit('focusTab', filename);
         },
-        save(context) {
-            axios.put(`${apiHost}/file`, {
-                name: context.state.focusedTab,
+        async save(context) {
+            const mutation = gql`mutation($filename: String!, $content: String!){
+                updateFile(filename: $filename, content: $content)
+            }`
+            const variables = {
+                filename: context.state.focusedTab,
                 content: context.state.content
-            })
-            .catch(err => console.error(err));
+            }
+            const req = await apolloClient.mutate({mutation, variables});
+            if(req.hasOwnProperty('error')){
+                console.error(req.error);
+                return;
+            }
         },
-        delete(context) {
+        async delete(context) {
             const filename = context.state.focusedTab;
-            axios.delete(`${apiHost}/file`, {
-                params: {
-                    filename: filename
-                }
-            }).then(() => {
+            const mutation = gql`mutation ($filename: String!){
+                deleteFile(filename: $filename)
+            }`;
+            const variables = {
+                filename: filename
+            };
+            const req = await apolloClient.mutate({mutation, variables});
+
+            if(req.hasOwnProperty('error')){
+                console.error(req.error);
+                return;
+            }
+            if(req.data.deleteFile){
                 context.commit('deleteExistFile', filename);
                 context.commit('deleteOpenTabs');
-            }).catch(err => console.error(err));
+            }else{
+                alert('삭제 실패');
+            }
         }
     }
 })

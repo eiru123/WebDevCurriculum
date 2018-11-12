@@ -6,23 +6,19 @@ const auth = {
     signToken(userId) {
         return jwt.sign({userId}, secret, {expiresIn});
     },
-    ensureAuth() {
-        return (req, res, next) => {
-            const {authorization} = req.headers;
-            if(!authorization) {
-                res.status(401);
-                throw Error('No Authorization headers');
-            }
-
-            try {
-                req.user = this.verify(authorization).userId;
-            } catch (e) {
-                res.status(401);
-                throw e;
-            }
-
-            next();
+    ensureAuth(headers) {
+        const {authorization} = headers;
+        if(!authorization) {
+            res.status(401);
+            throw Error('No Authorization headers');
         }
+
+        try {
+            return user = this.verify(authorization).userId;
+        } catch (e) {
+            res.status(401);
+            throw e;
+        }   
     },
     verify (token) {
         return jwt.verify(token.replace(/^Bearer\s/, ''), secret);

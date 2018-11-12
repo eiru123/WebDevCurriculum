@@ -238,3 +238,4 @@
     * Apollo Client의 장점은 무엇일까요?
         * 어떠한 앱에라도 사용할 수 있다. 간단하고 시작하기 쉽다. 어떤 빌드 셋팅이든 사용 가능하다. 브라우저 devtool이 있다. 캐싱의 기능이 있다.
     * Apollo Client를 쓰지 않고 Vanilla JavaScript로 GraphQL 요청을 보내려면 어떻게 해야 할까요?
+        * fetch api를 사용하여 POST요청을 보낸다. 그 때 body에 쿼리 내용을 JSON 형식으로 넣어서 보낸다.

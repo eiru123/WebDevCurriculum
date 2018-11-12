@@ -62,7 +62,8 @@
                 this.$store.dispatch('delete');
             },
             logout(name){
-                if(!confirm('로그아웃 하시겠습니까?')) return false;this.$store.dispatch('logout').then(()=>{
+                if(!confirm('로그아웃 하시겠습니까?')) return false;
+                this.$store.dispatch('logout').then(()=>{
                     this.$router.push('login');
                 });
                 

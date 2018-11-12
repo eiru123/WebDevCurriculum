@@ -113,6 +113,6 @@ app.post('/logout', auth.ensureAuth(), 	(req, res) => {
 	logout();
 	res.end();
 });
-const server = app.listen(3000, () => {
+const server = app.listen(3001, () => {
 	console.log('Server started!');
 });
