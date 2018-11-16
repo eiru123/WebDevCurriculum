@@ -1,0 +1,40 @@
+{
+  "private": true,
+  "scripts": {
+    "test": "jest __tests__",
+    "test-db": "jest __tests__/userdb.test.js",
+    "test-graphql": "jest __tests__/server.test.js"
+  },
+  "dependencies": {
+    "babel": "^6.23.0",
+    "body-parser": "^1.18.3",
+    "cookie-parser": "^1.4.3",
+    "express": "*",
+    "express-session": "^1.15.6",
+    "jsonwebtoken": "^8.3.0",
+    "mysql": "^2.16.0",
+    "mysql2": "^1.6.1",
+    "sequelize": "^4.38.0"
+  },
+  "devDependencies": {
+    "apollo": "^1.9.2",
+    "apollo-server": "^2.1.0",
+    "apollo-server-express": "^2.1.0",
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "graphql": "^14.0.2",
+    "graphql-tool": "^1.0.0",
+    "graphql-tools": "^4.0.3",
+    "jest": "^23.6.0",
+    "jest-cli": "^23.6.0",
+    "r2": "^2.0.1",
+    "superagent": "^4.0.0-beta.5",
+    "supertest": "^3.3.0"
+  },
+  "jest": {
+    "transform": {},
+    "transformIgnorePatterns": [
+      "/node_modules/"
+    ]
+  }
+}
