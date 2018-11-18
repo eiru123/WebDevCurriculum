@@ -1,4 +1,5 @@
-const userDB = require('./userdb');
+const userdb = require('./userdb');
+const userDB = new userdb('test');
 const auth = require('./auth');
 const resolvers = {
     Query: {
