@@ -62,16 +62,10 @@ class UserDB{
         });
         
         this.Users.sync()
-            .then(() => {
-                console.log('users table create success');
-            })
             .catch(err => {
                 console.error(err);
             });
         this.Files.sync()
-            .then(() => {
-                console.log('files table create success');
-            })
             .catch(err => {
                 console.error(err);
             });
@@ -89,9 +83,6 @@ class UserDB{
         );
         this.sequelize
             .authenticate()
-            .then(()=>{
-                console.log('Connection success: ', dbName);
-            })
             .catch(err => {
                 console.error(err);
             });
