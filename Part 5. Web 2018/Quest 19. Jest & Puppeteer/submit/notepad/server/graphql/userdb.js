@@ -137,7 +137,7 @@ class UserDB{
         });
     }
     deleteFile(userId, filename){
-        this.Files.destroy({
+        return this.Files.destroy({
             where: {
                 userId: userId,
                 filename: filename
@@ -147,7 +147,7 @@ class UserDB{
         });
     }
     updateFile(userId, filename, content){
-        this.Files.update({
+        return this.Files.update({
             content: content
         }, {
             where: {
@@ -155,11 +155,14 @@ class UserDB{
                 filename: filename
             }
         }).then(result => {
-            console.log(result);
+            return result;
+        }).catch(err => {
+            console.error(err);
         });
     }
     async logoutUpdate(userId, data){
-        await this.Users.update({
+        let result;
+        result = await this.Users.update({
             focusedTab: data.focusedTab
         }, {
             where: {
@@ -167,24 +170,32 @@ class UserDB{
             }
         }).then(result => {
             console.log(result);
+            return true;
         });
-        await this.Files.update({open: 0}, {
+        result = this.Files.update({open: 0}, {
             where: {userId: userId}
-        }).then(err => console.error(err));
-        console.log(data.tabs);
-        data.tabs.forEach(name =>{
-            this.Files.update({
-                open: 1
-            }, {
-                where: {
-                    userId: userId,
-                    filename: name
-                }
-            }).then(err => {
-                console.error(err);
-            })
+        }).catch(err => {
+            console.error(err);
+            return false;
         });
-        return true;
+        
+        result = Promise.all(data.openTabs.map(
+            async (name) =>{
+                await this.Files.update({
+                    open: 1
+                }, {
+                    where: {
+                        userId: userId,
+                        filename: name
+                    }
+                }).catch(err => {
+                    console.error(err);
+                    return false;
+                });
+            }
+        ));
+
+        return result;
     }
     makeHash(){
         return crypto.createHash('sha256');

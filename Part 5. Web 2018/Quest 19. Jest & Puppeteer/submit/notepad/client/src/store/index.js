@@ -118,11 +118,14 @@ export default new Vuex.Store({
             const openTabs = [];
             context.state.openTabs.forEach(({filename}) => {
                 openTabs.push(filename);
-            })
+            });
             const variables = {
-                openTabs: openTabs,
-                focusedTab: context.state.focusedTab
-            }
+                logoutInfo: {
+                    openTabs: openTabs,
+                    focusedTab: context.state.focusedTab
+                }
+            };
+            console.log(variables);
             const mutation = gql`mutation ($logoutInfo: LogoutInfo){
                 logout(logoutInfo: $logoutInfo)
             }`;
