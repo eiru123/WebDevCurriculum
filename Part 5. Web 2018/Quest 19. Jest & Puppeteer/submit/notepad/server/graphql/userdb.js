@@ -172,14 +172,15 @@ class UserDB{
             console.log(result);
             return true;
         });
-        result = this.Files.update({open: 0}, {
+        result = await this.Files.update({open: 0}, {
             where: {userId: userId}
+        }).then(() => {
+            return true;
         }).catch(err => {
             console.error(err);
             return false;
         });
-        
-        result = Promise.all(data.openTabs.map(
+        Promise.all(data.openTabs.map(
             async (name) =>{
                 await this.Files.update({
                     open: 1
@@ -188,6 +189,8 @@ class UserDB{
                         userId: userId,
                         filename: name
                     }
+                }).then(() => {
+                    return true;
                 }).catch(err => {
                     console.error(err);
                     return false;

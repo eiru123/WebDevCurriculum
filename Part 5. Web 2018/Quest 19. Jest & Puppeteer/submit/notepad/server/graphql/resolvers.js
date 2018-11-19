@@ -60,7 +60,8 @@ const resolvers = {
         logout: async (root, {logoutInfo}, {userId}) => {
             try{
                 console.log(logoutInfo);
-                await userDB.logoutUpdate(userId, logoutInfo);
+                return await userDB.logoutUpdate(userId, logoutInfo);
+                
             }catch(err){
                 console.error(err);
             }
