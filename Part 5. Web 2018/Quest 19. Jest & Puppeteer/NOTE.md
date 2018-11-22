@@ -61,7 +61,7 @@
   * 테스트 전과 후 처리는 `beforeAll`, `beforeEach`, `afterAll`, `afterEach`로 할 수 있다. 이 때 All이 붙은 함수들은 한 파일에서 한 번만 실행되고 Each가 붙은 함수들은 각 테스트마다 실행된다. 만약 특정 테스트에만 테스트 전후 처리를 하기 위해서는 `describe`에 넣으면 된다.
   * 테스트 순서는 각 describe의 것들이 모두 실행된 후 내부 describe에 있는 test들과 현재 감싸고 있는 describe안에 있는 test들이 순서대로 실행된다.
 * Puppeteer
-
+  * headless chrome node api: cli환경에서 브라우저가 시각적으로 보여지지 않고 백그라운드에서 작동할 수 있는 것을 이야기 한다. 서버에서 DOM을 읽어야 하는 경우에 사용된다.
 ## Checklist
 * 자동화된 테스트를 만드는 것에는 어떤 장점과 단점이 있을까요?
   * TDD(Test-Driven Development)란 무엇인가요? TDD의 장점과 단점은 무엇일까요?
