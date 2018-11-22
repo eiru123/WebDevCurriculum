@@ -7,7 +7,9 @@
   "private": true,
   "scripts": {
     "dev": "webpack-dev-server --mode development --open --hot",
-    "build": "webpack --mode production --progress --hide-modules"
+    "build": "webpack --mode production --progress --hide-modules",
+    "test": "node ../server/server.js & npm run dev & jest __tests__",
+    "stop": "kill -15 $(pgrep -f .bin/webpack-dev-server);kill -15 $(pgrep -f localhost:8080);kill -15 $(pgrep -f node\" \"../server/server.js)"
   },
   "dependencies": {
     "apollo-boost": "^0.1.16",
@@ -20,6 +22,7 @@
     "babel-polyfill": "^6.26.0",
     "graphql": "^14.0.2",
     "graphql-tag": "^2.9.2",
+    "puppeteer": "^1.10.0",
     "sweetalert": "^2.1.0",
     "vue": "^2.5.11",
     "vue-apollo": "^3.0.0-beta.25",

@@ -175,7 +175,7 @@ export default new Vuex.Store({
                 return;
             }
             if(req.data.newFile){
-                context.commit('focusTab', filename);
+                context.dispatch('focusTab', filename);
                 context.commit('addExistFile', filename);
                 context.commit('addOpenTabs', filename);
             }

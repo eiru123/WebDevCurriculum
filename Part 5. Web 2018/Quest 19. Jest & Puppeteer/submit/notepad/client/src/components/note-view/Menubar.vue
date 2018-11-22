@@ -1,6 +1,6 @@
 <template>
     <div class="menubar">
-        <button v-for="(value, key) in buttons" :key="key" @click="buttonEvent(key)"> {{ value }}</button>
+        <button v-for="(value, key) in buttons" :class="key" :key="key" @click="buttonEvent(key)"> {{ value }}</button>
         <div v-if="showMenu" class="files">
             <ul>
                 <li v-for="(file, index) in getExistFiles" :key="index" class="open-file" @click="openFile(file)">{{ file }}</li>
@@ -15,7 +15,7 @@
         data() {
             return {
                 buttons: {
-                    newFile: "새 파일",
+                    newfile: "새 파일",
                     open: "열기",
                     save: "저장",
                     delete: "삭제",
@@ -35,7 +35,7 @@
         methods: {
             buttonEvent(name) {
                 switch(name){
-                    case 'newFile': this.newFile(); break;
+                    case 'newfile': this.newFile(); break;
                     case 'open': this.open(); break;
                     case 'save': this.save(); break;
                     case 'delete': this.delete(); break;
@@ -45,6 +45,7 @@
             newFile(){
                 const filename = prompt('파일명을 입력해주세요.');
                 if(filename === '') return alert('파일명을 입력하셔야합니다');
+                else if (!filename) return;
                 this.$store.dispatch('newFile', filename)
                 .catch(err => console.error(err));
             },
