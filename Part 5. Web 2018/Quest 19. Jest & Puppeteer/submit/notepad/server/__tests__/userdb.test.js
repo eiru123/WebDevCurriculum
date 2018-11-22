@@ -28,7 +28,7 @@ describe('userdb unit test', () => {
 			userId: id,
 			filename: 'hello.txt',
 			content: 'this is test file',
-			open: 1
+			open: 0
 		});
 	});
 	test('getContent test', async() => {

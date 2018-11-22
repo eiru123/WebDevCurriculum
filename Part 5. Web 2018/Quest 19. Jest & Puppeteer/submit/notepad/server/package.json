@@ -1,9 +1,10 @@
 {
   "private": true,
   "scripts": {
-    "test": "jest __tests__",
+    "test": "node server.js & jest __tests__",
     "test-db": "jest __tests__/userdb.test.js",
-    "test-graphql": "jest __tests__/server.test.js"
+    "test-graphql": "jest __tests__/server.test.js",
+    "stop": "kill -15 $(pgrep -f node\" \"server.js)"
   },
   "dependencies": {
     "babel": "^6.23.0",
