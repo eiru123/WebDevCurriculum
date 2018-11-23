@@ -59,17 +59,18 @@ describe('notepad vue test', async() => {
 		focusedFileName = await page.$eval('.focus>span', el => el.innerHTML);
 		expect(focusedFileName).toBe('newFile');
 
-		await write.click({ clickCount: 3 }); 
-		await page.keyboard.press("Backspace");
-		await write.type("this is test");
-		await page.click('.save');
-		await page.waitFor(1000);
-
 		await page.click('.delete');
 		await page.waitFor(1000);
 		let focusedFile = await page.$('.focus');
 		expect(focusedFile).toBeNull();
 
+		await tab[0].click();
+		await page.waitFor(1000);
+		await write.click({ clickCount: 3 }); 
+		await page.keyboard.press("Backspace");
+		await write.type("this is test");
+		await page.click('.save');
+		await page.waitFor(1000);
 
 		await tab[0].click();
 		await page.waitFor(1000);
